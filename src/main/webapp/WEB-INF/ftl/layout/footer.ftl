@@ -2,7 +2,7 @@
       <hr>
 
       <footer>
-        <p>&copy; Company 2012 | All rights reserved | <a href="#">Help</a> | <a href="#">Feedback</a> | <a href="#">GitHub</a></p>
+        <p>&copy; Company 2012 | All rights reserved <!-- | <a href="#">Help</a> | <a href="#">Feedback</a> | <a href="#">GitHub</a> --></p>
       </footer>
 
     </div> <!-- /container -->
