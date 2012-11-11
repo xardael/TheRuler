@@ -16,9 +16,12 @@ public class Config {
 //    public static final Locale LOCALE = Locale.getDefault();
     public static final Locale LOCALE = new Locale("cs", "CZ");
     
-    public static final String DB_HOST = "http://localhost:1527/";
-    public static final String DB_USER = "user";
+    public static final String DB_HOST = "localhost";
+    public static final String DB_USER = "admin";
     public static final String DB_PASS = "pass";
+    public static final String DB_NAME = "TheRuler";
+    public static final int    DB_PORT = 1984;
+
 
     public static final String DB_DRIVER = "org.apache.derby.jdbc.ClientDriver";
 }

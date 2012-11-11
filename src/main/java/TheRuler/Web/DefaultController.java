@@ -1,6 +1,7 @@
 package TheRuler.Web;
 
 import TheRuler.Common.Config;
+import TheRuler.Model.DAOImpl;
 import TheRuler.Model.Grammar;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -37,6 +38,10 @@ public class DefaultController {
                 
                 model.addAttribute("basePath", Config.BASE_PATH);
                 
+                DAOImpl dao = new DAOImpl();
+                String result = dao.test();
+                model.addAttribute("text", result);
+               
 		return "grammar";
 	}
 
