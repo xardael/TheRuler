@@ -1,20 +1,20 @@
 package TheRuler.Model;
 
-public class Grammar {
+public class Rule {
 
-	private GrammarMeta meta;
+	private String id;
 	private String content;
 
-	public GrammarMeta getMeta() {
-		return this.meta;
+	public String getId() {
+		return this.id;
 	}
 
 	/**
 	 * 
-	 * @param meta
+	 * @param id
 	 */
-	public void setMeta(GrammarMeta meta) {
-		this.meta = meta;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getContent() {
