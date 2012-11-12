@@ -2,6 +2,10 @@ package TheRuler.Model;
 
 import java.util.List;
 
+/**
+ * 
+ * @author pyty
+ */
 public interface RuleManager {
 
 	/**

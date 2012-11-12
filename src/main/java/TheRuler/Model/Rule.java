@@ -1,5 +1,9 @@
 package TheRuler.Model;
 
+/**
+ * 
+ * @author pyty
+ */
 public class Rule {
 
 	private String id;

@@ -2,6 +2,10 @@ package TheRuler.Model;
 
 import java.util.Date;
 
+/**
+ * 
+ * @author pyty
+ */
 public class GrammarMeta {
 
 	private Long id;

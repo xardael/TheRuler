@@ -1,5 +1,9 @@
 package TheRuler.Model;
 
+/**
+ * 
+ * @author pyty
+ */
 public class Grammar {
 
 	private GrammarMeta meta;
