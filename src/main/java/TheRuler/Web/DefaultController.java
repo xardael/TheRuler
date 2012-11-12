@@ -23,7 +23,7 @@ public class DefaultController {
 	 * @param model 
 	 * @return The index view (FTL)
 	 */
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping("/")
 	public String index(ModelMap model) {
 
                 model.addAttribute("basePath", Config.BASE_PATH);
@@ -43,7 +43,7 @@ public class DefaultController {
                 model.addAttribute("basePath", Config.BASE_PATH);
                 
                 String result = Utils.test();
-                model.addAttribute("text", result);
+                model.addAttribute("text", "a");
                 
 		return "grammar";
 	}
