@@ -37,7 +37,7 @@ public class DefaultController {
 	 * @param model 
 	 * @return The index view (FTL)
 	 */
-	@RequestMapping(value = "/grammar/aaaa", method = RequestMethod.GET)
+	@RequestMapping(value = "/grammar/", method = RequestMethod.GET)
 	public String grammar(ModelMap model) {
                 
                 model.addAttribute("basePath", Config.BASE_PATH);
