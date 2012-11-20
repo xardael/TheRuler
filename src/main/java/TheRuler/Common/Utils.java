@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-
 import org.basex.core.Context;
 
 /**
@@ -14,9 +12,13 @@ import org.basex.core.Context;
  */
 public class Utils {
     
-
-    public static String test()
-    {
+    public static BaseXClient connectToBaseX() throws IOException {
+        BaseXClient baseXClient = new BaseXClient(Config.DB_HOST, Config.DB_PORT, Config.DB_USER, Config.DB_PASS);
+        baseXClient.execute("OPEN " + Config.DB_NAME);
+        return baseXClient;
+    }
+    
+    public static String test() {
         BaseXClient baseXClient = null;
         
         try {

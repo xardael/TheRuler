@@ -29,7 +29,7 @@
         <property name="exposeSpringMacroHelpers" value="true"/>
     </bean>
 
-    <!-- Zistit naco je toto -->
+    <!-- Zistit naco je toto, MUSI TO BYT TAKTO!!!! inak hadze 404 po rebuilde -->
     <context:component-scan base-package="TheRuler" />
          
 </beans>

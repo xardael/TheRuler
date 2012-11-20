@@ -77,7 +77,12 @@
         </div>
       </div>
 	  
-	  
+      <div>
+          Id: ${gm.id}<br>
+          Name: ${gm.name}<br>
+          Desc: ${gm.description}<br>
+          Date: ${gm.date?date}<br>
+      </div>
 	  
 	  <textarea rows="20" style="width: 99%">
 ${text}
