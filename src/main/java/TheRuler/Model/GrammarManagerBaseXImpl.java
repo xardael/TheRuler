@@ -1,8 +1,9 @@
 package TheRuler.Model;
 
 import TheRuler.Common.BaseXClient;
-import java.io.IOException;
 import java.io.StringReader;
+import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
@@ -36,8 +37,29 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 	 * 
 	 * @param grammarMeta
 	 */
-	public GrammarMeta createGrammar(GrammarMeta grammarMeta) {
-		throw new UnsupportedOperationException();
+	public GrammarMeta createGrammar(GrammarMeta grammarMeta) throws Exception {
+            if (grammarMeta == null) {
+                throw new IllegalArgumentException();
+            } else if (grammarMeta.getName() == null || grammarMeta.getName() == "") {
+                throw new IllegalArgumentException();
+            }
+            
+            BaseXClient.Query query = baseXClient.query("max(//grammars/grammarRecord/string(@id))");
+            String lastId = query.execute();
+            Long newId = Long.parseLong(lastId) + 1L;
+            
+            String insertNodeCommand = "insert node " +
+                                       "<grammarRecord id='" + newId + "'>" +
+                                       "  <name>Inserted grammar</name>" +
+                                       "  <description>Decription of inserted grammar</description>" +
+                                       "  <date>20.11.2012</date>" +
+                                       "</grammarRecord>" +
+                                       "into //grammars";
+            
+            String result = baseXClient.execute("xquery " + insertNodeCommand);
+            
+            grammarMeta.setId(newId);
+            return grammarMeta;
 	}
 
 	/**
@@ -53,6 +75,10 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 	 * @param id
 	 */
 	public GrammarMeta findGrammarMeta(Long id) throws Exception{
+            if (id == null) {
+                throw new IllegalArgumentException();
+            }
+            
             BaseXClient.Query query = baseXClient.query("for $grammarRecord in //grammars/grammarRecord " + 
                                                         "where $grammarRecord[@id='" + id + "'] " +
                                                         "return $grammarRecord");
@@ -93,8 +119,49 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             //return XmlToClassParser.parseGrammarMeta(query.execute());
 	}
 
-	public List<GrammarMeta> findAllGrammarMetas() {
-		throw new UnsupportedOperationException();
+	public List<GrammarMeta> findAllGrammarMetas() throws Exception {
+            BaseXClient.Query query = baseXClient.query("<grammars> " +
+                                                        "{for $grammarRecord in //grammars/grammarRecord " + 
+                                                        "return $grammarRecord} " +
+                                                        "</grammars>");
+            String xml = query.execute();
+            
+            List<GrammarMeta> grammarMetas = new ArrayList<GrammarMeta>();
+            
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            InputSource is = new InputSource();
+            is.setCharacterStream(new StringReader(xml));
+            Document doc = db.parse(is);
+            NodeList grammarRecords = doc.getElementsByTagName("grammarRecord");
+
+            for (int i = 0; i < grammarRecords.getLength(); i++) {
+                GrammarMeta gm = new GrammarMeta();
+                Element element = (Element) grammarRecords.item(i);
+
+                gm.setId(Long.parseLong(element.getAttribute("id")));
+                
+                NodeList nodes = element.getElementsByTagName("name");
+                Element line = (Element) nodes.item(0);
+                gm.setName(line.getFirstChild().getNodeValue());
+
+                nodes = element.getElementsByTagName("description");
+                line = (Element) nodes.item(0);
+                gm.setDescription(line.getFirstChild().getNodeValue());
+                
+                nodes = element.getElementsByTagName("date");
+                line = (Element) nodes.item(0);
+                gm.setDate(DateFormat.getDateInstance().parse(line.getFirstChild().getNodeValue()));
+                
+                grammarMetas.add(gm);
+            }
+                    
+
+//            grammarMeta.setId(Long.parseLong(grammarId));
+//            grammarMeta.setName(name);
+//            grammarMeta.setDescription(description);
+//            grammarMeta.setDate(new Date());
+            
+            return grammarMetas;
 	}
 
 	/**
@@ -109,8 +176,37 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 	 * 
 	 * @param grammarMeta
 	 */
-	public void updateGrammarMeta(TheRuler.Model.GrammarMeta grammarMeta) {
-		throw new UnsupportedOperationException();
+	public void updateGrammarMeta(TheRuler.Model.GrammarMeta grammarMeta) throws Exception{
+            if (grammarMeta == null) {
+                throw new IllegalArgumentException();
+            } else if (grammarMeta.getId() == null || grammarMeta.getName() == null) {
+                throw new IllegalArgumentException();
+            }
+            
+            String result = baseXClient.execute("xquery exists(//grammars/grammarRecord[@id=" + grammarMeta.getId() + "])");
+            
+            if (result.equals("false")) {
+                throw new IllegalArgumentException();
+            }
+   
+            String updateNodeCommand = "replace node //grammars/grammarRecord[@id=" + grammarMeta.getId() + "] with" +
+                                       "<grammarRecord id='" + grammarMeta.getId() + "'>" +
+                                       "  <name>" + grammarMeta.getName() + "</name>" +
+                                       "  <description>" + grammarMeta.getDescription() + "</description>" +
+                                       "  <date>" + grammarMeta.getDate() + "</date>" +
+                                       "</grammarRecord>";
+            
+            baseXClient.execute("xquery " + updateNodeCommand);
+/*  
+ * exists(//grammars/grammarRecord[@id=1])
+ 
+<grammarRecord id="1">
+    <name>My Grammar Name Updated</name>
+    <description>Decription of my grammar</description>
+    <date>10.12.2011</date>
+  </grammarRecord>
+ 
+ */                
 	}
 
 	/**
@@ -125,8 +221,20 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 	 * 
 	 * @param grammarMeta
 	 */
-	public void deletaGrammar(GrammarMeta grammarMeta) {
-		throw new UnsupportedOperationException();
+	public void deletaGrammar(GrammarMeta grammarMeta) throws Exception{
+            if (grammarMeta == null) {
+                throw new IllegalArgumentException();
+            } else if (grammarMeta.getId() == null) {
+                throw new IllegalArgumentException();
+            }
+            
+            String result = baseXClient.execute("xquery exists(//grammars/grammarRecord[@id=" + grammarMeta.getId() + "])");
+            
+            if (result.equals("false")) {
+                throw new IllegalArgumentException();
+            }
+            
+            baseXClient.execute("xquery delete node //grammars/grammarRecord[@id=" + grammarMeta.getId() + "]");
 	}
 
 }

@@ -6,7 +6,10 @@ import TheRuler.Common.Utils;
 import TheRuler.Model.Grammar;
 import TheRuler.Model.GrammarManagerBaseXImpl;
 import TheRuler.Model.GrammarMeta;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,9 +31,23 @@ public class DefaultController {
 	 * @return The index view (FTL)
 	 */
 	@RequestMapping("/")
-	public String index(ModelMap model) {
+	public String index(ModelMap model) throws IOException{
 
                 model.addAttribute("basePath", Config.BASE_PATH);
+                BaseXClient baseXClient = Utils.connectToBaseX();
+                
+                try {
+                    GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+                    grammarManager.setBaseXClient(baseXClient);
+                    
+                    List<GrammarMeta> grammarMetas = grammarManager.findAllGrammarMetas();
+                    
+                    model.addAttribute("grammarMetas", grammarMetas);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    baseXClient.close();
+                }
                                
 		return "index";
 	}
@@ -53,10 +70,21 @@ public class DefaultController {
                     BaseXClient baseXClient = Utils.connectToBaseX();
                     GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
                     grammarManager.setBaseXClient(baseXClient);
-                    GrammarMeta gm = grammarManager.findGrammarMeta(1L);
-                    GrammarMeta test = gm;
+                    //GrammarMeta gm = grammarManager.findGrammarMeta(1L);
+                    //GrammarMeta test = gm;
                     
-                    model.addAttribute("gm", gm);
+                    GrammarMeta grammarMeta = new GrammarMeta();
+                    grammarMeta.setId(2L);
+                    grammarMeta.setName("super Test");
+                    grammarMeta.setDescription("Lorem ipsum dolor sit amet");
+                    grammarMeta.setDate(new Date());
+                    
+                    //grammarMeta = grammarManager.createGrammar(grammarMeta);
+                    
+                    List<GrammarMeta> grammarMetas = new ArrayList<GrammarMeta>();
+                    grammarMetas = grammarManager.findAllGrammarMetas();
+                    
+                    model.addAttribute("grammarMetas", grammarMetas);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

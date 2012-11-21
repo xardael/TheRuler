@@ -48,17 +48,9 @@
 
     <table class="table table-hover">
       <tr><th>#</th><th>Name</th><th>Description</th><th>Date</th><th></th></tr>
-      <tr><td>1</td><td><a href="grammar/aaaa">Dignissim ligula null</a></td><td>asdasd</td><td>2010/08/01</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="#"><i class="icon-remove"></i></a></div></td></tr>
-      <tr><td>2</td><td><a href="#">Odio pulvinar felis bibendum </a></td><td>asdasd</td><td>2010/08/01</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="#"><i class="icon-remove"></i></a></div></td></tr>
-      <tr><td>3</td><td><a href="#">Vivamus eu sapien nis</a></td><td>asdasd</td><td>2010/08/01</td><td> <div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="#"><i class="icon-remove"></i></a></div></td></tr>
-      <tr><td>4</td><td><a href="#">Cras non sagittis orc</a></td><td>asdasd</td><td>2010/08/01</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="#"><i class="icon-remove"></i></a></div></td></tr>
-      <tr><td>5</td><td><a href="#">Pellentesque fermentum </a></td><td>asdasd</td><td>2010/08/01</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="#"><i class="icon-remove"></i></a></div></td></tr>
-      <tr><td>6</td><td><a href="#">Mauris rutrum malesuada</a></td><td>asdasd</td><td>2010/08/01</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="#"><i class="icon-remove"></i></a></div></td></tr>
-      <tr><td>7</td><td><a href="#">Maecenas rhoncus</a></td><td>asdasd</td><td>2010/08/01</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="#"><i class="icon-remove"></i></a></div></td></tr>
-      <tr><td>8</td><td><a href="#">Mauris in lorem </a></td><td>asdasd</td><td>2010/08/01</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="#"><i class="icon-remove"></i></a></div></td></tr>
-      <tr><td>9</td><td><a href="#">Torquent per conubi</a></td><td>asdasd</td><td>2010/08/01</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="#"><i class="icon-remove"></i></a></div></td></tr>
-      <tr><td>10</td><td><a href="#">Lorem ipsum dolor sit</a></td><td>asdasd</td><td>2010/08/01</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="#"><i class="icon-remove"></i></a></div></td></tr>
-
+      <#list grammarMetas as gm>
+        <tr><td>${gm.id}</td><td><a href="grammar/${gm.id}">${gm.name}</a></td><td>${(gm.description)!"No decription"}</td><td>${gm.date?date}</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="#"><i class="icon-remove"></i></a></div></td></tr>
+      </#list>
     </table>
 
         <div class="pagination pagination-centered">

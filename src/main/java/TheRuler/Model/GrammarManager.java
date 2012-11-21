@@ -13,13 +13,13 @@ public interface GrammarManager {
 	 * 
 	 * @param grammarMeta
 	 */
-	GrammarMeta createGrammar(GrammarMeta grammarMeta) throws IOException;
+	GrammarMeta createGrammar(GrammarMeta grammarMeta) throws Exception;
 
 	/**
 	 * 
 	 * @param id
 	 */
-	Grammar findGrammar(Long id) throws IOException;
+	Grammar findGrammar(Long id) throws Exception;
 
 	/**
 	 * 
@@ -27,30 +27,30 @@ public interface GrammarManager {
 	 */
 	GrammarMeta findGrammarMeta(Long id) throws Exception;
 
-	List<GrammarMeta> findAllGrammarMetas() throws IOException;
+	List<GrammarMeta> findAllGrammarMetas() throws Exception;
 
 	/**
 	 * 
 	 * @param grammar
 	 */
-	void updateGrammar(Grammar grammar) throws IOException;
+	void updateGrammar(Grammar grammar) throws Exception;
 
 	/**
 	 * 
 	 * @param grammarMeta
 	 */
-	void updateGrammarMeta(GrammarMeta grammarMeta) throws IOException;
+	void updateGrammarMeta(GrammarMeta grammarMeta) throws Exception;
 
 	/**
 	 * 
 	 * @param grammar
 	 */
-	void updateGrammarContent(Grammar grammar) throws IOException;
+	void updateGrammarContent(Grammar grammar) throws Exception;
 
 	/**
 	 * 
 	 * @param grammarMeta
 	 */
-	void deletaGrammar(GrammarMeta grammarMeta) throws IOException;
+	void deletaGrammar(GrammarMeta grammarMeta) throws Exception;
 
 }
