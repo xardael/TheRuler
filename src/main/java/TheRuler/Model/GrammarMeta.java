@@ -11,7 +11,7 @@ public class GrammarMeta {
 	private Long id;
 	private String name;
 	private String description;
-	private Date date;
+	private String date;
 
 	public Long getId() {
 		return this.id;
@@ -38,7 +38,11 @@ public class GrammarMeta {
 	}
 
 	public String getDescription() {
-		return this.description;
+            if (description == null) {
+                //return "";
+            }
+            
+	    return this.description;
 	}
 
 	/**
@@ -49,16 +53,20 @@ public class GrammarMeta {
 		this.description = description;
 	}
 
-	public Date getDate() {
-		return this.date;
+	public String getDate() {
+            if (date == null) {
+                return "";
+            }
+            return this.date;
 	}
 
 	/**
 	 * 
 	 * @param date
 	 */
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
+        
 }

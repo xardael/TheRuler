@@ -34,7 +34,7 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="${basePath}/res/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="${basePath}/res/ico/apple-touch-icon-57-precomposed.png">
     
-    <base href="${basePath}/">
+    
   </head>
 
   <body>
@@ -48,13 +48,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">The Ruler</a>
+          <a class="brand" href="${basePath}/">The Ruler</a>
 
           <p class="navbar-text" style="display: inline;">Manage your SRGS grammar easier and faster</p>
           <div class="nav-collapse collapse pull-right">
 
             <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
+              <li class="active"><a href="${basePath}/">Home</a></li>
               <li><a href="a.html">Help</a></li>
               <li><a href="#contact">Feedback</a></li>
               <li><a href="#contact">GitHub</a></li>

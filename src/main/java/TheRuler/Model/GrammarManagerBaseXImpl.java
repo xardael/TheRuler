@@ -105,12 +105,18 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 
                 NodeList descriptionNodes = root.getElementsByTagName("description");
                 line = (Element) descriptionNodes.item(0);
-                description = line.getFirstChild().getNodeValue();
+                if (line.getFirstChild() != null) {
+                    description = line.getFirstChild().getNodeValue();
+                }
+                
+                NodeList dateNodes = root.getElementsByTagName("date");
+                line = (Element) dateNodes.item(0);
+                date = line.getFirstChild().getNodeValue();
 
             grammarMeta.setId(Long.parseLong(grammarId));
             grammarMeta.setName(name);
             grammarMeta.setDescription(description);
-            grammarMeta.setDate(new Date());
+            grammarMeta.setDate(date);
         
         
             return grammarMeta;
@@ -146,11 +152,13 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 
                 nodes = element.getElementsByTagName("description");
                 line = (Element) nodes.item(0);
-                gm.setDescription(line.getFirstChild().getNodeValue());
+                if (line.getFirstChild() != null) {
+                    gm.setDescription(line.getFirstChild().getNodeValue());
+                }
                 
                 nodes = element.getElementsByTagName("date");
                 line = (Element) nodes.item(0);
-                gm.setDate(DateFormat.getDateInstance().parse(line.getFirstChild().getNodeValue()));
+                gm.setDate(line.getFirstChild().getNodeValue());
                 
                 grammarMetas.add(gm);
             }

@@ -60,49 +60,65 @@ public class DefaultController {
 	 * @param model 
 	 * @return The index view (FTL)
 	 */
-	@RequestMapping(value = "/grammar/aaaa", method = RequestMethod.GET)
-	public String grammar(ModelMap model) {
+	@RequestMapping(value = "/grammar/{id}")
+	public String grammar(ModelMap model, @PathVariable String id) {
+            
+            if (id.equals("") || id == null) {
+                throw new IllegalArgumentException();
+            }
                 
-                model.addAttribute("basePath", Config.BASE_PATH);
-                model.addAttribute("text", "finally");
+            model.addAttribute("basePath", Config.BASE_PATH);
+            model.addAttribute("text", "finally");
+
+            try {
+                BaseXClient baseXClient = Utils.connectToBaseX();
+                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+                grammarManager.setBaseXClient(baseXClient);
+
+                GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(id));
+
+                model.addAttribute("gm", gm);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
                 
-//                String result = Utils.test();
-//                
-                try {
-                    BaseXClient baseXClient = Utils.connectToBaseX();
-                    GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
-                    grammarManager.setBaseXClient(baseXClient);
-                    //GrammarMeta gm = grammarManager.findGrammarMeta(1L);
-                    //GrammarMeta test = gm;
-                    
-                    GrammarMeta grammarMeta = new GrammarMeta();
-                    grammarMeta.setId(2L);
-                    grammarMeta.setName("super Test");
-                    grammarMeta.setDescription("Lorem ipsum dolor sit amet");
-                    grammarMeta.setDate(new Date());
-                    
-                    //grammarMeta = grammarManager.createGrammar(grammarMeta);
-                    
-                    List<GrammarMeta> grammarMetas = new ArrayList<GrammarMeta>();
-                    grammarMetas = grammarManager.findAllGrammarMetas();
-                    
-                    model.addAttribute("grammarMetas", grammarMetas);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                
-//                GrammarMeta gm = new GrammarMeta();
-//                    gm.setId(1L);
-//                    gm.setName("Name");
-//                    gm.setDescription("description");
-//                    gm.setDate(new Date());
-//                model.addAttribute("gm", gm);
-                
-                
-                
-		return "grammar";
+            return "grammarMetaEdit";
 	}
 
+        @RequestMapping(value= "/save-grammar", method = RequestMethod.POST)
+        public String saveGrammar(@ModelAttribute("user") GrammarMeta gm) {
+            
+            if (gm == null) {
+                throw new IllegalArgumentException();
+            }
+
+            BaseXClient baseXClient = null;
+            
+            try {
+                baseXClient = Utils.connectToBaseX();
+                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+                grammarManager.setBaseXClient(baseXClient);
+            
+                grammarManager.updateGrammarMeta(gm);
+            
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (baseXClient != null) {
+                    try {
+                        baseXClient.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+             }
+             
+             
+            //model.addAttribute("cv", initedCvDocument.getCv());
+            //return "redirect:/grammar/" + gm.getId();
+            return "redirect:/grammar/" + gm.getId();
+        }
+        
         @RequestMapping(value= "/create-grammar", method = RequestMethod.POST)
         public String createGrammar(ModelMap model, HttpServletRequest request) {
             
