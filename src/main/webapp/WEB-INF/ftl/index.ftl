@@ -33,10 +33,10 @@
   			<h3 style="padding-top: 0">Grammars</h3>
   		</div>
       <div class="span4">
-        <form class="form-inline pull-right">
-          <input type="text" placeholder="New Grammar Name...">
-          <button type="submit" class="btn">New Grammar</button>
-      </form>
+          <form name="newGrammar" method="POST" action="${basePath}/create-grammar" class="form-inline pull-right">
+             <input type="text" name="name" placeholder="New Grammar Name...">
+             <button type="submit" class="btn">New Grammar</button>
+        </form>
       </div>
       <div class="span4">
         <form class="form-inline pull-right">

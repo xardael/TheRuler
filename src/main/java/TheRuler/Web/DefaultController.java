@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -101,6 +102,42 @@ public class DefaultController {
 		return "grammar";
 	}
 
+        @RequestMapping(value= "/create-grammar", method = RequestMethod.POST)
+        public String createGrammar(ModelMap model, HttpServletRequest request) {
+            
+            if (request.getParameter("name").equals("")) {
+                throw new IllegalArgumentException();
+            }
+
+            BaseXClient baseXClient = null;
+            GrammarMeta gm = new GrammarMeta();
+            gm.setName(request.getParameter("name"));
+            
+            try {
+                baseXClient = Utils.connectToBaseX();
+                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+                grammarManager.setBaseXClient(baseXClient);
+            
+                gm = grammarManager.createGrammar(gm);
+            
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (baseXClient != null) {
+                    try {
+                        baseXClient.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+             }
+             
+             
+            //model.addAttribute("cv", initedCvDocument.getCv());
+            //return "redirect:/grammar/" + gm.getId();
+            return "redirect:/";
+        }
+        
 	/**
 	 * Add a new grammar to db
 	 * 
@@ -108,9 +145,17 @@ public class DefaultController {
 	 * @return Redirect to /index page to display grammar list
 	 */
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String add(@ModelAttribute("grammar") Grammar grammar) {
+	public String add(ModelMap model, HttpServletRequest request) {
 
-            
+//            if (request.getParameter("name").equals("")) {
+//                throw new IllegalArgumentException();
+//            }
+//
+//            GrammarMeta gm = new GrammarMeta();
+//            gm.setName(request.getParameter("name"));
+//            
+//            
+//            //model.addAttribute("cv", initedCvDocument.getCv());
             return "redirect:index.html";
 	}
 

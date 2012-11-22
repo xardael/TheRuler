@@ -50,8 +50,8 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             
             String insertNodeCommand = "insert node " +
                                        "<grammarRecord id='" + newId + "'>" +
-                                       "  <name>Inserted grammar</name>" +
-                                       "  <description>Decription of inserted grammar</description>" +
+                                       "  <name>" + grammarMeta.getName() + "</name>" +
+                                       "  <description>" + grammarMeta.getDescription() + "</description>" +
                                        "  <date>20.11.2012</date>" +
                                        "</grammarRecord>" +
                                        "into //grammars";
