@@ -49,7 +49,7 @@
     <table class="table table-hover">
       <tr><th>#</th><th>Name</th><th>Description</th><th>Date</th><th></th></tr>
       <#list grammarMetas as gm>
-        <tr><td>${gm.id}</td><td><a href="grammar/${gm.id}">${gm.name}</a></td><td>${(gm.description)!"No decription"}</td><td>${gm.date?date}</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="#"><i class="icon-remove"></i></a></div></td></tr>
+        <tr><td>${gm.id}</td><td><a href="grammar/${gm.id}">${gm.name}</a></td><td>${(gm.description)!"No decription"}</td><td>${gm.date?date}</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="${basePath}/delete-grammar/${gm.id}"><i class="icon-remove"></i></a></div></td></tr>
       </#list>
     </table>
 
