@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -119,6 +120,42 @@ public class DefaultController {
                 grammarManager.setBaseXClient(baseXClient);
             
                 gm = grammarManager.createGrammar(gm);
+            
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (baseXClient != null) {
+                    try {
+                        baseXClient.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+             }
+             
+             
+            //model.addAttribute("cv", initedCvDocument.getCv());
+            //return "redirect:/grammar/" + gm.getId();
+            return "redirect:/";
+        }
+        
+        @RequestMapping(value = "/delete-grammar/{id}")
+	public String deleteGrammar(ModelMap model, @PathVariable String id) {
+            
+            if (id.equals("") || id == null) {
+                throw new IllegalArgumentException();
+            }
+
+            BaseXClient baseXClient = null;
+            GrammarMeta gm = new GrammarMeta();
+            gm.setId(Long.parseLong(id));
+            
+            try {
+                baseXClient = Utils.connectToBaseX();
+                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+                grammarManager.setBaseXClient(baseXClient);
+            
+                grammarManager.deletaGrammar(gm);
             
             } catch (Exception e) {
                 e.printStackTrace();
