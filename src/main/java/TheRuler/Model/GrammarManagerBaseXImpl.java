@@ -51,8 +51,8 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             String insertNodeCommand = "insert node " +
                                        "<grammarRecord id='" + newId + "'>" +
                                        "  <name>" + grammarMeta.getName() + "</name>" +
-                                       "  <description>" + grammarMeta.getDescription() + "</description>" +
-                                       "  <date>20.11.2012</date>" +
+                                       "  <description>" + ((grammarMeta.getDescription() == null) ? "" : grammarMeta.getDescription()) + "</description>" +
+                                       "  <date>" + ((grammarMeta.getDate() == null) ? "" : grammarMeta.getDate()) + "</date>" +
                                        "</grammarRecord>" +
                                        "into //grammars";
             
@@ -66,8 +66,14 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 	 * 
 	 * @param id
 	 */
-	public Grammar findGrammar(Long id) {
-		throw new UnsupportedOperationException();
+	public Grammar findGrammar(Long id) throws Exception {
+            Grammar grammar = new Grammar();
+            GrammarMeta gm = findGrammarMeta(id);
+            
+            grammar.setMeta(gm);
+            grammar.setContent("Tu bude ten zazrak");
+            
+            return grammar;    
 	}
 
 	/**

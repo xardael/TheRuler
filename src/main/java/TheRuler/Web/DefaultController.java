@@ -68,7 +68,38 @@ public class DefaultController {
             }
                 
             model.addAttribute("basePath", Config.BASE_PATH);
-            model.addAttribute("text", "finally");
+
+            try {
+                BaseXClient baseXClient = Utils.connectToBaseX();
+                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+                grammarManager.setBaseXClient(baseXClient);
+
+                Grammar grammar = grammarManager.findGrammar(Long.parseLong(id));
+
+                model.addAttribute("gm", grammar.getMeta());
+                model.addAttribute("grammarContent", grammar.getContent());
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+                
+            return "grammar";
+	}
+        
+        /**
+	 * Grammar edit
+	 * 
+	 * @param model 
+	 * @return The index view (FTL)
+	 */
+	@RequestMapping(value = "/edit-grammar/{id}")
+	public String editGrammar(ModelMap model, @PathVariable String id) {
+            
+            if (id.equals("") || id == null) {
+                throw new IllegalArgumentException();
+            }
+                
+            model.addAttribute("basePath", Config.BASE_PATH);
 
             try {
                 BaseXClient baseXClient = Utils.connectToBaseX();
@@ -116,7 +147,7 @@ public class DefaultController {
              
             //model.addAttribute("cv", initedCvDocument.getCv());
             //return "redirect:/grammar/" + gm.getId();
-            return "redirect:/grammar/" + gm.getId();
+            return "redirect:/edit-grammar/" + gm.getId();
         }
         
         @RequestMapping(value= "/create-grammar", method = RequestMethod.POST)
@@ -129,6 +160,7 @@ public class DefaultController {
             BaseXClient baseXClient = null;
             GrammarMeta gm = new GrammarMeta();
             gm.setName(request.getParameter("name"));
+            gm.setDate((new Date()).toString());
             
             try {
                 baseXClient = Utils.connectToBaseX();
@@ -152,7 +184,7 @@ public class DefaultController {
              
             //model.addAttribute("cv", initedCvDocument.getCv());
             //return "redirect:/grammar/" + gm.getId();
-            return "redirect:/";
+            return "redirect:/edit-grammar/" + gm.getId();
         }
         
         @RequestMapping(value = "/delete-grammar/{id}")
