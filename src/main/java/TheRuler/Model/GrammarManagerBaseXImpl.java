@@ -1,10 +1,11 @@
 package TheRuler.Model;
 
 import TheRuler.Common.BaseXClient;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -57,6 +58,18 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
                                        "into //grammars";
             
             String result = baseXClient.execute("xquery " + insertNodeCommand);
+            
+            String grammar = "<grammar xmlns='http://www.w3.org/2001/06/grammar' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.w3.org/2001/06/grammar http://www.w3.org/TR/speech-grammar/grammar.xsd' xml:lang='en-US' version='1.0'></grammar>";
+            
+            InputStream bais = new ByteArrayInputStream(grammar.getBytes("UTF-8"));
+            
+            
+            try {
+                baseXClient.add(newId.toString() + ".xml", bais);
+                System.out.println(baseXClient.info());
+            } catch (IOException iOException) {
+                iOException.printStackTrace();
+            }
             
             grammarMeta.setId(newId);
             return grammarMeta;
