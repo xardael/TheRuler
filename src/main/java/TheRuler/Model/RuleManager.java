@@ -14,40 +14,40 @@ public interface RuleManager {
 	 * @param rule
 	 * @param grammarMeta
 	 */
-	void addRule(Rule rule, GrammarMeta grammarMeta) throws IOException;
+	void addRule(Rule rule, GrammarMeta grammarMeta) throws Exception;
 
 	/**
 	 * 
 	 * @param id
 	 * @param grammarMeta
 	 */
-	Rule findRuleById(String id, GrammarMeta grammarMeta) throws IOException;
+	Rule findRuleById(String id, GrammarMeta grammarMeta) throws Exception;
 
 	/**
 	 * 
 	 * @param grammarMeta
 	 */
-	List<Rule> findAllRules(GrammarMeta grammarMeta) throws IOException;
+	List<Rule> findAllRules(GrammarMeta grammarMeta) throws Exception;
 
 	/**
 	 * 
 	 * @param id
 	 * @param grammarMeta
 	 */
-	List<Rule> findAllRulesById(String id, GrammarMeta grammarMeta) throws IOException;
+	List<Rule> findAllRulesById(String id, GrammarMeta grammarMeta) throws Exception;
 
 	/**
 	 * 
 	 * @param rule
 	 * @param grammarMeta
 	 */
-	void updateRule(Rule rule, GrammarMeta grammarMeta) throws IOException;
+	void updateRule(Rule rule, GrammarMeta grammarMeta) throws Exception;
 
 	/**
 	 * 
 	 * @param rule
 	 * @param grammarMeta
 	 */
-	void deleteRule(Rule rule, GrammarMeta grammarMeta) throws IOException;
+	void deleteRule(Rule rule, GrammarMeta grammarMeta) throws Exception;
 
 }

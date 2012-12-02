@@ -1,10 +1,15 @@
 package TheRuler.Common;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.basex.core.Context;
+import org.w3c.dom.Element;
 
 /**
  *
@@ -16,6 +21,17 @@ public class Utils {
         BaseXClient baseXClient = new BaseXClient(Config.DB_HOST, Config.DB_PORT, Config.DB_USER, Config.DB_PASS);
         baseXClient.execute("OPEN " + Config.DB_NAME);
         return baseXClient;
+    }
+    
+    public static String serializeXml(Element element) throws Exception
+    {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        StreamResult result = new StreamResult(buffer);
+
+        DOMSource source = new DOMSource(element);
+        TransformerFactory.newInstance().newTransformer().transform(source, result);
+
+        return new String(buffer.toByteArray());
     }
     
     public static String test() {

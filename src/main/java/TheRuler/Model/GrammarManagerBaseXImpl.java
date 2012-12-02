@@ -1,6 +1,7 @@
 package TheRuler.Model;
 
 import TheRuler.Common.BaseXClient;
+import TheRuler.Common.Config;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,7 +60,8 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             
             String result = baseXClient.execute("xquery " + insertNodeCommand);
             
-            String grammar = "<grammar xmlns='http://www.w3.org/2001/06/grammar' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.w3.org/2001/06/grammar http://www.w3.org/TR/speech-grammar/grammar.xsd' xml:lang='en-US' version='1.0'></grammar>";
+            //String grammar = "<grammar xmlns='http://www.w3.org/2001/06/grammar' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.w3.org/2001/06/grammar http://www.w3.org/TR/speech-grammar/grammar.xsd' xml:lang='en-US' version='1.0'></grammar>";
+            String grammar = "<grammar><rule id='a'></rule></grammar>";
             
             InputStream bais = new ByteArrayInputStream(grammar.getBytes("UTF-8"));
             
@@ -80,11 +82,23 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 	 * @param id
 	 */
 	public Grammar findGrammar(Long id) throws Exception {
+            if (id == null) {
+                throw new IllegalArgumentException();
+            }
+            
+            // Get grammar meta
             Grammar grammar = new Grammar();
             GrammarMeta gm = findGrammarMeta(id);
             
             grammar.setMeta(gm);
-            grammar.setContent("Tu bude ten zazrak");
+            
+            // Get grammar content
+            BaseXClient.Query query = baseXClient.query("for $doc in collection('" + Config.DB_NAME + "') " +
+                                                        "where matches(document-uri($doc), '" + id + ".xml') " +
+                                                        "return $doc");
+            String xml = query.execute();
+            
+            grammar.setContent(xml);
             
             return grammar;    
 	}
@@ -240,8 +254,29 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 	 * 
 	 * @param grammar
 	 */
-	public void updateGrammarContent(TheRuler.Model.Grammar grammar) {
-		throw new UnsupportedOperationException();
+	public void updateGrammarContent(TheRuler.Model.Grammar grammar) throws Exception{
+            if (grammar == null) {
+                throw new IllegalArgumentException();
+            } else if (grammar.getMeta().getId() == null) {
+                throw new IllegalArgumentException();
+            }
+            
+            Long id = grammar.getMeta().getId();
+            
+            String result = baseXClient.execute("xquery exists(//grammars/grammarRecord[@id=" + id.toString() + "])");
+            
+            if (result.equals("false")) {
+                throw new IllegalArgumentException();
+            }
+   
+            InputStream bais = new ByteArrayInputStream(grammar.getContent().getBytes("UTF-8"));
+            
+            try {
+                baseXClient.replace(id + ".xml", bais);
+                System.out.println(baseXClient.info());
+            } catch (IOException iOException) {
+                iOException.printStackTrace();
+            }
 	}
 
 	/**
@@ -262,6 +297,13 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             }
             
             baseXClient.execute("xquery delete node //grammars/grammarRecord[@id=" + grammarMeta.getId() + "]");
+            
+            try {
+                baseXClient.execute("delete " + grammarMeta.getId() + ".xml");
+                System.out.println(baseXClient.info());
+            } catch (IOException iOException) {
+                iOException.printStackTrace();
+            }
 	}
 
 }

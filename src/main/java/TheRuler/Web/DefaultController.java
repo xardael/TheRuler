@@ -3,11 +3,8 @@ package TheRuler.Web;
 import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
-import TheRuler.Model.Grammar;
-import TheRuler.Model.GrammarManagerBaseXImpl;
-import TheRuler.Model.GrammarMeta;
+import TheRuler.Model.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -76,8 +73,7 @@ public class DefaultController {
 
                 Grammar grammar = grammarManager.findGrammar(Long.parseLong(id));
 
-                model.addAttribute("gm", grammar.getMeta());
-                model.addAttribute("grammarContent", grammar.getContent());
+                model.addAttribute("grammar", grammar);
                 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -148,6 +144,45 @@ public class DefaultController {
             //model.addAttribute("cv", initedCvDocument.getCv());
             //return "redirect:/grammar/" + gm.getId();
             return "redirect:/edit-grammar/" + gm.getId();
+        }
+        
+        @RequestMapping(value= "/save-grammar-content", method = RequestMethod.POST)
+        public String saveGrammarContent(Grammar grammar) {
+            
+            if (grammar == null) {
+                throw new IllegalArgumentException();
+            }
+//            } else if (grammar.getMeta() == null) {
+//                throw new NullPointerException();
+//            } else if (grammar.getMeta().getId() == null) {
+//                throw new NullPointerException();
+//            }
+
+            BaseXClient baseXClient = null;
+            
+            try {
+                baseXClient = Utils.connectToBaseX();
+                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+                grammarManager.setBaseXClient(baseXClient);
+            
+                grammarManager.updateGrammarContent(grammar);
+            
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (baseXClient != null) {
+                    try {
+                        baseXClient.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+             }
+             
+             
+            //model.addAttribute("cv", initedCvDocument.getCv());
+            //return "redirect:/grammar/" + gm.getId();
+            return "redirect:/grammar/" + grammar.getMeta().getId();
         }
         
         @RequestMapping(value= "/create-grammar", method = RequestMethod.POST)
@@ -243,5 +278,42 @@ public class DefaultController {
 //            //model.addAttribute("cv", initedCvDocument.getCv());
             return "redirect:index.html";
 	}
+        
+        
+        @RequestMapping(value= "/rule-search", method = RequestMethod.GET)
+        public String ruleSearch(ModelMap model, HttpServletRequest request) {
+            
+            if (request.getParameter("name").equals("") || request.getParameter("grammarId").equals("")) {
+                throw new IllegalArgumentException();
+            }
+
+            BaseXClient baseXClient = null;
+            GrammarMeta gm = new GrammarMeta();
+            gm.setId(Long.parseLong(request.getParameter("grammarId")));
+            
+            try {
+                baseXClient = Utils.connectToBaseX();
+                RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
+                ruleManager.setBaseXClient(baseXClient);
+            
+                List<Rule> rules = ruleManager.findAllRules(gm);
+                
+                model.addAttribute("rules", rules);
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (baseXClient != null) {
+                    try {
+                        baseXClient.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }   
+            
+            model.addAttribute("basePath", Config.BASE_PATH);
+            return "ruleSearch";
+        }
 
 }
