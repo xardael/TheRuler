@@ -31,7 +31,9 @@ public class Utils {
         DOMSource source = new DOMSource(element);
         TransformerFactory.newInstance().newTransformer().transform(source, result);
 
-        return new String(buffer.toByteArray());
+        String xml = new String(buffer.toByteArray());
+        
+        return xml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
     }
     
     public static String test() {

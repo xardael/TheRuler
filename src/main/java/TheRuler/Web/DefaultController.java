@@ -290,6 +290,7 @@ public class DefaultController {
             BaseXClient baseXClient = null;
             GrammarMeta gm = new GrammarMeta();
             gm.setId(Long.parseLong(request.getParameter("grammarId")));
+            model.addAttribute("gm", gm);
             
             try {
                 baseXClient = Utils.connectToBaseX();
@@ -314,6 +315,72 @@ public class DefaultController {
             
             model.addAttribute("basePath", Config.BASE_PATH);
             return "ruleSearch";
+        }
+        
+        @RequestMapping(value = "/grammar/{grammarId}/rule/{ruleId}")
+	public String ruleEdit(ModelMap model, @PathVariable String grammarId, @PathVariable String ruleId) {
+            
+            if (grammarId.equals("") || grammarId == null || ruleId.equals("") || ruleId == null) {
+                throw new IllegalArgumentException();
+            }
+                
+            model.addAttribute("basePath", Config.BASE_PATH);
+
+            try {
+                BaseXClient baseXClient = Utils.connectToBaseX();
+                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+                grammarManager.setBaseXClient(baseXClient);
+                RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
+                ruleManager.setBaseXClient(baseXClient);
+
+                GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(grammarId));
+                Rule rule = ruleManager.findRuleById(ruleId, gm);
+
+                model.addAttribute("gm", gm);
+                model.addAttribute("rule", rule);
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+                
+            return "ruleEdit";
+	}
+        
+        @RequestMapping(value = "/delete-rule/{grammarId}/{ruleId}")
+	public String deleteRule(ModelMap model, @PathVariable Long grammarId, @PathVariable String ruleId) {
+            if (grammarId == null || grammarId == 0 || ruleId == null || ruleId.equals("")) {
+                throw new IllegalArgumentException();
+            }
+
+            BaseXClient baseXClient = null;
+            GrammarMeta gm = new GrammarMeta();
+            gm.setId(grammarId);
+            Rule rule = new Rule();
+            rule.setId(ruleId);
+            
+            try {
+                baseXClient = Utils.connectToBaseX();
+                RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
+                ruleManager.setBaseXClient(baseXClient);
+            
+                ruleManager.deleteRule(rule, gm);
+            
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (baseXClient != null) {
+                    try {
+                        baseXClient.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+             }
+             
+             
+            //model.addAttribute("cv", initedCvDocument.getCv());
+            //return "redirect:/grammar/" + gm.getId();
+            return "redirect:/grammar/" + gm.getId();
         }
 
 }

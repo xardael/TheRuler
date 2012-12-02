@@ -49,7 +49,7 @@
     <table class="table table-hover">
       <tr><th>#</th><th>Name</th><th>Description</th><th>Date</th><th></th></tr>
       <#list rules as rule>
-      <tr><td>${rule.id}</td><td><pre>${rule.content?html}</pre></td><td></td><td></td><td><div class="btn-group pull-right"><a class="btn btn-small" href="${basePath}/edit-grammar/"><i class="icon-file"></i></a><a class="btn btn-small" href="${basePath}/delete-grammar/"><i class="icon-remove"></i></a></div></td></tr>
+      <tr><td>${rule.id}</td><td><pre>${rule.content?html}</pre></td><td></td><td></td><td><div class="btn-group pull-right"><a class="btn btn-small" href="${basePath}/grammar/${gm.id}/rule/${rule.id}"><i class="icon-file"></i></a><a class="btn btn-small" href="${basePath}/delete-rule/${gm.id}/${rule.id}"><i class="icon-remove"></i></a></div></td></tr>
       </#list>
     </table>
 
