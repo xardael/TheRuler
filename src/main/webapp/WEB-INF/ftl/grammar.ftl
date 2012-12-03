@@ -53,12 +53,33 @@
       
       <div class="row">
           <div class="span12">
-              <table class="table table-hover">
-                <tr><th>#</th><th>Name</th><th>Description</th><th>Date</th><th></th></tr>
-                <#list rules as rule>
-                <tr><td>${rule.id}</td><td><pre>${rule.content?html}</pre></td><td></td><td></td><td><div class="btn-group pull-right"><a class="btn btn-small" href="${basePath}/grammar/${gm.id}/rule/${rule.id}"><i class="icon-file"></i></a><a class="btn btn-small" href="${basePath}/delete-rule/${gm.id}/${rule.id}"><i class="icon-remove"></i></a></div></td></tr>
-                </#list>
-              </table>
+              <div class="accordion" id="accordion">
+                <table style="width: 100%">
+                    <#list rules as rule>  
+                    <tr>
+                        <td>
+                            <div class="accordion-group">
+
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse${rule.id}">
+                                        ${rule.id}
+                                        </a>                        
+                                    </div>
+                                    <div id="collapse${rule.id}" class="accordion-body collapse">
+                                        <div class="accordion-inner">
+                                        <pre>${rule.content?html}</pre>
+                                        </div>
+                                    </div>
+
+                            </div>
+                        </td>
+                        <td style="vertical-align: top;">
+                            <div class="btn-group pull-right"><a class="btn btn-small" href="${basePath}/grammar/${gm.id}/rule/${rule.id}"><i class="icon-file"></i></a><a class="btn btn-small" href="${basePath}/delete-rule/${gm.id}/${rule.id}"><i class="icon-remove"></i></a></div>
+                        </td>
+                    </tr>
+                    </#list>
+                </table>
+              </div>
           </div>
       </div>
 

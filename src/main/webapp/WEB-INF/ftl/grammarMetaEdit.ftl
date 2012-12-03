@@ -21,8 +21,8 @@
 
     <ul class="breadcrumb">
         <li><a href="${basePath}">Home</a> <span class="divider">&gt;</span></li>
-        <li><a href="${basePath}/grammar/${gm.id}">Grammar Edit</a> <span class="divider">&gt;</span></li>
-        <li class="active">Grammar Meta Edit</li>
+        <li><a href="${basePath}/grammar/${gm.id}">Grammar</a> <span class="divider">&gt;</span></li>
+        <li class="active">Grammar Edit</li>
     </ul>
 
     <form name="gm" class="form-horizontal pull-left" method="post" action="${basePath}/save-grammar">
