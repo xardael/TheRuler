@@ -2,24 +2,14 @@
 
     <div class="container">
 		<div class="row">
-			<div class="span10">
+			<div class="span12">
 				<h2>The Ruler</h2>
-			</div>
-			<div class="span2">
-        <!-- <div class="btn-group pull-right"  style="margin-top: 10px;">        
-          <button class="btn" href="#">Export</button>
-          <button class="btn" href="#">Delete</button>
-        </div> -->
-        
-            <ul class="nav nav-pills" style="padding-top: 20px;">
-            <li> <a href="#">Import from a file</a></li>
-          </ul>
 			</div>
 		</div>
 		
 		
 	    <ul class="breadcrumb">
-			<li>Grammars</li>
+			<li>Home</li>
 		</ul>
 
       <!-- Main hero unit for a primary marketing message or call to action -->
@@ -33,16 +23,13 @@
   			<h3 style="padding-top: 0">Grammars</h3>
   		</div>
       <div class="span4">
-          <form name="newGrammar" method="POST" action="${basePath}/create-grammar" class="form-inline pull-right">
+        
+      </div>
+      <div class="span4">
+        <form name="newGrammar" method="POST" action="${basePath}/create-grammar" class="form-inline pull-right">
              <input type="text" name="name" placeholder="New Grammar Name...">
              <button type="submit" class="btn">New Grammar</button>
         </form>
-      </div>
-      <div class="span4">
-        <form class="form-inline pull-right">
-          <input type="text" placeholder="Search For A Grammar">
-          <button type="submit" class="btn">Search</button>
-      </form>
       </div>
 	  </div>
 

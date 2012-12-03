@@ -60,7 +60,7 @@ public class DefaultController {
 	@RequestMapping(value = "/grammar/{id}")
 	public String grammar(ModelMap model, @PathVariable String id) {
             
-            if (id.equals("") || id == null) {
+            if (id == null || id.equals("")) {
                 throw new IllegalArgumentException();
             }
                 
@@ -71,9 +71,15 @@ public class DefaultController {
                 GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
                 grammarManager.setBaseXClient(baseXClient);
 
-                Grammar grammar = grammarManager.findGrammar(Long.parseLong(id));
+                GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(id));
 
-                model.addAttribute("grammar", grammar);
+                model.addAttribute("gm", gm);
+                
+                RuleManagerBaseXImpl ruleManager = new  RuleManagerBaseXImpl();
+                ruleManager.setBaseXClient(baseXClient);
+                List<Rule> rules = ruleManager.findAllRules(gm);
+                
+                model.addAttribute("rules", rules);
                 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -104,7 +110,10 @@ public class DefaultController {
 
                 GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(id));
 
+                Grammar grammar = grammarManager.findGrammar(Long.parseLong(id));
+                
                 model.addAttribute("gm", gm);
+                model.addAttribute("grammar", grammar);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -292,12 +301,14 @@ public class DefaultController {
             gm.setId(Long.parseLong(request.getParameter("grammarId")));
             model.addAttribute("gm", gm);
             
+            String searchText = request.getParameter("name");
+            
             try {
                 baseXClient = Utils.connectToBaseX();
                 RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
                 ruleManager.setBaseXClient(baseXClient);
             
-                List<Rule> rules = ruleManager.findAllRules(gm);
+                List<Rule> rules = ruleManager.findAllRulesById(searchText, gm);
                 
                 model.addAttribute("rules", rules);
                 

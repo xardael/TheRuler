@@ -3,7 +3,7 @@
 <div class="container">
     <div class="row">
         <div class="span10">
-            <h2>Grammar Meta Edit</h2>
+            <h2>${gm.name}</h2>
         </div>
         <div class="span2">
             <!-- <div class="btn-group pull-right"  style="margin-top: 10px;">				
@@ -21,7 +21,8 @@
 
     <ul class="breadcrumb">
         <li><a href="${basePath}">Home</a> <span class="divider">&gt;</span></li>
-        <li><a href="#">Grammar Meta Edit</a> <span class="divider">&gt;</span></li>
+        <li><a href="${basePath}/grammar/${gm.id}">Grammar Edit</a> <span class="divider">&gt;</span></li>
+        <li class="active">Grammar Meta Edit</li>
     </ul>
 
     <form name="gm" class="form-horizontal pull-left" method="post" action="${basePath}/save-grammar">
@@ -53,5 +54,18 @@
         </div>
     </form>
 
+    <form name="grammar" class="form-horizontal pull-left" method="post" action="${basePath}/save-grammar-content">
+            <input name="meta.id" type="hidden" value="${gm.id}" />
+	  <textarea name="content" rows="20" style="width: 99%">${grammar.content}</textarea>
+        
+
+            <div class="container">
+            <a class="btn pull-left" href="#">Insert ruleref</a>
+
+            <button type="submit" class="btn pull-right">Save</button>
+            <a class="pull-right" style="margin: 5px 20px 0 0;" href="#">Discard changes</a>
+            </div>
+    </form>
+    
     <div>&nbsp;</div>
 <#include "/layout/footer.ftl">
