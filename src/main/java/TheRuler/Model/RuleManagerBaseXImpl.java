@@ -51,7 +51,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
             // Tu ma byt este kontrola ci ID uz neexistuje. Presnejsie mohla by byt.
             
             String insertNodeCommand = "insert node <rule id='" + rule.getId() + "'> " +
-                                       rule.getContent() +
+                                       (rule.getContent() == null ? "" : rule.getContent())  +
                                        "</rule> " +
                                        "into doc('" + Config.DB_NAME + "/" + grammarMeta.getId() +  ".xml')/grammar";
                     
@@ -123,7 +123,34 @@ public class RuleManagerBaseXImpl implements RuleManager {
 	 * @param grammarMeta
 	 */
 	public List<Rule> findAllRulesById(String id, GrammarMeta grammarMeta) throws Exception {
-		throw new UnsupportedOperationException();
+		BaseXClient.Query query = baseXClient.query("<rules> " +
+                                                        "{for $rule in doc('" + Config.DB_NAME + "/" + grammarMeta.getId() +  ".xml')//rule[contains( " +
+                                                        "translate(@id,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') " +
+                                                        ", '" + id + "')] " +
+                                                        "return $rule} " +
+                                                        "</rules>");
+            String xml = query.execute();
+            
+            List<Rule> rules = new ArrayList<Rule>();
+            
+            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            InputSource is = new InputSource();
+            is.setCharacterStream(new StringReader(xml));
+            Document doc = db.parse(is);
+            NodeList grammarRecords = doc.getElementsByTagName("rule");
+
+            for (int i = 0; i < grammarRecords.getLength(); i++) {
+                Rule rule = new Rule();
+                Element element = (Element) grammarRecords.item(i);
+
+                rule.setId(element.getAttribute("id"));
+                
+                rule.setContent(Utils.serializeXml(element));
+                
+                rules.add(rule);
+            }
+                    
+            return rules;
 	}
 
 	/**

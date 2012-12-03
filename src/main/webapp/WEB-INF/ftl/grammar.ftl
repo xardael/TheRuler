@@ -35,8 +35,9 @@
 			<h3 style="padding-top: 0">Raw edit</h3>
 		</div>
     <div class="span4">
-      <form class="form-inline pull-right">
-        <input type="text" placeholder="New rule name...">
+      <form name="ruleAdd" method="Post" action="${basePath}/rule-add" class="form-inline pull-right">
+        <input type="hidden" name="grammarId" value="${grammar.meta.id}">
+        <input type="text" name="ruleId" placeholder="New rule name...">
         <button type="submit" class="btn">New Rule</button>
     </form>
     </div>

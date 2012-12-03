@@ -317,6 +317,45 @@ public class DefaultController {
             return "ruleSearch";
         }
         
+        @RequestMapping(value= "/rule-add", method = RequestMethod.POST)
+        public String ruleAdd(HttpServletRequest request) {
+            
+            if (request.getParameter("ruleId") == null || request.getParameter("ruleId").equals("") 
+             || request.getParameter("grammarId") == null || request.getParameter("grammarId").equals("")) {
+                throw new IllegalArgumentException();
+            }
+
+            BaseXClient baseXClient = null;
+            GrammarMeta gm = new GrammarMeta();
+            gm.setId(Long.parseLong(request.getParameter("grammarId")));
+            
+            try {
+                baseXClient = Utils.connectToBaseX();
+                RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
+                ruleManager.setBaseXClient(baseXClient);
+            
+                List<Rule> rules = ruleManager.findAllRules(gm);
+                Rule rule = new Rule();
+                rule.setId(request.getParameter("ruleId"));
+                        
+                ruleManager.addRule(rule, gm);
+                
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (baseXClient != null) {
+                    try {
+                        baseXClient.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }   
+
+            return "redirect:/grammar/" + gm.getId();
+        }
+        
         @RequestMapping(value = "/grammar/{grammarId}/rule/{ruleId}")
 	public String ruleEdit(ModelMap model, @PathVariable String grammarId, @PathVariable String ruleId) {
             
