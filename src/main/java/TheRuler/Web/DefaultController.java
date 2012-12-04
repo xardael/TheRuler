@@ -91,13 +91,14 @@ public class DefaultController {
                 List<Rule> rules;
                 
                 if (search) {
-                    rules = ruleManager.findAllRulesById(request.getParameter("name"), gm);
+                    rules = ruleManager.findAllRulesById(request.getParameter("name").toLowerCase(), gm);
                 } else {
                     rules = ruleManager.findAllRules(gm);
                 }
                 
                 model.addAttribute("rules", rules);
                 model.addAttribute("search", search);
+                model.addAttribute("searchString", request.getParameter("name"));
                 
             } catch (Exception e) {
                 e.printStackTrace();

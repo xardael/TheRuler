@@ -35,7 +35,19 @@
     <table class="table table-hover">
       <tr><th>#</th><th>Name</th><th>Description</th><th>Date</th><th></th></tr>
       <#list grammarMetas as gm>
-        <tr><td>${gm.id}</td><td><a href="${basePath}/grammar/${gm.id}">${gm.name}</a></td><td>${(gm.description)!"------- No decription -------"}</td><td>${gm.date}</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="${basePath}/edit-grammar/${gm.id}"><i class="icon-edit"></i></a><a class="btn btn-small" href="${basePath}/delete-grammar/${gm.id}"><i class="icon-remove"></i></a></div></td></tr>
+        <tr><td>${gm_index + 1}.</td><td><a href="${basePath}/grammar/${gm.id}">${gm.name}</a></td><td>
+                <#if gm.description??>
+                    <#if (gm.description?length > 100)>
+                        ${gm.description?substring(0,100)}...
+                    <#else>
+                        ${gm.description}
+                    </#if>  
+                            <#else>
+                            ------- No decription -------
+                            
+                            </#if>  
+                
+            </td><td>${gm.date}</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="${basePath}/edit-grammar/${gm.id}"><i class="icon-edit"></i></a><a class="btn btn-small" href="${basePath}/delete-grammar/${gm.id}"><i class="icon-remove"></i></a></div></td></tr>
       </#list>
     </table>
 

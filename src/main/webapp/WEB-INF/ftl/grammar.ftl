@@ -39,7 +39,9 @@
       </div>
       <div class="row">
           <div class="span12">
+              <div class="well">
             <p>${gm.description!"No description."}</p>
+            </div>
           </div>
       </div>
 
@@ -63,7 +65,11 @@
     <div class="span4">
       <form name="ruleSearch" method="GET" class="form-inline pull-right" style="margin: 15px 0 0 0">
              <input type="hidden" name="search" value="true">
-             <input type="text" name="name" placeholder="Search for a Rule...">
+             <input type="text" name="name" placeholder="Search for a Rule..." 
+                    <#if search == true>
+                            value="${searchString}"
+                            </#if>  
+             >
              <button type="submit" class="btn">Search</button>
         </form>
     </div>
@@ -76,13 +82,13 @@
                 <table style="width: 100%">
                     <#list rules as rule>  
                     <tr>
-                        <td>
+                        <td style="width: 100%;">
                             <div class="accordion-group">
 
                                     <div class="accordion-heading">
                                         <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse${rule.id}">
                                         ${rule.id}
-                                        </a>                        
+                                        </a>  
                                     </div>
                                     <div id="collapse${rule.id}" class="accordion-body collapse">
                                         <div class="accordion-inner">
@@ -92,8 +98,11 @@
 
                             </div>
                         </td>
-                        <td style="vertical-align: top;">
-                            <div class="btn-group pull-right"><a class="btn btn-small" href="${basePath}/grammar/${gm.id}/rule/${rule.id}"><i class="icon-edit"></i></a><a class="btn btn-small" href="${basePath}/delete-rule/${gm.id}/${rule.id}"><i class="icon-remove"></i></a></div>
+                        <td style="vertical-align: top !important;">
+                            <div class="btn-group pull-right" style="height: 32px;">
+                                <a class="btn btn-small" style="height: 100%; width: 22px;" href="${basePath}/grammar/${gm.id}/rule/${rule.id}"><i class="icon-edit" style="margin-top: 6px;"></i></a>
+                                <a class="btn btn-small" style="height: 100%; width: 22px;" href="${basePath}/delete-rule/${gm.id}/${rule.id}"><i class="icon-remove" style="margin-top: 6px;"></i></a>
+                            </div>
                         </td>
                     </tr>
                     </#list>

@@ -31,28 +31,16 @@
       </div>
       <div class="row">
           <div class="span12">
-            <p>${gm.description!"No description."}</p>
+              <div class="well">
+                <p>${gm.description!"No description."}</p>
+              </div>
           </div>
       </div>
 
 	  <div class="row">
-		<div class="span4">
+		<div class="span12">
 			<h3 style="padding-top: 0">${rule.id}</h3>
-		</div>
-    <div class="span4">
-        <form class="form-inline pull-right" style="margin: 15px 0 0 0">
-        <input type="text" placeholder="New rule name...">
-        <button type="submit" class="btn">New Rule</button>
-    </form>
-    </div>
-    <div class="span4">
-      <form name="ruleSearch" method="GET" action="${basePath}/rule-search" class="form-inline pull-right" style="margin: 15px 0 0 0">
-             <input type="hidden" name="grammarId" value="${gm.id}">
-             <input type="text" name="name" placeholder="Search for a Rule...">
-             <button type="submit" class="btn">Search</button>
-        </form>
-    </div>
-		
+		</div>		
 	  </div>
         <form name="grammar" class="form-horizontal pull-left" method="post" action="${basePath}/save-grammar-content">
             <input name="meta.id" type="hidden" value="${gm.id}" />
