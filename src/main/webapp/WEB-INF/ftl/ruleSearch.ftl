@@ -1,7 +1,6 @@
 <#include "/layout/header.ftl">
 
-    <div class="container">
-		<div class="row">
+    		<div class="row">
 			<div class="span10">
 				<h2>The Ruler</h2>
 			</div>

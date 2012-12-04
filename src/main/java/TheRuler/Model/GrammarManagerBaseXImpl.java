@@ -61,7 +61,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             String result = baseXClient.execute("xquery " + insertNodeCommand);
             
             //String grammar = "<grammar xmlns='http://www.w3.org/2001/06/grammar' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.w3.org/2001/06/grammar http://www.w3.org/TR/speech-grammar/grammar.xsd' xml:lang='en-US' version='1.0'></grammar>";
-            String grammar = "<grammar><rule id='a'></rule></grammar>";
+            String grammar = "<grammar><rule id='EmptyRule'></rule></grammar>";
             
             InputStream bais = new ByteArrayInputStream(grammar.getBytes("UTF-8"));
             

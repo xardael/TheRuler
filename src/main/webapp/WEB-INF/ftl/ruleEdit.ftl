@@ -1,9 +1,8 @@
 <#include "/layout/header.ftl">
 
-    <div class="container">
 		<div class="row">
 			<div class="span10">
-				<h2>${gm.name}</h2>
+				<h2>Rule edit</h2>
 			</div>
 			<div class="span2">
 				<!-- <div class="btn-group pull-right"  style="margin-top: 10px;">				
@@ -11,37 +10,43 @@
 				  <button class="btn" href="#">Delete</button>
 				</div> -->
 				
-				    <ul class="nav nav-pills" style="padding-top: 20px;">
-						<li> <a href="#">Export</a></li>
-						<li> <a href="#">Delete</a></li>
-
+				    <ul class="nav nav-pills pull-right" style="margin: 15px 0 0 0">
+						<li> <a href="#">Delete Rule</a></li>
 					</ul>
 			</div>
 		</div>
 		
 		
 	    <ul class="breadcrumb">
-			<li><a href="${basePath}/">Home</a> <span class="divider">&gt;</span></li>
-			<li class="active">Grammar edit</li>
+			<li><a href="${basePath}/">Grammars</a> <span class="divider">&gt;</span></li>
+                        <li><a href="${basePath}/grammar/${gm.id}">${gm.name}</a> <span class="divider">&gt;</span></li>
+			<li class="active">${rule.id}</li>
 		</ul>
 
       <!-- Main hero unit for a primary marketing message or call to action -->
-      <div>
-        <p>${gm.description!"No description."}</p>
+      <div class="row">
+          <div class="span12">
+            <h3>${gm.name}</h3>
+          </div>
+      </div>
+      <div class="row">
+          <div class="span12">
+            <p>${gm.description!"No description."}</p>
+          </div>
       </div>
 
 	  <div class="row">
 		<div class="span4">
-			<h3 style="padding-top: 0">Rule edit</h3>
+			<h3 style="padding-top: 0">${rule.id}</h3>
 		</div>
     <div class="span4">
-      <form class="form-inline pull-right">
+        <form class="form-inline pull-right" style="margin: 15px 0 0 0">
         <input type="text" placeholder="New rule name...">
         <button type="submit" class="btn">New Rule</button>
     </form>
     </div>
     <div class="span4">
-      <form name="ruleSearch" method="GET" action="${basePath}/rule-search" class="form-inline pull-right">
+      <form name="ruleSearch" method="GET" action="${basePath}/rule-search" class="form-inline pull-right" style="margin: 15px 0 0 0">
              <input type="hidden" name="grammarId" value="${gm.id}">
              <input type="text" name="name" placeholder="Search for a Rule...">
              <button type="submit" class="btn">Search</button>

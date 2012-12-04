@@ -1,18 +1,20 @@
 <#include "/layout/header.ftl">
 
-<div class="container">
+
     <div class="row">
-        <div class="span10">
-            <h2>${gm.name}</h2>
+        <div class="span9">
+            <h2>Grammar Edit</h2>
         </div>
-        <div class="span2">
+        <div class="span3">
             <!-- <div class="btn-group pull-right"  style="margin-top: 10px;">				
               <button class="btn" href="#">Export</button>
               <button class="btn" href="#">Delete</button>
             </div> -->
 
-            <ul class="nav nav-pills" style="padding-top: 20px;">
-                <li> <a href="#">Delete</a></li>
+            <ul class="nav nav-pills pull-right" style="margin: 15px 0 0 0">
+                <li> <a href="#">Export</a></li>
+                <li class="active"> <a href="${basePath}/edit-grammar/${gm.id}">Edit</a></li>
+                <li> <a href="${basePath}/delete-grammar/${gm.id}">Delete</a></li>
 
             </ul>
         </div>
@@ -20,8 +22,8 @@
 
 
     <ul class="breadcrumb">
-        <li><a href="${basePath}">Home</a> <span class="divider">&gt;</span></li>
-        <li><a href="${basePath}/grammar/${gm.id}">Grammar</a> <span class="divider">&gt;</span></li>
+        <li><a href="${basePath}/">Grammars</a> <span class="divider">&gt;</span></li>
+        <li><a href="${basePath}/grammar/${gm.id}">${gm.name}</a> <span class="divider">&gt;</span></li>
         <li class="active">Grammar Edit</li>
     </ul>
 
@@ -41,7 +43,7 @@
         </div>
         <div class="control-group">
             <div class="controls">
-                <textarea name="description" rows="20" style="width: 99%">${(gm.description)!""}</textarea>
+                <textarea name="description" rows="5" style="width: 99%">${(gm.description)!""}</textarea>
             </div>
         </div>
         <div class="control-group">
@@ -56,7 +58,7 @@
 
     <form name="grammar" class="form-horizontal pull-left" method="post" action="${basePath}/save-grammar-content">
             <input name="meta.id" type="hidden" value="${gm.id}" />
-	  <textarea name="content" rows="20" style="width: 99%">${grammar.content}</textarea>
+	  <textarea name="content" rows="15" style="width: 99%">${grammar.content}</textarea>
         
 
             <div class="container">

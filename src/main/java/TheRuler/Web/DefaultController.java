@@ -5,6 +5,7 @@ import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
 import TheRuler.Model.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -56,12 +57,21 @@ public class DefaultController {
 	 * 
 	 * @param model 
 	 * @return The index view (FTL)
-	 */
-	@RequestMapping(value = "/grammar/{id}")
-	public String grammar(ModelMap model, @PathVariable String id) {
+	 */        
+	@RequestMapping(value = "/grammar/{id}", method = RequestMethod.GET)
+	public String grammar(ModelMap model, @PathVariable String id, HttpServletRequest request) {
             
             if (id == null || id.equals("")) {
                 throw new IllegalArgumentException();
+            }
+            
+            boolean search = false;
+            
+            if (request.getParameter("search") != null) {
+                search = true;
+                if (request.getParameter("name").equals("")) {
+                    throw new IllegalArgumentException();
+                }        
             }
                 
             model.addAttribute("basePath", Config.BASE_PATH);
@@ -77,9 +87,17 @@ public class DefaultController {
                 
                 RuleManagerBaseXImpl ruleManager = new  RuleManagerBaseXImpl();
                 ruleManager.setBaseXClient(baseXClient);
-                List<Rule> rules = ruleManager.findAllRules(gm);
+                
+                List<Rule> rules;
+                
+                if (search) {
+                    rules = ruleManager.findAllRulesById(request.getParameter("name"), gm);
+                } else {
+                    rules = ruleManager.findAllRules(gm);
+                }
                 
                 model.addAttribute("rules", rules);
+                model.addAttribute("search", search);
                 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -228,7 +246,7 @@ public class DefaultController {
              
             //model.addAttribute("cv", initedCvDocument.getCv());
             //return "redirect:/grammar/" + gm.getId();
-            return "redirect:/edit-grammar/" + gm.getId();
+            return "redirect:/grammar/" + gm.getId();
         }
         
         @RequestMapping(value = "/delete-grammar/{id}")

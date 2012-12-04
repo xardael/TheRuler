@@ -61,7 +61,9 @@
               <li><a href="#contact">Feedback</a></li>
               <li><a href="#contact">GitHub</a></li>
             </ul>
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
-    </div>
+          </div><!--/nav-collapse -->
+        </div> <!--/container -->
+      </div> <!--/navbar-inner -->
+    </div> <!--/navbar -->
+      
+    <div class="container">
