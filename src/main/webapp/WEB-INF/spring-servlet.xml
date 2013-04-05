@@ -16,6 +16,11 @@
     <!-- freemarker config -->
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
         <property name="templateLoaderPath" value="/WEB-INF/ftl/"/>
+        <property name="freemarkerSettings">
+        <props>
+            <prop key="auto_import">spring.ftl as spring</prop>
+        </props>
+   </property>
     </bean>
 
     <!-- 
@@ -27,6 +32,11 @@
         <property name="prefix" value=""/>
         <property name="suffix" value=".ftl"/>
         <property name="exposeSpringMacroHelpers" value="true"/>
+        <property name="requestContextAttribute" value="rc"/>
+    </bean>
+
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="locale/messages"/>
     </bean>
 
     <!-- Zistit naco je toto, MUSI TO BYT TAKTO!!!! inak hadze 404 po rebuilde -->

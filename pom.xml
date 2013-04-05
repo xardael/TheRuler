@@ -63,7 +63,7 @@
         <version>6.1.14</version>
         <configuration>
             <scanIntervalSeconds>2</scanIntervalSeconds>
-            <stopKey>foo</stopKey>
+            <stopKey>stop</stopKey>
             <stopPort>7887</stopPort>
         </configuration>
       </plugin>

@@ -13,13 +13,14 @@
 
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div>
+          <b><@spring.message "test"/>  ${rc.getMessage("test")}</b>
         <p>Maecenas rhoncus, lorem vel lobortis tincidunt, justo nisl pulvinar ipsum, eget adipiscing erat risus a quam. Sed malesuada massa imperdiet erat pretium quis fermentum nulla molestie. Pellentesque fermentum mollis nisl vel adipiscing. Aliquam ac convallis lacus. Sed vel turpis erat. Praesent non purus quis arcu sagittis facilisis. Duis lacinia accumsan eros, eget convallis tortor congue vitae. Aliquam erat volutpat. Phasellus dictum tempus tellus a venenatis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rutrum malesuada velit eget malesuada.
         Vivamus at quam vel nisi semper vestibulum et eget enim. Mauris in lorem sed ante ultricies vulputate ac in eros. </p>
       </div>
 
 	  <div class="row">
   		<div class="span4">
-  			<h3 style="padding-top: 0">Grammars</h3>
+  			<h3 style="padding-top: 0">${rc.getMessage("grammars")}</h3>
   		</div>
       <div class="span4">
         

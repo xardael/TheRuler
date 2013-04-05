@@ -24,4 +24,10 @@
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
         
+        
+     <context-param>
+        <param-name>base</param-name>
+        <param-value>/TheRuler</param-value>
+    </context-param>
+        
 </web-app>

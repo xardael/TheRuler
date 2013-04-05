@@ -3,6 +3,7 @@ package TheRuler.Web;
 import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
+import TheRuler.Exceptions.ResourceNotFoundException;
 import TheRuler.Model.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -452,4 +453,21 @@ public class DefaultController {
             return "redirect:/grammar/" + gm.getId();
         }
 
+        
+        @RequestMapping(value = "/install")
+	public String install(ModelMap model) {
+            
+            if (Config.getDbInstalled()) {
+                throw new ResourceNotFoundException();
+            }
+                        
+            try {
+                Utils.installDB();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            Config.setDbInstalled(Boolean.TRUE);
+            return "redirect:/";
+        }
 }

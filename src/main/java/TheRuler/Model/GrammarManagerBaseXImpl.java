@@ -48,7 +48,14 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             
             BaseXClient.Query query = baseXClient.query("max(//grammars/grammarRecord/string(@id))");
             String lastId = query.execute();
-            Long newId = Long.parseLong(lastId) + 1L;
+            Long newId;
+            // Becaouse of first node insertion
+            try {
+                newId = Long.parseLong(lastId);
+            } catch (NumberFormatException nfe) {
+                newId = 0L;
+            }
+            newId++;
             
             String insertNodeCommand = "insert node " +
                                        "<grammarRecord id='" + newId + "'>" +

@@ -21,6 +21,11 @@ public class Grammar {
 		this.meta = meta;
 	}
 
+        /**
+         * Raw XML SRGS Grammar
+         * 
+         * @return 
+         */
 	public String getContent() {
 		return this.content;
 	}
