@@ -1,6 +1,6 @@
 package TheRuler.Common;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
@@ -36,7 +36,7 @@ public class Config {
     public static final String DB_HOST = "localhost";
     public static final String DB_USER = "admin";
     public static final String DB_PASS = "pass";
-    public static final String DB_NAME = "Test39";
+    public static final String DB_NAME = "Test44";
     public static final int    DB_PORT = 1984;
     
     public static Boolean getDbInstalled() {
@@ -47,5 +47,13 @@ public class Config {
     public static void setDbInstalled(Boolean b) {
         Properties props = init();
         props.setProperty("DB_INSTALLED", b.toString());
+        try {
+            URL url = Config.class.getClassLoader().getResource("config.properties");  
+            String path = url.getPath();  
+            Writer writer = new FileWriter(path);
+            props.store(writer, "");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

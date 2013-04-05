@@ -453,10 +453,20 @@ public class DefaultController {
             return "redirect:/grammar/" + gm.getId();
         }
 
-        
-        @RequestMapping(value = "/install")
-	public String install(ModelMap model) {
+        @RequestMapping(value = "/doInstall", method = RequestMethod.POST)
+        public String install(ModelMap model, HttpServletRequest request) {
+//            if (request.getParameter("ruleId") == null || request.getParameter("ruleId").equals("") 
+//             || request.getParameter("grammarId") == null || request.getParameter("grammarId").equals("")) {
+//                throw new IllegalArgumentException();
+//            }
+
+            String host = request.getParameter("inputHost");
+            String user = request.getParameter("inputUser");
+            String pass = request.getParameter("inputPass");
+            String name = request.getParameter("inputName");
+            String port = request.getParameter("inputPort");
             
+            // If DB is already seted as installed - do not process
             if (Config.getDbInstalled()) {
                 throw new ResourceNotFoundException();
             }
@@ -466,8 +476,22 @@ public class DefaultController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            
+
+            // Set DB asi installed into properties file
             Config.setDbInstalled(Boolean.TRUE);
+
             return "redirect:/";
+        }
+        
+        @RequestMapping(value = "/install", method = RequestMethod.GET)
+	public String install(ModelMap model) {
+//            if (request.getParameter("ruleId") == null || request.getParameter("ruleId").equals("") 
+//             || request.getParameter("grammarId") == null || request.getParameter("grammarId").equals("")) {
+//                throw new IllegalArgumentException();
+//            }
+
+            model.addAttribute("basePath", Config.BASE_PATH);
+
+            return "install";
         }
 }
