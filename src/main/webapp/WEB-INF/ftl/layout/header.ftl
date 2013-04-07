@@ -8,7 +8,7 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href="${basePath}/res/css/bootstrap.css" rel="stylesheet">
+    <link href="${basePath}/res/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -31,11 +31,6 @@
 
     <!-- Fav and touch icons -->
     <link rel="shortcut icon" href="res/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="${basePath}/res/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="${basePath}/res/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="${basePath}/res/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="${basePath}/res/ico/apple-touch-icon-57-precomposed.png">
-    
     
   </head>
 
@@ -57,9 +52,9 @@
 
             <ul class="nav">
               <li class="active"><a href="${basePath}/">Home</a></li>
-              <li><a href="a.html">Help</a></li>
-              <li><a href="#contact">Feedback</a></li>
-              <li><a href="#contact">GitHub</a></li>
+              <li><a href="https://github.com/xardael/TheRuler/wiki/_pages">Help</a></li>
+              <li><a href="https://github.com/xardael/TheRuler">Feedback</a></li>
+              <li><a href="https://github.com/xardael/TheRuler">GitHub</a></li>
             </ul>
           </div><!--/nav-collapse -->
         </div> <!--/container -->

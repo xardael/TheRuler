@@ -13,7 +13,7 @@
 
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div>
-        <p>This will install and configure database for TheRuler.</p>
+        <p>This will <code>install</code> and configure database for TheRuler.</p>
       </div>
 
       <form class="form-horizontal" method="post" action="${basePath}/doInstall" name="config">
@@ -37,11 +37,11 @@
     </div>
     </div>
         
-        <div class="control-group warning">
+        <div class="control-group">
             <label class="control-label" for="inputName">Database Name:</label>
             <div class="controls">
                 <input type="text" id="inuptName"  name="inputName" placeholder="eg. grammars">
-                <span class="help-inline">WARNING! If database already exists, it will be overwritten.</span>
+                <span class="help-inline"><span class="label label-warning">Warning!</span> If database already exists, it will be overwritten.</span>
             </div>
         </div>
         
@@ -51,10 +51,10 @@
                 <input type="text" id="inuptPort"  name="inputPort" placeholder="eg. 1984" value="1984">
             </div>
         </div>
-        
+
     <div class="control-group">
         <div class="controls">
-            <button type="submit" class="btn">Install</button>
+            <button type="submit" class="btn btn-primary">Install</button>
         </div>
     </div>
     

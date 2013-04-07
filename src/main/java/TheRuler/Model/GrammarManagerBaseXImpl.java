@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -22,6 +24,7 @@ import org.xml.sax.InputSource;
 public class GrammarManagerBaseXImpl implements GrammarManager {
 
         private BaseXClient baseXClient;
+        private static final Logger LOGGER = Logger.getLogger(GrammarManagerBaseXImpl.class.getName());
         
         /**
          * 
@@ -79,6 +82,8 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             } catch (IOException iOException) {
                 iOException.printStackTrace();
             }
+            
+            LOGGER.log(Level.INFO, "createGrammar - created grammar with id = " + newId);
             
             grammarMeta.setId(newId);
             return grammarMeta;
@@ -208,6 +213,8 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 //            grammarMeta.setName(name);
 //            grammarMeta.setDescription(description);
 //            grammarMeta.setDate(new Date());
+            
+            LOGGER.log(Level.INFO, "findAllGrammars - grammars finded");
             
             return grammarMetas;
 	}
