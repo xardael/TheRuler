@@ -45,7 +45,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="${basePath}/">The Ruler</a>
+          <a class="brand" href="${rc.contextPath}/">The Ruler</a>
 
           <p class="navbar-text" style="display: inline;">Manage your SRGS grammar easier and faster</p>
           <div class="nav-collapse collapse pull-right">
