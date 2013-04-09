@@ -16,6 +16,7 @@
           <b><@spring.message "test"/>  ${rc.getMessage("test")}</b>
         <p>Maecenas rhoncus, lorem vel lobortis tincidunt, justo nisl pulvinar ipsum, eget adipiscing erat risus a quam. Sed malesuada massa imperdiet erat pretium quis fermentum nulla molestie. Pellentesque fermentum mollis nisl vel adipiscing. Aliquam ac convallis lacus. Sed vel turpis erat. Praesent non purus quis arcu sagittis facilisis. Duis lacinia accumsan eros, eget convallis tortor congue vitae. Aliquam erat volutpat. Phasellus dictum tempus tellus a venenatis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rutrum malesuada velit eget malesuada.
         Vivamus at quam vel nisi semper vestibulum et eget enim. Mauris in lorem sed ante ultricies vulputate ac in eros. </p>
+        <p><b>test ${rc.contextPath}</b></p>
       </div>
 
 	  <div class="row">
@@ -26,7 +27,7 @@
         
       </div>
       <div class="span4">
-        <form name="newGrammar" method="POST" action="${basePath}/create-grammar" class="form-inline pull-right" style="margin: 15px 0 0 0;">
+        <form name="newGrammar" method="POST" action="${rc.contextPath}/create-grammar" class="form-inline pull-right" style="margin: 15px 0 0 0;">
              <input type="text" name="name" placeholder="New Grammar Name...">
              <button type="submit" class="btn">New Grammar</button>
         </form>
@@ -36,7 +37,7 @@
     <table class="table table-hover">
       <tr><th>#</th><th>Name</th><th>Description</th><th>Date</th><th></th></tr>
       <#list grammarMetas as gm>
-        <tr><td>${gm_index + 1}.</td><td><a href="${basePath}/grammar/${gm.id}">${gm.name}</a></td><td>
+        <tr><td>${gm_index + 1}.</td><td><a href="${rc.contextPath}/grammar/${gm.id}">${gm.name}</a></td><td>
                 <#if gm.description??>
                     <#if (gm.description?length > 100)>
                         ${gm.description?substring(0,100)}...
@@ -48,7 +49,7 @@
                             
                             </#if>  
                 
-            </td><td>${gm.date}</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="${basePath}/edit-grammar/${gm.id}"><i class="icon-edit"></i></a><a class="btn btn-small" href="${basePath}/delete-grammar/${gm.id}"><i class="icon-remove"></i></a></div></td></tr>
+            </td><td>${gm.date}</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="${rc.contextPath}/edit-grammar/${gm.id}"><i class="icon-edit"></i></a><a class="btn btn-small" href="${rc.contextPath}/delete-grammar/${gm.id}"><i class="icon-remove"></i></a></div></td></tr>
       </#list>
     </table>
 

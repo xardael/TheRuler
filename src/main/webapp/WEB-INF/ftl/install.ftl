@@ -1,10 +1,22 @@
 <#include "/layout/header.ftl">
+    
+            <div class="row">
+			<div class="span12">
+				<div class="alert alert-block alert-error hidden" id="error">
+    <button type="button" class="close">&times;</button>
+    <h4>Warning!</h4>
+    Best check yo self, you're not...
+    </div>
+			</div>
+		</div>
 
 		<div class="row">
 			<div class="span12">
 				<h2>The Ruler</h2>
 			</div>
 		</div>
+
+
 		
 		
 	    <ul class="breadcrumb">
@@ -14,13 +26,16 @@
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div>
         <p>This will <code>install</code> and configure database for TheRuler.</p>
+        
+          <a href="#" class="btn btn-large btn-danger" data-toggle="popover" title="A Title" data-content="And here's some amazing content. It's very engaging. right?">Click to toggle popover</a>
       </div>
 
-      <form class="form-horizontal" method="post" action="${basePath}/doInstall" name="config">
-        <div class="control-group">
+      <form class="form-horizontal" id="installForm" method="post" action="${rc.contextPath}/doInstall" name="config">
+          <div class="control-group" id="test">
             <label class="control-label" for="inputHost">Host:</label>
             <div class="controls">
-                <input type="text" id="inputHost" name="inputHost" placeholder="eg. localhost/database">
+                <input type="text" class="required" id="inputHost" name="inputHost" placeholder="eg. localhost/database">
+                <span class="help-inline hidden">Please correct the error</span>
             </div>
         </div>
         <div class="control-group">
@@ -31,7 +46,7 @@
         </div>
         
     <div class="control-group">
-    <label class="control-label" for="inputPassword">Password</label>
+    <label class="control-label" for="inputPassword">Password:</label>
     <div class="controls">
     <input type="password" id="inputPassword"  name="inputPass" placeholder="eg. w84gSAb2-kMN">
     </div>
@@ -55,11 +70,13 @@
     <div class="control-group">
         <div class="controls">
             <button type="submit" class="btn btn-primary">Install</button>
+            <input type="submit" class="btn btn-primary" value="t">
+            
         </div>
     </div>
     
     </form>
-
-    
+     
+      
 
 <#include "/layout/footer.ftl">

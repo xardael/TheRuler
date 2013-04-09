@@ -27,8 +27,8 @@ import org.xml.sax.SAXException;
 public class Utils {
     
     public static BaseXClient connectToBaseX() throws IOException {
-        BaseXClient baseXClient = new BaseXClient(Config.DB_HOST, Config.DB_PORT, Config.DB_USER, Config.DB_PASS);
-        baseXClient.execute("OPEN " + Config.DB_NAME);
+        BaseXClient baseXClient = new BaseXClient(Config.getDbHost(), Config.getDbPort(), Config.getDbUser(), Config.getDbPass());
+        baseXClient.execute("OPEN " + Config.getDbName());
         return baseXClient;
     }
     
@@ -46,10 +46,10 @@ public class Utils {
     }
     
     public static void installDB() throws IOException{
-        BaseXClient baseXClient = new BaseXClient(Config.DB_HOST, Config.DB_PORT, Config.DB_USER, Config.DB_PASS);
-        baseXClient.execute("DROP DB " + Config.DB_NAME);
-        baseXClient.execute("CREATE DB " + Config.DB_NAME);
-        baseXClient.execute("OPEN " + Config.DB_NAME);
+        BaseXClient baseXClient = connectToBaseX();
+        baseXClient.execute("DROP DB " + Config.getDbName());
+        baseXClient.execute("CREATE DB " + Config.getDbName());
+        baseXClient.execute("OPEN " + Config.getDbName());
         InputStream bais = new ByteArrayInputStream(Config.GRAMMARS_ROOT.getBytes("UTF-8"));
         baseXClient.add(Config.GRAMMARS_FILE, bais);
     }
@@ -83,46 +83,5 @@ public class Utils {
             System.out.println(ex.getMessage());
             return false;
         }
-    }
-    
-    public static String test() {
-        BaseXClient baseXClient = null;
-        
-        try {
-            baseXClient = new BaseXClient(Config.DB_HOST, Config.DB_PORT, Config.DB_USER, Config.DB_PASS);
-            baseXClient.execute("OPEN " + Config.DB_NAME);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        HashMap<String, String> properties = new HashMap<String, String>();
-        properties.put("user", "admin");
-        properties.put("password", "pass");
-        
-        //BaseXClient bxc = new BaseXClient(args)
-        
-        // BaseXClient.Query query = baseXClient.query(
-        // "for $cv in //cv " +
-        // "where $cv/meta/hash/text() = \"" + hash + "\" " +
-        // "return $cv"
-        // );
-        // String result = query.execute();
-        //
-        
-        Context context = new Context(properties);
-        String result = null;
-        
-        try {
-            BaseXClient.Query query = baseXClient.query(
-                    //"for $file in doc('etc/factbook.xml') return data($file)"
-                    //"for $file in doc('etc/factbook.xml') return data($file)"
-                    "file:list($dir as xs:string) "
-            );
-            result = query.execute();
-        } catch (IOException ex) {
-            Logger.getLogger("test").log(Level.SEVERE, null, ex);
-        }
-        
-        return result;
     }
 }

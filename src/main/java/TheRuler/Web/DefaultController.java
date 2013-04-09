@@ -34,7 +34,6 @@ public class DefaultController {
 	@RequestMapping("/")
 	public String index(ModelMap model) throws IOException{
 
-                model.addAttribute("basePath", Config.BASE_PATH);
                 BaseXClient baseXClient = Utils.connectToBaseX();
                 
                 try {
@@ -74,8 +73,6 @@ public class DefaultController {
                     throw new IllegalArgumentException();
                 }        
             }
-                
-            model.addAttribute("basePath", Config.BASE_PATH);
 
             try {
                 BaseXClient baseXClient = Utils.connectToBaseX();
@@ -120,8 +117,6 @@ public class DefaultController {
             if (id.equals("") || id == null) {
                 throw new IllegalArgumentException();
             }
-                
-            model.addAttribute("basePath", Config.BASE_PATH);
 
             try {
                 BaseXClient baseXClient = Utils.connectToBaseX();
@@ -224,6 +219,11 @@ public class DefaultController {
             BaseXClient baseXClient = null;
             GrammarMeta gm = new GrammarMeta();
             gm.setName(request.getParameter("name"));
+            
+            Date d = new Date();
+            
+            
+            
             gm.setDate((new Date()).toString());
             
             try {
@@ -343,8 +343,7 @@ public class DefaultController {
                     }
                 }
             }   
-            
-            model.addAttribute("basePath", Config.BASE_PATH);
+
             return "ruleSearch";
         }
         
@@ -394,8 +393,6 @@ public class DefaultController {
                 throw new IllegalArgumentException();
             }
                 
-            model.addAttribute("basePath", Config.BASE_PATH);
-
             try {
                 BaseXClient baseXClient = Utils.connectToBaseX();
                 GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
@@ -468,7 +465,7 @@ public class DefaultController {
             
             // If DB is already seted as installed - do not process
             if (Config.getDbInstalled()) {
-                throw new ResourceNotFoundException();
+                //throw new ResourceNotFoundException();
             }
                         
             try {
@@ -489,8 +486,6 @@ public class DefaultController {
 //             || request.getParameter("grammarId") == null || request.getParameter("grammarId").equals("")) {
 //                throw new IllegalArgumentException();
 //            }
-
-            model.addAttribute("basePath", Config.BASE_PATH);
 
             return "install";
         }

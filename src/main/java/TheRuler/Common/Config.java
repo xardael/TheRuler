@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  *
@@ -33,15 +34,47 @@ public class Config {
     public static final String GRAMMARS_ROOT = "<grammars></grammars>";
     public static final String GRAMMARS_FILE = "Meta.xml";
     
-    public static final String DB_HOST = "localhost";
-    public static final String DB_USER = "admin";
-    public static final String DB_PASS = "pass";
-    public static final String DB_NAME = "Test44";
-    public static final int    DB_PORT = 1984;
+    public static String getDbHost() {
+        return "localhost";
+    }
+    public static  void setDbHost() {
+        throw new NotImplementedException();
+    }
+    
+    public static String getDbUser() {
+        return "admin";
+    }    
+    public static void setDbUser() {
+        throw new NotImplementedException();
+    }
+    
+    public static String getDbPass() {
+        return "pass";
+    }    
+    public static void setDbPass() {
+        throw new NotImplementedException();
+    }
+    
+    public static String getDbName() {
+        return "nova";
+    }    
+    public static void setDbName() {
+        throw new NotImplementedException();
+    }
+    
+    public static int getDbPort() {
+        return 1984;
+    }    
+    public static void setDbPort() {
+        throw new NotImplementedException();
+    }
     
     public static Boolean getDbInstalled() {
         Properties props = init();
         return Boolean.parseBoolean(props.getProperty("DB_INSTALLED", "FALSE"));
+    }
+    public static final void setDbInstalled() {
+        throw new NotImplementedException();
     }
     
     public static void setDbInstalled(Boolean b) {

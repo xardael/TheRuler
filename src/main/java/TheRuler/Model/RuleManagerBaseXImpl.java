@@ -53,7 +53,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
             String insertNodeCommand = "insert node <rule id='" + rule.getId() + "'> " +
                                        (rule.getContent() == null ? "" : rule.getContent())  +
                                        "</rule> " +
-                                       "into doc('" + Config.DB_NAME + "/" + grammarMeta.getId() +  ".xml')/grammar";
+                                       "into doc('" + Config.getDbName() + "/" + grammarMeta.getId() +  ".xml')/grammar";
                     
             String result = baseXClient.execute("xquery " + insertNodeCommand);
 	}
@@ -68,7 +68,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
                 throw new IllegalArgumentException();
             }
             
-            BaseXClient.Query query = baseXClient.query("doc('" + Config.DB_NAME + "/" + grammarMeta.getId() + ".xml')//rule[@id='" + id + "']/child::*");
+            BaseXClient.Query query = baseXClient.query("doc('" + Config.getDbName() + "/" + grammarMeta.getId() + ".xml')//rule[@id='" + id + "']/child::*");
             String xml = query.execute();
             
             Rule rule = new Rule();
@@ -84,7 +84,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
 	 */
 	public List<Rule> findAllRules(GrammarMeta grammarMeta) throws Exception {
             BaseXClient.Query query = baseXClient.query("<rules> " +
-                                                        "{for $rule in doc('" + Config.DB_NAME + "/" + grammarMeta.getId() +  ".xml')//rule " +
+                                                        "{for $rule in doc('" + Config.getDbName() + "/" + grammarMeta.getId() +  ".xml')//rule " +
                                                         "return $rule} " +
                                                         "</rules>");
             String xml = query.execute();
@@ -124,7 +124,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
 	 */
 	public List<Rule> findAllRulesById(String id, GrammarMeta grammarMeta) throws Exception {
 		BaseXClient.Query query = baseXClient.query("<rules> " +
-                                                        "{for $rule in doc('" + Config.DB_NAME + "/" + grammarMeta.getId() +  ".xml')//rule[contains( " +
+                                                        "{for $rule in doc('" + Config.getDbName() + "/" + grammarMeta.getId() +  ".xml')//rule[contains( " +
                                                         "translate(@id,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') " +
                                                         ", '" + id + "')] " +
                                                         "return $rule} " +
@@ -174,13 +174,13 @@ public class RuleManagerBaseXImpl implements RuleManager {
                 throw new IllegalArgumentException();
             }
             
-            String result = baseXClient.execute("xquery exists(doc('" + Config.DB_NAME + "/" + grammarMeta.getId() + ".xml')//rule[@id='" + rule.getId() + "'])");
+            String result = baseXClient.execute("xquery exists(doc('" + Config.getDbName() + "/" + grammarMeta.getId() + ".xml')//rule[@id='" + rule.getId() + "'])");
             
             if (result.equals("false")) {
                 throw new IllegalArgumentException();
             }
             
-            baseXClient.execute("xquery delete node doc('" + Config.DB_NAME + "/" + grammarMeta.getId() + ".xml')//rule[@id='" + rule.getId() + "']");
+            baseXClient.execute("xquery delete node doc('" + Config.getDbName() + "/" + grammarMeta.getId() + ".xml')//rule[@id='" + rule.getId() + "']");
 	}
 
 }

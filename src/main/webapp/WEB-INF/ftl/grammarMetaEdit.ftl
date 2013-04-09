@@ -13,8 +13,8 @@
 
             <ul class="nav nav-pills pull-right" style="margin: 15px 0 0 0">
                 <li> <a href="#">Export</a></li>
-                <li class="active"> <a href="${basePath}/edit-grammar/${gm.id}">Edit</a></li>
-                <li> <a href="${basePath}/delete-grammar/${gm.id}">Delete</a></li>
+                <li class="active"> <a href="${rc.contextPath}/edit-grammar/${gm.id}">Edit</a></li>
+                <li> <a href="${rc.contextPath}/delete-grammar/${gm.id}">Delete</a></li>
 
             </ul>
         </div>
@@ -22,12 +22,12 @@
 
 
     <ul class="breadcrumb">
-        <li><a href="${basePath}/">Grammars</a> <span class="divider">&gt;</span></li>
-        <li><a href="${basePath}/grammar/${gm.id}">${gm.name}</a> <span class="divider">&gt;</span></li>
+        <li><a href="${rc.contextPath}/">Grammars</a> <span class="divider">&gt;</span></li>
+        <li><a href="${rc.contextPath}/grammar/${gm.id}">${gm.name}</a> <span class="divider">&gt;</span></li>
         <li class="active">Grammar Edit</li>
     </ul>
 
-    <form name="gm" class="form-horizontal pull-left" method="post" action="${basePath}/save-grammar">
+    <form name="gm" class="form-horizontal pull-left" method="post" action="${rc.contextPath}/save-grammar">
         <input type="hidden" name="id" value="${gm.id}">
         <div class="control-group">
             <label class="control-label" for="name">Name: </label>
@@ -56,7 +56,7 @@
         </div>
     </form>
 
-    <form name="grammar" class="form-horizontal pull-left" method="post" action="${basePath}/save-grammar-content">
+    <form name="grammar" class="form-horizontal pull-left" method="post" action="${rc.contextPath}/save-grammar-content">
             <input name="meta.id" type="hidden" value="${gm.id}" />
 	  <textarea name="content" rows="15" style="width: 99%">${grammar.content}</textarea>
         

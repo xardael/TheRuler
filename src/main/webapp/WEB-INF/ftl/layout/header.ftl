@@ -8,7 +8,7 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href="${basePath}/res/css/bootstrap.min.css" rel="stylesheet">
+    <link href="${rc.contextPath}/res/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -20,12 +20,14 @@
       }
 
     </style>
-    <link href="${basePath}/res/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="${rc.contextPath}/res/css/bootstrap-responsive.min.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    
+    
     
     
 
@@ -51,7 +53,7 @@
           <div class="nav-collapse collapse pull-right">
 
             <ul class="nav">
-              <li class="active"><a href="${basePath}/">Home</a></li>
+              <li class="active"><a href="${rc.contextPath}/">Home</a></li>
               <li><a href="https://github.com/xardael/TheRuler/wiki/_pages">Help</a></li>
               <li><a href="https://github.com/xardael/TheRuler">Feedback</a></li>
               <li><a href="https://github.com/xardael/TheRuler">GitHub</a></li>

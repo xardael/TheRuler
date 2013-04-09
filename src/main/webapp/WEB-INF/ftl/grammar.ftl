@@ -13,19 +13,19 @@
 				
 				    <ul class="nav nav-pills pull-right" style="margin: 15px 0 0 0">
                                                 <li> <a href="#">Export</a></li>
-                                                <li> <a href="${basePath}/edit-grammar/${gm.id}">Edit</a></li>
-						<li> <a href="${basePath}/delete-grammar/${gm.id}">Delete</a></li>
+                                                <li> <a href="${rc.contextPath}/edit-grammar/${gm.id}">Edit</a></li>
+						<li> <a href="${rc.contextPath}/delete-grammar/${gm.id}">Delete</a></li>
 					</ul>
 			</div>
 		</div>
 		
 		
 	    <ul class="breadcrumb">
-			<li><a href="${basePath}/">Grammars</a> <span class="divider">&gt;</span></li>
+			<li><a href="${rc.contextPath}/">Grammars</a> <span class="divider">&gt;</span></li>
                         <#if search == false>
                             <li class="active">${gm.name}</li>
                             <#else>
-                            <li><a href="${basePath}/grammar/${gm.id}">${gm.name}</a> <span class="divider">&gt;</span></li>
+                            <li><a href="${rc.contextPath}/grammar/${gm.id}">${gm.name}</a> <span class="divider">&gt;</span></li>
                             <li class="active">Search Results</li>
                         </#if>  
 			
@@ -56,7 +56,7 @@
                         </h4>
 		</div>
     <div class="span4">
-      <form name="ruleAdd" method="Post" action="${basePath}/rule-add" class="form-inline pull-right" style="margin: 15px 0 0 0">
+      <form name="ruleAdd" method="Post" action="${rc.contextPath}/rule-add" class="form-inline pull-right" style="margin: 15px 0 0 0">
         <input type="hidden" name="grammarId" value="${gm.id}">
         <input type="text" name="ruleId" placeholder="New rule name...">
         <button type="submit" class="btn">New Rule</button>
@@ -100,8 +100,8 @@
                         </td>
                         <td style="vertical-align: top !important;">
                             <div class="btn-group pull-right" style="height: 32px;">
-                                <a class="btn btn-small" style="height: 100%; width: 22px;" href="${basePath}/grammar/${gm.id}/rule/${rule.id}"><i class="icon-edit" style="margin-top: 6px;"></i></a>
-                                <a class="btn btn-small" style="height: 100%; width: 22px;" href="${basePath}/delete-rule/${gm.id}/${rule.id}"><i class="icon-remove" style="margin-top: 6px;"></i></a>
+                                <a class="btn btn-small" style="height: 100%; width: 22px;" href="${rc.contextPath}/grammar/${gm.id}/rule/${rule.id}"><i class="icon-edit" style="margin-top: 6px;"></i></a>
+                                <a class="btn btn-small" style="height: 100%; width: 22px;" href="${rc.contextPath}/delete-rule/${gm.id}/${rule.id}"><i class="icon-remove" style="margin-top: 6px;"></i></a>
                             </div>
                         </td>
                     </tr>
