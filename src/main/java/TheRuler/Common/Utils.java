@@ -5,7 +5,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.transform.Source;
@@ -46,12 +49,33 @@ public class Utils {
     }
     
     public static void installDB() throws IOException{
-        BaseXClient baseXClient = connectToBaseX();
-        baseXClient.execute("DROP DB " + Config.getDbName());
-        baseXClient.execute("CREATE DB " + Config.getDbName());
-        baseXClient.execute("OPEN " + Config.getDbName());
+        String result;
+        BaseXClient baseXClient = new BaseXClient(Config.getDbHost(), Config.getDbPort(), Config.getDbUser(), Config.getDbPass());
+        //result = baseXClient.execute("DROP DB " + Config.getDbName());
+        result = baseXClient.execute("CREATE DB " + Config.getDbName());
+        result = baseXClient.execute("OPEN " + Config.getDbName());
         InputStream bais = new ByteArrayInputStream(Config.GRAMMARS_ROOT.getBytes("UTF-8"));
         baseXClient.add(Config.GRAMMARS_FILE, bais);
+    }
+    
+    public static String convertDateToGmtString(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return dateFormat.format(date);
+    }
+    
+    public static Date convertGmtStringToDate(String gmtDateString) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return dateFormat.parse(gmtDateString);
+    }
+    
+    public static String convertGmtStringToLocaleString(String gmtDateString) throws ParseException {
+        Date date = convertGmtStringToDate(gmtDateString);
+        //SimpleDateFormat dateFormat = new SimpleDateFormat(); // Using default Locale
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG); // Using default Locale
+        dateFormat.setTimeZone(TimeZone.getDefault());
+        return dateFormat.format(date);
     }
     
     public static boolean validate(String xml) throws SAXException, IOException {

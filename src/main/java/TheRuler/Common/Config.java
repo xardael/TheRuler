@@ -56,7 +56,7 @@ public class Config {
     }
     
     public static String getDbName() {
-        return "nova";
+        return "SuperNova";
     }    
     public static void setDbName() {
         throw new NotImplementedException();

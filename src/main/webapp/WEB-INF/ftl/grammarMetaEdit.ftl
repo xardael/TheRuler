@@ -12,9 +12,9 @@
             </div> -->
 
             <ul class="nav nav-pills pull-right" style="margin: 15px 0 0 0">
-                <li> <a href="#">Export</a></li>
+                <li> <a href="${rc.contextPath}/export/${gm.id}">Export</a></li>
                 <li class="active"> <a href="${rc.contextPath}/edit-grammar/${gm.id}">Edit</a></li>
-                <li> <a href="${rc.contextPath}/delete-grammar/${gm.id}">Delete</a></li>
+                <li> <a href="${rc.contextPath}/delete-grammar/${gm.id}" class="delete">Delete</a></li>
 
             </ul>
         </div>

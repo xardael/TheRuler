@@ -44,6 +44,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -144,7 +145,7 @@ public class AjaxController {
             Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        return "a";
+        return "ahoj";
     }
     
     @RequestMapping(value="/ajaxik", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")

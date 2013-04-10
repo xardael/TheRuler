@@ -2,11 +2,13 @@ package TheRuler.Model;
 
 import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Config;
+import TheRuler.Common.Utils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -64,7 +66,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
                                        "<grammarRecord id='" + newId + "'>" +
                                        "  <name>" + grammarMeta.getName() + "</name>" +
                                        "  <description>" + ((grammarMeta.getDescription() == null) ? "" : grammarMeta.getDescription()) + "</description>" +
-                                       "  <date>" + ((grammarMeta.getDate() == null) ? "" : grammarMeta.getDate()) + "</date>" +
+                                       "  <date>" + Utils.convertDateToGmtString(new Date()) + "</date>" +
                                        "</grammarRecord>" +
                                        "into //grammars";
             
@@ -132,7 +134,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             String grammarId = null;
             String name = null;
             String description = null;
-            String date = null;
+            String dateString = null;
             GrammarMeta grammarMeta = new GrammarMeta();
 
 
@@ -156,12 +158,12 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
                 
                 NodeList dateNodes = root.getElementsByTagName("date");
                 line = (Element) dateNodes.item(0);
-                date = line.getFirstChild().getNodeValue();
+                dateString = line.getFirstChild().getNodeValue();
 
             grammarMeta.setId(Long.parseLong(grammarId));
             grammarMeta.setName(name);
             grammarMeta.setDescription(description);
-            grammarMeta.setDate(date);
+            grammarMeta.setDate(Utils.convertGmtStringToLocaleString(dateString));
         
         
             return grammarMeta;
@@ -203,7 +205,8 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
                 
                 nodes = element.getElementsByTagName("date");
                 line = (Element) nodes.item(0);
-                gm.setDate(line.getFirstChild().getNodeValue());
+                String dateString = line.getFirstChild().getNodeValue();
+                gm.setDate(Utils.convertGmtStringToLocaleString(dateString));
                 
                 grammarMetas.add(gm);
             }

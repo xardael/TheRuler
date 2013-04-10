@@ -36,8 +36,8 @@
             
             $(".alert").alert()
             
-            // Validate form fields in Sign up form 
-            $("#installForm").blur(function(){
+            // Validate form fields in install form 
+            $("#AinstallForm").blur(function(){
                 alert("a");
                 var isFormValid = true;
                 $("#installForm .required input:text").each(function(){ 
@@ -54,13 +54,25 @@
             
             $('[name="newGrammar"]').submit(function() {
                 if ($.trim($('[name="name"]').val()).length == 0) {
-                    bootbox.alert("Chyba", function() {
-                        Example.show("Hello world callback");
-                    });
+                    bootbox.alert("Grammar name must not by emtpy.");
+                    return false;
                 }
             });
             
-            $('#installForm').submit(function() {
+            $(".delete").click( function(e) {
+                var href = $(this).attr('href');
+                e.preventDefault();
+                bootbox.confirm("Do you really want to delete selected item?", function(result) {
+                    if (result == true) {
+                        if (e.isDefaultPrevented()) {
+                            window.location = href;
+                        }
+                    }
+                }); 
+                
+            });
+            
+            $('#AinstallForm').submit(function() {
                 if ($.trim($("input:first").val()).length == 0) {
                     $("input:first").parent().addClass("error");
                     $("#inputHost").attr('data-content','blah blah').attr('title','Chyba').popover('show');

@@ -38,6 +38,17 @@
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basename" value="locale/messages"/>
     </bean>
+    
+    <bean class = "org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <array>
+                <bean class = "org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name="supportedMediaTypes" value="text/plain;charset=UTF-8" />
+                    <property name="writeAcceptCharset" value="false" />
+                </bean>
+            </array>
+        </property>
+    </bean>
 
     <!-- Zistit naco je toto, MUSI TO BYT TAKTO!!!! inak hadze 404 po rebuilde -->
     <context:component-scan base-package="TheRuler" />

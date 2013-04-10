@@ -28,8 +28,12 @@
       </div>
       <div class="span4">
         <form name="newGrammar" method="POST" action="${rc.contextPath}/create-grammar" class="form-inline pull-right" style="margin: 15px 0 0 0;">
+            <div class="control-group" id="test">
+
              <input type="text" name="name" placeholder="New Grammar Name...">
              <button type="submit" class="btn">New Grammar</button>
+
+            </div>
         </form>
       </div>
 	  </div>
@@ -49,7 +53,7 @@
                             
                             </#if>  
                 
-            </td><td>${gm.date}</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="#"><i class="icon-file"></i></a><a class="btn btn-small" href="${rc.contextPath}/edit-grammar/${gm.id}"><i class="icon-edit"></i></a><a class="btn btn-small" href="${rc.contextPath}/delete-grammar/${gm.id}"><i class="icon-remove"></i></a></div></td></tr>
+            </td><td>${gm.date}</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="${rc.contextPath}/export/${gm.id}" title="Export"><i class="icon-file"></i></a><a class="btn btn-small" href="${rc.contextPath}/edit-grammar/${gm.id}"><i class="icon-edit"></i></a><a class="btn btn-small delete" href="${rc.contextPath}/delete-grammar/${gm.id}"><i class="icon-remove"></i></a></div></td></tr>
       </#list>
     </table>
 

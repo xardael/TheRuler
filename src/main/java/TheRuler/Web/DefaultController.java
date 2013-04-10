@@ -3,19 +3,18 @@ package TheRuler.Web;
 import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
-import TheRuler.Exceptions.ResourceNotFoundException;
 import TheRuler.Model.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 
@@ -219,12 +218,6 @@ public class DefaultController {
             BaseXClient baseXClient = null;
             GrammarMeta gm = new GrammarMeta();
             gm.setName(request.getParameter("name"));
-            
-            Date d = new Date();
-            
-            
-            
-            gm.setDate((new Date()).toString());
             
             try {
                 baseXClient = Utils.connectToBaseX();
@@ -471,7 +464,9 @@ public class DefaultController {
             try {
                 Utils.installDB();
             } catch (Exception e) {
+                String s = e.getMessage();
                 e.printStackTrace();
+                
             }
 
             // Set DB asi installed into properties file
@@ -488,5 +483,62 @@ public class DefaultController {
 //            }
 
             return "install";
+        }
+        
+        @RequestMapping(value = "/exporta/{grammarId}", method = RequestMethod.GET)
+        public String export(ModelMap model, HttpServletResponse response, HttpServletRequest request, @PathVariable Long grammarId) {
+            if (grammarId == null || grammarId == 0) {
+                throw new IllegalArgumentException();
+            }
+            
+            try {
+                BaseXClient baseXClient = Utils.connectToBaseX();
+                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+                grammarManager.setBaseXClient(baseXClient);
+
+                Grammar grammar = grammarManager.findGrammar(grammarId);
+                
+                response.setHeader("Content-Disposition", "attachment;filename=" + "export" + ".xml"); //grammar.getMeta().getName() + ".xml");
+                response.setContentType("text/plain");
+                response.setCharacterEncoding("UTF-8");
+
+                return grammar.getContent();
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            return null;
+        }
+        
+        @RequestMapping(value = "/export/{grammarId}", method = RequestMethod.GET, produces="text/plain;charset=UTF-8")
+        @ResponseBody
+        public String plaintext(HttpServletResponse response, @PathVariable Long grammarId) {
+            response.setHeader("Content-Disposition", "attachment;filename=\"export.xml\"");
+            if (grammarId == null || grammarId == 0) {
+                throw new IllegalArgumentException();
+            }
+            
+            BaseXClient baseXClient = null;
+            try {
+                baseXClient = Utils.connectToBaseX();
+                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+                grammarManager.setBaseXClient(baseXClient);
+
+                Grammar grammar = grammarManager.findGrammar(grammarId);
+
+                return grammar.getContent();
+                
+            } catch (Exception e) {
+                return "ERROR";
+            } finally {
+                if (baseXClient != null) {
+                    try {
+                        baseXClient.close();
+                    } catch (IOException e) {
+                        return "ERROR";
+                    }
+                }
+            }
         }
 }
