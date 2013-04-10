@@ -11,7 +11,7 @@
 				</div> -->
 				
 				    <ul class="nav nav-pills pull-right" style="margin: 15px 0 0 0">
-						<li> <a href="#">Delete Rule</a></li>
+                                        <li> <a href="${rc.contextPath}/delete-rule/${gm.id}/${rule.id}" class="delete">Delete Rule</a></li>
 					</ul>
 			</div>
 		</div>
@@ -42,25 +42,21 @@
 			<h3 style="padding-top: 0">${rule.id}</h3>
 		</div>		
 	  </div>
-        <form name="grammar" class="form-horizontal pull-left" method="post" action="${rc.contextPath}/save-grammar-content">
+        <form name="grammar" method="post" action="${rc.contextPath}/save-grammar-content">
             <input name="meta.id" type="hidden" value="${gm.id}" />
 	  <textarea name="content" rows="20" style="width: 99%">${rule.content}</textarea>
+          
+      <div class="form-actions">
+            <a class="btn pull-left" href="#">Insert ruleref</a>
+          
+            <button type="submit" class="btn pull-right btn-primary">Save changes</button>
+            <button type="button" class="btn pull-right" style="margin: 0 20px 0 0;">Cancel</button>
+       </div>
+
+        </form>          
         
-
           
-    <div class="container">
-      <a class="btn pull-left" href="#">Insert ruleref</a>
-
-      <button type="submit" class="btn pull-right">Save</button>
-      <a class="pull-right" style="margin: 5px 20px 0 0;" href="#">Discard changes</a>
-    </div>
           
-        <div class="form-actions">
-    <button type="submit" class="btn btn-primary">Save changes</button>
-    <button type="button" class="btn">Cancel</button>
-    </div>
-          
-          <div>    
     
 <script type="text/javascript">
         function doAjaxPost() {
@@ -84,6 +80,12 @@
         }
         
         function checkAvailability() {
+        $.getJSON("${rc.contextPath}/ajax/availability", { name: $('#name').val() }, function(gm) {
+            $('#info').html(gm.name + " is not available, try ");
+        });
+    }
+        
+        function checkasdasfadAvailability() {
             //$.getJSON("${rc.contextPath}/availability", { name: $('#name').val() }, function(availability) {
             //    alert(availability);
             //});
@@ -166,5 +168,5 @@
         </div>
     </div>
     
-</form> 
+
 <#include "/layout/footer.ftl">

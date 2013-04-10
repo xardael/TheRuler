@@ -28,6 +28,7 @@
 
 package TheRuler.Web;
 
+import TheRuler.Model.GrammarMeta;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -113,20 +114,24 @@ public class AjaxController {
     
     
     
-    @RequestMapping(value="/availability", method = RequestMethod.GET)
-    public @ResponseBody String getAvailability(@RequestParam String name, @RequestParam String education) {
+    @RequestMapping(value="/availaasbility", method=RequestMethod.GET, headers="Accept=application/json")
+    public @ResponseBody GrammarMeta getAvaasilability(@RequestParam String name, @RequestParam String education) {
         
         Map<String,Object> json = new HashMap<String, Object>();
         json.put("Name:", name);
-        json.put("Education:", education);
+        json.put("Education ALE:", education);
+        
+        GrammarMeta gm = new GrammarMeta();
+        gm.setName(name);
+        gm.setDescription(education);
         
         //new JSONObject(map);
         
-        return json.toString();
+        return gm;
     }
     
     @RequestMapping(value="/ajax/validation", method = RequestMethod.POST)
-    public @ResponseBody String getAvailability(@RequestParam String xml) {
+    public @ResponseBody String getAvailabislity(@RequestParam String xml) {
         try {
 //            URL schemaFile = new URL("http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd");
 //            Source xmlFile = new StreamSource(new File("web.xml"));
@@ -165,4 +170,13 @@ public class AjaxController {
 		response.getWriter().write(helloAjax);
 
 	}
+    
+    @RequestMapping(value="/ajax/availability", method=RequestMethod.GET)
+    public @ResponseBody GrammarMeta getAvailability(@RequestParam String name) {
+        GrammarMeta gm = new GrammarMeta();
+        if (name != null) {
+            gm.setName(name);
+        }
+        return gm;
+    }
 }

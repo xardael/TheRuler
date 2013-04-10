@@ -27,34 +27,33 @@
         <li class="active">Grammar Edit</li>
     </ul>
 
-    <form name="gm" class="form-horizontal pull-left" method="post" action="${rc.contextPath}/save-grammar">
-        <input type="hidden" name="id" value="${gm.id}">
-        <div class="control-group">
-            <label class="control-label" for="name">Name: </label>
-            <div class="controls">
-                <input type="text" name="name" id="name" value="${gm.name}">
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="date">Date: </label>
-            <div class="controls">
-                <input type="text" name="date" id="date" value="${gm.date}">
-            </div> 
-        </div>
-        <div class="control-group">
-            <div class="controls">
-                <textarea name="description" rows="5" style="width: 99%">${(gm.description)!""}</textarea>
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="container">
-                <a class="btn pull-left" href="#">Insert ruleref</a>
+    <div class="row">
+        <div class="span12">
+            <form name="gm" method="post" action="${rc.contextPath}/save-grammar">
+                <input type="hidden" name="id" value="${gm.id}">
+                <div class="control-group">
+                    <label class="control-label" for="name">Name: </label>
+                    <div class="controls">
+                        <input type="text" name="name" class="span6" id="name" value="${gm.name}">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="date">Description: </label>
+                    <div class="controls">
+                        <textarea name="description" rows="5" class="span6">${(gm.description)!""}</textarea>
+                    </div>
+                </div>
 
-                <button type="submit" class="btn pull-right">Save</button>
-                <a class="pull-right" style="margin: 5px 20px 0 0;" href="#">Discard changes</a>
-            </div>
-        </div>
-    </form>
+                <div class="form-actions">
+
+
+                    <button type="submit" class="btn  btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>            
+    </div>
+
+
 
     <form name="grammar" class="form-horizontal pull-left" method="post" action="${rc.contextPath}/save-grammar-content">
             <input name="meta.id" type="hidden" value="${gm.id}" />
