@@ -100,6 +100,23 @@
                 
                 return false;
             });
+            
+            $('form.validate').submit(function() {
+                var isFormValid = true;
+                
+                $("input.required", this).each(function(){ 
+                    if ($.trim($(this).val()).length == 0){
+                        $(this).closest('div.control-group').addClass('error');
+                        $(".help-inline", $(this).parent()).text('${rc.getMessage("fillEmpty")}');
+                        isFormValid = false;
+                    } else {
+                        $(this).closest('div.control-group').removeClass('error');
+                        $(".help-inline", $(this).parent()).text('');
+                    }
+                });
+                
+                return isFormValid;
+            });
           
     </script>
 

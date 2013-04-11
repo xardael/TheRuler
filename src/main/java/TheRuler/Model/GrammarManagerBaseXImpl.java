@@ -107,7 +107,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             grammar.setMeta(gm);
             
             // Get grammar content
-            BaseXClient.Query query = baseXClient.query("for $doc in collection('" + Config.getDbName() + "') " +
+            BaseXClient.Query query = baseXClient.query("for $doc in collection('" + Config.getValue(Config.C_DB_NAME) + "') " +
                                                         "where matches(document-uri($doc), '" + id + ".xml') " +
                                                         "return $doc");
             String xml = query.execute();

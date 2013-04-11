@@ -30,8 +30,8 @@ import org.xml.sax.SAXException;
 public class Utils {
     
     public static BaseXClient connectToBaseX() throws IOException {
-        BaseXClient baseXClient = new BaseXClient(Config.getDbHost(), Config.getDbPort(), Config.getDbUser(), Config.getDbPass());
-        baseXClient.execute("OPEN " + Config.getDbName());
+        BaseXClient baseXClient = new BaseXClient(Config.getValue(Config.C_DB_HOST), Integer.parseInt(Config.getValue(Config.C_DB_PORT)), Config.getValue(Config.C_DB_USER), Config.getValue(Config.C_DB_PASS));
+        baseXClient.execute("OPEN " + Config.getValue(Config.C_DB_NAME));
         return baseXClient;
     }
     
@@ -50,22 +50,22 @@ public class Utils {
     
     public static void installDB() throws IOException{
         String result;
-        BaseXClient baseXClient = new BaseXClient(Config.getDbHost(), Config.getDbPort(), Config.getDbUser(), Config.getDbPass());
+        BaseXClient baseXClient = new BaseXClient(Config.getValue(Config.C_DB_HOST), Integer.parseInt(Config.getValue(Config.C_DB_PORT)), Config.getValue(Config.C_DB_USER), Config.getValue(Config.C_DB_PASS));
         //result = baseXClient.execute("DROP DB " + Config.getDbName());
-        result = baseXClient.execute("CREATE DB " + Config.getDbName());
-        result = baseXClient.execute("OPEN " + Config.getDbName());
-        InputStream bais = new ByteArrayInputStream(Config.GRAMMARS_ROOT.getBytes("UTF-8"));
-        baseXClient.add(Config.GRAMMARS_FILE, bais);
+        result = baseXClient.execute("CREATE DB " + Config.getValue(Config.C_DB_NAME));
+        result = baseXClient.execute("OPEN " + Config.getValue(Config.C_DB_NAME));
+        InputStream bais = new ByteArrayInputStream(Config.GRAMMARS_ROOT_NAME.getBytes("UTF-8"));
+        baseXClient.add(Config.GRAMMARS_FILE_NAME, bais);
     }
     
     public static String convertDateToGmtString(Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.format(date);
     }
     
     public static Date convertGmtStringToDate(String gmtDateString) throws ParseException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.parse(gmtDateString);
     }

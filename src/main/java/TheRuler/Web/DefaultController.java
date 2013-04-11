@@ -5,11 +5,14 @@ import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
 import TheRuler.Model.*;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
@@ -211,11 +214,18 @@ public class DefaultController {
         
         @RequestMapping(value= "/create-grammar", method = RequestMethod.POST)
         public String createGrammar(ModelMap model, HttpServletRequest request) {
-            
             if (request.getParameter("name").equals("")) {
                 throw new IllegalArgumentException();
             }
+            
+//            try {
+//                request.setCharacterEncoding("UTF-8");
+//            } catch (UnsupportedEncodingException ex) {
+//                Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
+//            }
 
+            String s = request.getParameter("name");
+            
             BaseXClient baseXClient = null;
             GrammarMeta gm = new GrammarMeta();
             gm.setName(request.getParameter("name"));
@@ -456,22 +466,38 @@ public class DefaultController {
             String pass = request.getParameter("inputPass");
             String name = request.getParameter("inputName");
             String port = request.getParameter("inputPort");
-            
-            // If DB is already seted as installed - do not process
-            if (Config.getDbInstalled()) {
-                //throw new ResourceNotFoundException();
+            try {
+                // If DB is already seted as installed - do not process
+                if (Boolean.parseBoolean(Config.getValue(Config.C_DB_INST))) {
+                    //throw new ResourceNotFoundException();
+                }
+                
+                Config.setValue(Config.C_DB_HOST, host);
+                Config.setValue(Config.C_DB_USER, user);
+                Config.setValue(Config.C_DB_PASS, pass);
+                Config.setValue(Config.C_DB_NAME, name);
+                Config.setValue(Config.C_DB_PORT, port);
+                
+                
+            } catch (IOException ex) {
+                Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
             }
                         
             try {
                 Utils.installDB();
+                Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
             } catch (Exception e) {
                 String s = e.getMessage();
                 e.printStackTrace();
                 
             }
-
-            // Set DB asi installed into properties file
-            Config.setDbInstalled(Boolean.TRUE);
+//            try {
+//                // Set DB asi installed into properties file
+//
+//                //Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
+//            } catch (IOException ex) {
+//                Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
+//            }
 
             return "redirect:/";
         }
@@ -484,32 +510,6 @@ public class DefaultController {
 //            }
 
             return "install";
-        }
-        
-        @RequestMapping(value = "/exporta/{grammarId}", method = RequestMethod.GET)
-        public String export(ModelMap model, HttpServletResponse response, HttpServletRequest request, @PathVariable Long grammarId) {
-            if (grammarId == null || grammarId == 0) {
-                throw new IllegalArgumentException();
-            }
-            
-            try {
-                BaseXClient baseXClient = Utils.connectToBaseX();
-                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
-                grammarManager.setBaseXClient(baseXClient);
-
-                Grammar grammar = grammarManager.findGrammar(grammarId);
-                
-                response.setHeader("Content-Disposition", "attachment;filename=" + "export" + ".xml"); //grammar.getMeta().getName() + ".xml");
-                response.setContentType("text/plain");
-                response.setCharacterEncoding("UTF-8");
-
-                return grammar.getContent();
-                
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            
-            return null;
         }
         
         @RequestMapping(value = "/export/{grammarId}", method = RequestMethod.GET, produces="text/plain;charset=UTF-8")

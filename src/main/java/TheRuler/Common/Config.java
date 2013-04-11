@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
+import org.springframework.util.StringUtils;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -12,81 +13,66 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  */
 public class Config {
 
-    private static Properties init() {
+    /**
+     * Load properties from file. 
+     * 
+     * @return Properties object containing data loaded from file
+     * @throws IOException 
+     */
+    private static Properties init() throws IOException {
         Properties props = new Properties();
-        try {
-            props.load(Config.class.getClassLoader().getResourceAsStream("config.properties"));
-        } catch (IOException ex) {
-            throw new RuntimeException("Error opening DB config file", ex);
-        }
+        props.load(Config.class.getClassLoader().getResourceAsStream("config.properties"));
         return props;
     }
+
+    /*
+     * Constants 
+     */
+    public static final String GRAMMARS_ROOT_NAME = "<grammars></grammars>";
+    public static final String GRAMMARS_FILE_NAME = "Meta.xml";
+    public static final String CONFIG_FILE_NAME = "config.properties";
     
-    public String getDbUrl() {
-        Properties props = init();
-        return props.getProperty("dburl");
-    }
+    /*
+     * Constatn names for config.properties 
+     */
+    public static final String C_DB_HOST = "DB_HOST";
+    public static final String C_DB_USER = "DB_USER";
+    public static final String C_DB_PASS = "DB_PASS";
+    public static final String C_DB_NAME = "DB_NAME";
+    public static final String C_DB_PORT = "DB_PORT"; 
+    public static final String C_DB_INST = "DB_INST"; 
     
-    public static final String BASE_PATH = "/TheRuler";
-//    public static final Locale LOCALE = Locale.getDefault();
-    public static final Locale LOCALE = new Locale("cs", "CZ");
-    
-    public static final String GRAMMARS_ROOT = "<grammars></grammars>";
-    public static final String GRAMMARS_FILE = "Meta.xml";
-    
-    public static String getDbHost() {
-        return "localhost";
-    }
-    public static  void setDbHost() {
-        throw new NotImplementedException();
-    }
-    
-    public static String getDbUser() {
-        return "admin";
-    }    
-    public static void setDbUser() {
-        throw new NotImplementedException();
-    }
-    
-    public static String getDbPass() {
-        return "pass";
-    }    
-    public static void setDbPass() {
-        throw new NotImplementedException();
-    }
-    
-    public static String getDbName() {
-        return "SuperNova";
-    }    
-    public static void setDbName() {
-        throw new NotImplementedException();
-    }
-    
-    public static int getDbPort() {
-        return 1984;
-    }    
-    public static void setDbPort() {
-        throw new NotImplementedException();
-    }
-    
-    public static Boolean getDbInstalled() {
-        Properties props = init();
-        return Boolean.parseBoolean(props.getProperty("DB_INSTALLED", "FALSE"));
-    }
-    public static final void setDbInstalled() {
-        throw new NotImplementedException();
-    }
-    
-    public static void setDbInstalled(Boolean b) {
-        Properties props = init();
-        props.setProperty("DB_INSTALLED", b.toString());
-        try {
-            URL url = Config.class.getClassLoader().getResource("config.properties");  
-            String path = url.getPath();  
-            Writer writer = new FileWriter(path);
-            props.store(writer, "");
-        } catch (IOException e) {
-            e.printStackTrace();
+    /**
+     * Get value of given key from properties file
+     * 
+     * @param key
+     * @return If key exists, its value is returned. Otherwise returns empty string.
+     * @throws IOException 
+     */
+    public static String getValue(String key) throws IOException {
+        if (key == null) {
+            throw new IllegalArgumentException();
         }
+        Properties props = init();
+        return props.getProperty(key, "");
+    }
+    
+    /**
+     * Set given key value into properties file
+     * 
+     * @param key
+     * @param value
+     * @throws IOException, IllegalArgumentException
+     */
+    public static void setValue(String key, String value) throws IOException {
+        if (key == null || value == null) {
+            throw new IllegalArgumentException();
+        }
+        Properties props = init();
+        props.setProperty(key, value);
+        URL url = Config.class.getClassLoader().getResource(CONFIG_FILE_NAME);  
+        String path = url.getPath();  
+        Writer writer = new FileWriter(path);
+        props.store(writer, "");
     }
 }

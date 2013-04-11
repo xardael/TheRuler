@@ -20,58 +20,57 @@
 		
 		
 	    <ul class="breadcrumb">
-			<li>Installation</li>
+			<li>Database installation</li>
             </ul>
 
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div>
-        <p>This will <code>install</code> and configure database for TheRuler.</p>
-        
-          <a href="#" class="btn btn-large btn-danger" data-toggle="popover" title="A Title" data-content="And here's some amazing content. It's very engaging. right?">Click to toggle popover</a>
-      </div>
 
-      <form class="form-horizontal" id="installForm" method="post" action="${rc.contextPath}/doInstall" name="config">
+      <form class="form-horizontal validate" id="installForm" method="post" action="${rc.contextPath}/doInstall" name="config">
           <div class="control-group" id="test">
             <label class="control-label" for="inputHost">Host:</label>
             <div class="controls">
                 <input type="text" class="required" id="inputHost" name="inputHost" placeholder="eg. localhost/database">
-                <span class="help-inline hidden">Please correct the error</span>
+                <span class="help-inline"></span>
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="inputUser">User:</label>
             <div class="controls">
-                <input type="text" id="inuptUser" name="inputUser" placeholder="eg. admin">
+                <input type="text" class="required" id="inuptUser" name="inputUser" placeholder="eg. admin">
+                <span class="help-inline"></span>
             </div>
         </div>
         
     <div class="control-group">
     <label class="control-label" for="inputPassword">Password:</label>
     <div class="controls">
-    <input type="password" id="inputPassword"  name="inputPass" placeholder="eg. w84gSAb2-kMN">
+    <input type="password" class="required" id="inputPassword"  name="inputPass" placeholder="eg. w84gSAb2-kMN">
+    <span class="help-inline"></span>
     </div>
     </div>
         
         <div class="control-group">
             <label class="control-label" for="inputName">Database Name:</label>
             <div class="controls">
-                <input type="text" id="inuptName"  name="inputName" placeholder="eg. grammars">
-                <span class="help-inline"><span class="label label-warning">Warning!</span> If database already exists, it will be overwritten.</span>
+                <input type="text" class="required" id="inuptName"  name="inputName" placeholder="eg. grammars">
+                <span class="help-inline"></span>
+                <div style="margin-top: 10px"><span class="label label-warning">Warning!</span> If database already exists, it will be overwritten.</div>
             </div>
+            
         </div>
         
+          
+          
         <div class="control-group">
             <label class="control-label" for="inputPort">Port:</label>
             <div class="controls">
-                <input type="text" id="inuptPort"  name="inputPort" placeholder="eg. 1984" value="1984">
+                <input type="text" class="required" id="inuptPort"  name="inputPort" placeholder="eg. 1984" value="1984">
+                <span class="help-inline"></span>
             </div>
         </div>
 
     <div class="control-group">
         <div class="controls">
-            <button type="submit" class="btn btn-primary">Install</button>
-            <input type="submit" class="btn btn-primary" value="t">
-            
+            <button type="submit" class="btn btn-primary">Install</button>            
         </div>
     </div>
     
