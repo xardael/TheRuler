@@ -14,7 +14,7 @@
       <!-- Main hero unit for a primary marketing message or call to action -->
       <div>
           <b><@spring.message "test"/>  ${rc.getMessage("test")}</b>
-        <p>Maecenas rhoncus, lorem vel lobortis tincidunt, justo nisl pulvinar ipsum, eget adipiscing erat risus a quam. Sed malesuada massa imperdiet erat pretium quis fermentum nulla molestie. Pellentesque fermentum mollis nisl vel adipiscing. Aliquam ac convallis lacus. Sed vel turpis erat. Praesent non purus quis arcu sagittis facilisis. Duis lacinia accumsan eros, eget convallis tortor congue vitae. Aliquam erat volutpat. Phasellus dictum tempus tellus a venenatis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rutrum malesuada velit eget malesuada.
+        <p>ľščťžýáíéäúô Maecenas rhoncus, lorem vel lobortis tincidunt, justo nisl pulvinar ipsum, eget adipiscing erat risus a quam. Sed malesuada massa imperdiet erat pretium quis fermentum nulla molestie. Pellentesque fermentum mollis nisl vel adipiscing. Aliquam ac convallis lacus. Sed vel turpis erat. Praesent non purus quis arcu sagittis facilisis. Duis lacinia accumsan eros, eget convallis tortor congue vitae. Aliquam erat volutpat. Phasellus dictum tempus tellus a venenatis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rutrum malesuada velit eget malesuada.
         Vivamus at quam vel nisi semper vestibulum et eget enim. Mauris in lorem sed ante ultricies vulputate ac in eros. </p>
         <p><b>test ${rc.contextPath}</b></p>
       </div>

@@ -5,7 +5,8 @@
     <title>The Ruler</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="author" content="Peter Gren">
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 
     <!-- Le styles -->
     <link href="${rc.contextPath}/res/css/bootstrap.min.css" rel="stylesheet">

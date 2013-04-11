@@ -59,6 +59,20 @@
                 }
             });
             
+            $('[name="ruleAdd"]').submit(function() {
+                if ($.trim($('[name="ruleId"]').val()).length == 0) {
+                    bootbox.alert("Rule name must not by emtpy.");
+                    return false;
+                }
+            });
+            
+            $(".noempty").closest("form").submit(function() {
+                if ($.trim($('[name="name"]').val()).length == 0) {
+                    bootbox.alert("Grammar name must not by emtpy.");
+                    return false;
+                }
+            });
+            
             $(".delete").click( function(e) {
                 var href = $(this).attr('href');
                 e.preventDefault();

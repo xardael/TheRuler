@@ -69,7 +69,8 @@ public class DefaultController {
             if (request.getParameter("search") != null) {
                 search = true;
                 if (request.getParameter("name").equals("")) {
-                    throw new IllegalArgumentException();
+                    //throw new IllegalArgumentException();
+                    return "redirect:/grammar/" + id;
                 }        
             }
 
