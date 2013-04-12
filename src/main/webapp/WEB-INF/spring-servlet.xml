@@ -19,11 +19,22 @@
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
         <property name="templateLoaderPath" value="/WEB-INF/ftl/"/>
         <property name="freemarkerSettings">
-        <props>
-            <prop key="default_encoding">UTF-8</prop>
-            <prop key="auto_import">spring.ftl as spring</prop>
-        </props>
-   </property>
+            <props>
+                <prop key="default_encoding">UTF-8</prop>
+                <prop key="auto_import">spring.ftl as spring</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+                <props>
+                        <prop key="TheRuler.Exceptions.GenericException">
+                                errors/generic
+                        </prop>
+                        <prop key="java.lang.Exception">errors/error</prop>
+                </props>
+        </property>
     </bean>
 
     <!-- 

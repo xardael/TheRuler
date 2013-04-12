@@ -32,7 +32,7 @@
       <div class="row">
           <div class="span12">
               <div class="well">
-                <p><span class="label label-info">Heads up!</span>  ${gm.description!"No description."}</p>
+                ${gm.description!"No description."}
               </div>
           </div>
       </div>

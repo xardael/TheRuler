@@ -47,16 +47,17 @@
 
 	  <div class="row">
 		<div class="span4">
-			<h4 style="padding-top: 0">
+			<h3 style="padding-top: 0">
+                            <button type="button" class="btn btn-small" id="collapseBtn" style="margin-bottom: 5px;" data-toggle="tooltip" title="Toggle all"><i class="icon-chevron-down" style=""></i></button>
                             <#if search == false>
                             Rules
                             <#else>
                             Search Results
                             </#if>  
-                        </h4>
+                        </h3>
 		</div>
     <div class="span4">
-      <form name="ruleAdd" method="Post" action="${rc.contextPath}/rule-add" class="form-inline pull-right" style="margin: 15px 0 0 0">
+      <form name="ruleAdd" method="post" action="${rc.contextPath}/rule-add" class="form-inline pull-right" style="margin: 15px 0 0 0">
         <input type="hidden" name="grammarId" value="${gm.id}">
         <input type="text" name="ruleId" placeholder="New rule name...">
         <button type="submit" class="btn">New Rule</button>
@@ -65,7 +66,7 @@
     <div class="span4">
       <form name="ruleSearch" method="GET" class="form-inline pull-right" style="margin: 15px 0 0 0">
              <input type="hidden" name="search" value="true">
-             <input type="text" name="name" placeholder="Search for a Rule..." 
+             <input type="text" name="name" placeholder="Search for a rule..." 
                     <#if search == true>
                             value="${searchString}"
                             </#if>  
@@ -78,19 +79,22 @@
       
       <div class="row">
           <div class="span12">
+                <#if (search == true) && (rules?size == 0)>
+                <div class="alert"><strong>No results.</strong></div>
+                </#if>  
               <div class="accordion" id="accordion">
-                <table style="width: 100%">
+                <table id="rules" style="width: 100%">
                     <#list rules as rule>  
                     <tr>
                         <td style="width: 100%;">
                             <div class="accordion-group">
 
                                     <div class="accordion-heading">
-                                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse${rule.id}">
+                                        <a class="accordion-toggle" href="${rc.contextPath}/grammar/${gm.id}/rule/${rule.id}">
                                         ${rule.id}
                                         </a>  
                                     </div>
-                                    <div id="collapse${rule.id}" class="accordion-body collapse">
+                                    <div id="collapse${rule.id}" class="accordion-body collapse mcollapse">
                                         <div class="accordion-inner">
                                         <pre>${rule.content?html}</pre>
                                         </div>
@@ -101,7 +105,7 @@
                         <td style="vertical-align: top !important;">
                             <div class="btn-group pull-right" style="height: 32px;">
                                 <a class="btn btn-small" style="height: 100%; width: 22px;" href="${rc.contextPath}/grammar/${gm.id}/rule/${rule.id}"><i class="icon-edit" style="margin-top: 6px;"></i></a>
-                                <a class="btn btn-small" style="height: 100%; width: 22px;" href="${rc.contextPath}/delete-rule/${gm.id}/${rule.id}"><i class="icon-remove" style="margin-top: 6px;"></i></a>
+                                <a class="btn btn-small delete" style="height: 100%; width: 22px;" href="${rc.contextPath}/delete-rule/${gm.id}/${rule.id}"><i class="icon-remove" style="margin-top: 6px;"></i></a>
                             </div>
                         </td>
                     </tr>

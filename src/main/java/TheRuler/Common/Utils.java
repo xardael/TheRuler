@@ -108,4 +108,8 @@ public class Utils {
             return false;
         }
     }
+    
+    public static void t() throws NullPointerException {
+        throw new NullPointerException("Skvele");
+    }
 }

@@ -3,6 +3,8 @@ package TheRuler.Web;
 import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
+import TheRuler.Exceptions.GenericException;
+import TheRuler.Exceptions.ResourceNotFoundException;
 import TheRuler.Model.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -35,6 +37,13 @@ public class DefaultController {
 	 */
 	@RequestMapping("/")
 	public String index(ModelMap model) throws IOException{
+//            try {
+//                Utils.t();
+//            } catch (NullPointerException e) {
+//                org.apache.log4j.Logger.getLogger(GrammarManagerBaseXImpl.class.getName()).error( "failed!", e );
+//                throw new  NullPointerException("b;a");
+//            }
+            
 
                 BaseXClient baseXClient = Utils.connectToBaseX();
                 
@@ -455,11 +464,19 @@ public class DefaultController {
         }
 
         @RequestMapping(value = "/doInstall", method = RequestMethod.POST)
-        public String install(ModelMap model, HttpServletRequest request) {
+        public String doInstall(ModelMap model, HttpServletRequest request) {
 //            if (request.getParameter("ruleId") == null || request.getParameter("ruleId").equals("") 
 //             || request.getParameter("grammarId") == null || request.getParameter("grammarId").equals("")) {
 //                throw new IllegalArgumentException();
 //            }
+            
+            try {
+                if (Boolean.parseBoolean(Config.getValue(Config.C_DB_INST))) {
+                    //throw new ResourceNotFoundException();
+                }
+            } catch (IOException ioe) {
+
+            }
 
             String host = request.getParameter("inputHost");
             String user = request.getParameter("inputUser");
@@ -469,7 +486,7 @@ public class DefaultController {
             try {
                 // If DB is already seted as installed - do not process
                 if (Boolean.parseBoolean(Config.getValue(Config.C_DB_INST))) {
-                    //throw new ResourceNotFoundException();
+                    throw new ResourceNotFoundException();
                 }
                 
                 Config.setValue(Config.C_DB_HOST, host);
@@ -488,26 +505,27 @@ public class DefaultController {
                 Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
             } catch (Exception e) {
                 String s = e.getMessage();
-                e.printStackTrace();
-                
             }
-//            try {
-//                // Set DB asi installed into properties file
-//
-//                //Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
-//            } catch (IOException ex) {
-//                Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+            try {
+                // Set DB asi installed into properties file
+
+                Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
+            } catch (IOException ex) {
+                Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
             return "redirect:/";
         }
         
         @RequestMapping(value = "/install", method = RequestMethod.GET)
 	public String install(ModelMap model) {
-//            if (request.getParameter("ruleId") == null || request.getParameter("ruleId").equals("") 
-//             || request.getParameter("grammarId") == null || request.getParameter("grammarId").equals("")) {
-//                throw new IllegalArgumentException();
-//            }
+            try {
+                if (Boolean.parseBoolean(Config.getValue(Config.C_DB_INST))) {
+                    throw new ResourceNotFoundException();
+                }
+            } catch (IOException ioe) {
+
+            }
 
             return "install";
         }

@@ -54,7 +54,7 @@
           <div class="nav-collapse collapse pull-right">
 
             <ul class="nav">
-              <li class="active"><a href="${rc.contextPath}/">Home</a></li>
+              <li><a href="${rc.contextPath}/">Home</a></li>
               <li><a href="https://github.com/xardael/TheRuler/wiki/_pages">Help</a></li>
               <li><a href="https://github.com/xardael/TheRuler">Feedback</a></li>
               <li><a href="https://github.com/xardael/TheRuler">GitHub</a></li>

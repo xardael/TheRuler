@@ -17,11 +17,11 @@
     
      <script type="text/javascript">
          
-//        $(document).ready(function() {
-//            bootbox.confirm("Are you sure?", function(result) {
-//Example.show("Confirm result: "+result);
-//}); 
+        $(document).ready(function() {
+            //bootbox.confirm("Are you sure?", function(result) {
+            //Example.show("Confirm result: "+result);
             
+        }); 
             
             //get popover working with attribute
             $(function () {
@@ -117,6 +117,12 @@
                 
                 return isFormValid;
             });
+            
+            $('#collapseBtn').click(function() {
+                $(".mcollapse").collapse('toggle');
+            });
+            
+            
           
     </script>
 
