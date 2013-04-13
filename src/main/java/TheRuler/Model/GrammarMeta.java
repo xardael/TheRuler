@@ -54,7 +54,11 @@ public class GrammarMeta {
 	}
 
 	public String getDate() {
-            return this.date;
+            if (this.date == null) {
+                return "";
+            } else {
+                return this.date;
+            }
 	}
 
 	/**

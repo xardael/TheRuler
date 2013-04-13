@@ -73,7 +73,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             String result = baseXClient.execute("xquery " + insertNodeCommand);
             
             //String grammar = "<grammar xmlns='http://www.w3.org/2001/06/grammar' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.w3.org/2001/06/grammar http://www.w3.org/TR/speech-grammar/grammar.xsd' xml:lang='en-US' version='1.0'></grammar>";
-            String grammar = "<grammar><rule id='EmptyRule'></rule></grammar>";
+            String grammar = "<grammar></grammar>";
             
             InputStream bais = new ByteArrayInputStream(grammar.getBytes("UTF-8"));
             
@@ -163,7 +163,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             grammarMeta.setId(Long.parseLong(grammarId));
             grammarMeta.setName(name);
             grammarMeta.setDescription(description);
-            grammarMeta.setDate(Utils.convertGmtStringToLocaleString(dateString));
+            grammarMeta.setDate(dateString);
         
         
             return grammarMeta;
@@ -226,15 +226,16 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 	 * 
 	 * @param grammar
 	 */
-	public void updateGrammar(Grammar grammar) {
-		throw new UnsupportedOperationException();
+	public void updateGrammar(Grammar grammar) throws IOException{
+		updateGrammarMeta(grammar.getMeta());
+                updateGrammarContent(grammar);
 	}
 
 	/**
 	 * 
 	 * @param grammarMeta
 	 */
-	public void updateGrammarMeta(TheRuler.Model.GrammarMeta grammarMeta) throws Exception{
+	public void updateGrammarMeta(TheRuler.Model.GrammarMeta grammarMeta) throws IOException{
             if (grammarMeta == null) {
                 throw new IllegalArgumentException();
             } else if (grammarMeta.getId() == null || grammarMeta.getName() == null) {
@@ -271,7 +272,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 	 * 
 	 * @param grammar
 	 */
-	public void updateGrammarContent(TheRuler.Model.Grammar grammar) throws Exception{
+	public void updateGrammarContent(TheRuler.Model.Grammar grammar) throws IOException{
             if (grammar == null) {
                 throw new IllegalArgumentException();
             } else if (grammar.getMeta().getId() == null) {
@@ -300,7 +301,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 	 * 
 	 * @param grammarMeta
 	 */
-	public void deletaGrammar(GrammarMeta grammarMeta) throws Exception{
+	public void deletaGrammar(GrammarMeta grammarMeta) throws IOException{
             if (grammarMeta == null) {
                 throw new IllegalArgumentException();
             } else if (grammarMeta.getId() == null) {

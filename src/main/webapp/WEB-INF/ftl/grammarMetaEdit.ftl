@@ -29,8 +29,9 @@
 
     <div class="row">
         <div class="span12">
-            <form name="gm" method="post" action="${rc.contextPath}/save-grammar">
+            <form name="grammar" method="post" action="${rc.contextPath}/save-grammar">
                 <input type="hidden" name="id" value="${gm.id}">
+                <input type="hidden" name="date" value="${gm.date}">
                 <div class="control-group">
                     <label class="control-label" for="name">Name: </label>
                     <div class="controls">
@@ -38,35 +39,29 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <label class="control-label" for="date">Description: </label>
+                    <label class="control-label" for="description">Description: </label>
                     <div class="controls">
                         <textarea name="description" rows="5" class="span6">${(gm.description)!""}</textarea>
                     </div>
                 </div>
 
-                <div class="form-actions">
-
-
-                    <button type="submit" class="btn  btn-primary">Save changes</button>
+                <div class="control-group">
+                    <label class="control-label" for="date">Content: </label>
+                    <div class="controls">
+                        <textarea name="content" id="content" rows="15" style="width: 99%">${grammar.content}</textarea>
+                    </div>
                 </div>
+        
+
+            <div class="form-actions">
+            <a class="btn pull-left" href="#">Insert ruleref</a>
+          
+            <button type="submit" class="btn pull-right btn-primary">Save changes</button>
+            <button type="button" class="btn pull-right discard" style="margin: 0 20px 0 0;">Cancel</button>
+            </div>
             </form>
         </div>            
     </div>
 
-
-
-    <form name="grammar" class="form-horizontal pull-left" method="post" action="${rc.contextPath}/save-grammar-content">
-            <input name="meta.id" type="hidden" value="${gm.id}" />
-	  <textarea name="content" rows="15" style="width: 99%">${grammar.content}</textarea>
-        
-
-            <div class="container">
-            <a class="btn pull-left" href="#">Insert ruleref</a>
-
-            <button type="submit" class="btn pull-right">Save</button>
-            <a class="pull-right" style="margin: 5px 20px 0 0;" href="#">Discard changes</a>
-            </div>
-    </form>
-    
     <div>&nbsp;</div>
 <#include "/layout/footer.ftl">

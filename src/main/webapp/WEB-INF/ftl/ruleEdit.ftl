@@ -44,13 +44,13 @@
 	  </div>
         <form name="grammar" method="post" action="${rc.contextPath}/save-grammar-content">
             <input name="meta.id" type="hidden" value="${gm.id}" />
-	  <textarea name="content" rows="20" style="width: 99%">${rule.content}</textarea>
+            <textarea name="content" id="content" rows="20" style="width: 99%">${rule.content}</textarea>
           
       <div class="form-actions">
             <a class="btn pull-left" href="#">Insert ruleref</a>
           
             <button type="submit" class="btn pull-right btn-primary">Save changes</button>
-            <button type="button" class="btn pull-right" style="margin: 0 20px 0 0;">Cancel</button>
+            <button type="button" class="btn pull-right discard" style="margin: 0 20px 0 0;">Cancel</button>
        </div>
 
         </form>          
@@ -130,37 +130,20 @@
         }
         
 </script>
-
-
-<table>
-            <tr><td>Enter your name : </td><td> <input type="text" id="name"><br/></td></tr>
-            <tr><td>Education : </td><td> <input type="text" id="education"><br/></td></tr>
-            <tr><td colspan="2"><input type="button" value="Add Users" onclick="checkAvailability()"><br/></td></tr>
-            <tr><td colspan="2"><div id="info" style="color: green;"></div></td></tr>
-        </table>
-        <a href="/AjaxWithSpringMVC2Annotations/ShowUsers.htm">Show All Users</a>
-
-
-
-
-          
-          
-    <div class="alert alert-info">
-            <strong>Heads up!</strong>
-            Navbar links must have resolvable id targets. For example, a <code>&lt;a href="#home"&gt;home&lt;/a&gt;</code> must correspond to something in the dom like <code>&lt;div id="home"&gt;&lt;/div&gt;</code>.
-          </div>
      
+          
+
     <!-- Button to trigger modal -->
-    <a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>
-     $('#myModal').modal('toggle')
-    <!-- Modal -->
+<!--    <a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>
+     $('#myModal').modal('toggle')-->
+    <!-- Modal to see validation resulsts -->
     <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Bla</button>
             <h3 id="myModalLabel">Modal header</h3>
         </div>
         <div class="modal-body">
-            <p>One fine body�</p>
+            <p>One fine body</p>
         </div>
         <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>

@@ -16,11 +16,17 @@
     
     
      <script type="text/javascript">
+        
+        var toggle = 0;
          
         $(document).ready(function() {
             //bootbox.confirm("Are you sure?", function(result) {
             //Example.show("Confirm result: "+result);
             
+            $('#content').each(function() {
+                $this = $(this);
+                $this.data('defaultval', $this.val());
+            });
         }); 
             
             //get popover working with attribute
@@ -33,8 +39,6 @@
                     selector: 'a[rel="tooltip"], [data-toggle="tooltip"]'
                 });
             });
-            
-            $(".alert").alert()
             
             // Validate form fields in install form 
             $("#AinstallForm").blur(function(){
@@ -86,6 +90,19 @@
                 
             });
             
+            $(".discard").click( function(e) {
+                if ($('#content').val() != $('#content').data('defaultval')) {
+                    bootbox.confirm("Do you really want to discard changes?", function(result) {
+                        if (result == true) {
+                            $('#content').val($('#content').data('defaultval'));
+                        }
+                    }); 
+
+                    
+                    
+                }
+            });
+            
             $('#AinstallForm').submit(function() {
                 if ($.trim($("input:first").val()).length == 0) {
                     $("input:first").parent().addClass("error");
@@ -119,6 +136,15 @@
             });
             
             $('#collapseBtn').click(function() {
+                if (toggle % 2 == 0) {
+                    $('i', this).removeClass('icon-chevron-down');
+                    $('i', this).addClass('icon-chevron-up');
+                } else {
+                    $('i', this).removeClass('icon-chevron-up');
+                    $('i', this).addClass('icon-chevron-down');
+                }
+                
+                toggle++;
                 $(".mcollapse").collapse('toggle');
             });
             

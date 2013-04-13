@@ -149,9 +149,9 @@ public class DefaultController {
 	}
 
         @RequestMapping(value= "/save-grammar", method = RequestMethod.POST)
-        public String saveGrammar(@ModelAttribute("user") GrammarMeta gm) {
+        public String saveGrammar(Grammar grammar) {
             
-            if (gm == null) {
+            if (grammar == null) {
                 throw new IllegalArgumentException();
             }
 
@@ -162,9 +162,9 @@ public class DefaultController {
                 GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
                 grammarManager.setBaseXClient(baseXClient);
             
-                grammarManager.updateGrammarMeta(gm);
+                grammarManager.updateGrammar(grammar);
             
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             } finally {
                 if (baseXClient != null) {
@@ -179,7 +179,7 @@ public class DefaultController {
              
             //model.addAttribute("cv", initedCvDocument.getCv());
             //return "redirect:/grammar/" + gm.getId();
-            return "redirect:/edit-grammar/" + gm.getId();
+            return "redirect:/edit-grammar/" + grammar.getMeta().getId();
         }
         
         @RequestMapping(value= "/save-grammar-content", method = RequestMethod.POST)

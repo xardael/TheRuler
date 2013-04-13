@@ -48,7 +48,7 @@
 	  <div class="row">
 		<div class="span4">
 			<h3 style="padding-top: 0">
-                            <button type="button" class="btn btn-small" id="collapseBtn" style="margin-bottom: 5px;" data-toggle="tooltip" title="Toggle all"><i class="icon-chevron-down" style=""></i></button>
+                            <button type="button" class="btn btn-small" id="collapseBtn" style="margin-bottom: 5px;" title="Toggle all"><i class="icon-chevron-down" style=""></i></button>
                             <#if search == false>
                             Rules
                             <#else>
@@ -79,9 +79,16 @@
       
       <div class="row">
           <div class="span12">
-                <#if (search == true) && (rules?size == 0)>
-                <div class="alert"><strong>No results.</strong></div>
-                </#if>  
+              <#if rules?size == 0>
+                
+                <div class="alert"><strong>
+                        <#if (search == true)>
+                            No results.
+                         <#else>
+                            No rules.    
+                        </#if>  
+                </strong></div>
+              </#if>
               <div class="accordion" id="accordion">
                 <table id="rules" style="width: 100%">
                     <#list rules as rule>  
@@ -104,7 +111,6 @@
                         </td>
                         <td style="vertical-align: top !important;">
                             <div class="btn-group pull-right" style="height: 32px;">
-                                <a class="btn btn-small" style="height: 100%; width: 22px;" href="${rc.contextPath}/grammar/${gm.id}/rule/${rule.id}"><i class="icon-edit" style="margin-top: 6px;"></i></a>
                                 <a class="btn btn-small delete" style="height: 100%; width: 22px;" href="${rc.contextPath}/delete-rule/${gm.id}/${rule.id}"><i class="icon-remove" style="margin-top: 6px;"></i></a>
                             </div>
                         </td>
