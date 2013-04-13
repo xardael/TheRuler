@@ -29,11 +29,13 @@ import org.springframework.web.bind.annotation.*;
 import org.xml.sax.SAXException;
 
 /**
+ * Controller for handling AJAX requests
  * 
  * @author pyty
  */
 @Controller
 public class AjaxController {
+    
     
     @RequestMapping(value="/ajax/availability", method=RequestMethod.GET)
     public @ResponseBody GrammarMeta getAvailability(@RequestParam String name) {
@@ -44,6 +46,13 @@ public class AjaxController {
         return gm;
     }
     
+    /**
+     * Find rules. Provides insert ruleref functionality.
+     * 
+     * @param grammarId
+     * @param searchText
+     * @return JSON formated collection of strings
+     */
     @RequestMapping(value="/ajax/findRules", method=RequestMethod.POST)
     public @ResponseBody List<String> findRules(@RequestParam Long grammarId, @RequestParam String searchText) {
         GrammarMeta gm = new GrammarMeta();
@@ -69,6 +78,12 @@ public class AjaxController {
         return ids;
     }
     
+    /**
+     * Validate posted XML and return String AJAX response
+     * 
+     * @param content xml string to validate
+     * @return true if is content is valid, otherwise returns validation error
+     */
     @RequestMapping(value="/ajax/validateXml", method=RequestMethod.POST)
     public @ResponseBody String validateXml(@RequestParam String content) {
         String result = "false";

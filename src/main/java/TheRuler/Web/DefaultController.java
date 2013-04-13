@@ -22,6 +22,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 /**
+ * Controller for handling standard requests
  * 
  * @author pyty
  */

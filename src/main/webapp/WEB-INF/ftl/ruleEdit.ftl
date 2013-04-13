@@ -48,7 +48,7 @@
           
             <div class="form-actions">
                 <button type="button" class="btn" id="insertRuleref" data-toggle="modal"><i class="icon-plus-sign"></i> Insert ruleref</button>
-                <button type="button" class="btn" id="validateXml" style="margin: 0 0 0 10px;" data-loading-text='<img src="${rc.contextPath}/res/img/loading_spinner.gif" width="15" height="15" alt=""> Validating...'><i class="icon-warning-sign"></i> Check XML format</button>
+<!--                <button type="button" class="btn" id="validateXml" style="margin: 0 0 0 10px;" data-loading-text='<img src="${rc.contextPath}/res/img/loading_spinner.gif" width="15" height="15" alt=""> Validating...'><i class="icon-warning-sign"></i> Check XML format</button>-->
 
                 <button type="submit" class="btn pull-right btn-primary">Save changes</button>
                 <button type="button" class="btn pull-right discard" style="margin: 0 10px 0 0;">Cancel</button>

@@ -1,7 +1,7 @@
 The Ruler
 =========
 
-An application for easy SRGS grammars management. Version 1.0
+An application for easy SRGS grammars management. Version 1.0. [Documentation (SK)](https://github.com/xardael/TheRuler/wiki)
 
 
 License
