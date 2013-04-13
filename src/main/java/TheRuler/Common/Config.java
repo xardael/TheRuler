@@ -12,6 +12,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * @author pyty
  */
 public class Config {
+    
 
     /**
      * Load properties from file. 
@@ -28,6 +29,7 @@ public class Config {
     /*
      * Constants 
      */
+    public static final String GRAMMAR_ROOT_NAME = "<grammar></grammar>";
     public static final String GRAMMARS_ROOT_NAME = "<grammars></grammars>";
     public static final String GRAMMARS_FILE_NAME = "Meta.xml";
     public static final String CONFIG_FILE_NAME = "config.properties";

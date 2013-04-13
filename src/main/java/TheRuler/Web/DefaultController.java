@@ -139,8 +139,13 @@ public class DefaultController {
 
                 Grammar grammar = grammarManager.findGrammar(Long.parseLong(id));
                 
+                RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
+                ruleManager.setBaseXClient(baseXClient);
+                List<Rule> rules = ruleManager.findAllRules(gm);
+                
                 model.addAttribute("gm", gm);
                 model.addAttribute("grammar", grammar);
+                model.addAttribute("rules", rules);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -415,9 +420,11 @@ public class DefaultController {
 
                 GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(grammarId));
                 Rule rule = ruleManager.findRuleById(ruleId, gm);
+                List<Rule> rules = ruleManager.findAllRules(gm);
 
                 model.addAttribute("gm", gm);
                 model.addAttribute("rule", rule);
+                model.addAttribute("rules", rules);
                 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -532,7 +539,7 @@ public class DefaultController {
         
         @RequestMapping(value = "/export/{grammarId}", method = RequestMethod.GET, produces="text/plain;charset=UTF-8")
         @ResponseBody
-        public String plaintext(HttpServletResponse response, @PathVariable Long grammarId) {
+        public String export(HttpServletResponse response, @PathVariable Long grammarId) {
             response.setHeader("Content-Disposition", "attachment;filename=\"export.xml\"");
             if (grammarId == null || grammarId == 0) {
                 throw new IllegalArgumentException();

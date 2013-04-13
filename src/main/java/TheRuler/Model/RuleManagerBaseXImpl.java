@@ -11,10 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * 
@@ -64,7 +67,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
 	 * @param grammarMeta
 	 */
 	public Rule findRuleById(String id, GrammarMeta grammarMeta) throws Exception {
-            if (id == null || grammarMeta == null || grammarMeta.getId() == null) {
+            if (id == null || grammarMeta == null || grammarMeta.getId() == null || baseXClient == null) {
                 throw new IllegalArgumentException();
             }
             
@@ -122,7 +125,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
 	 * @param id
 	 * @param grammarMeta
 	 */
-	public List<Rule> findAllRulesById(String id, GrammarMeta grammarMeta) throws Exception {
+	public List<Rule> findAllRulesById(String id, GrammarMeta grammarMeta) throws IOException, ParserConfigurationException, SAXException, TransformerException {
 		BaseXClient.Query query = baseXClient.query("<rules> " +
                                                         "{for $rule in doc('" + Config.getValue(Config.C_DB_NAME) + "/" + grammarMeta.getId() +  ".xml')//rule[contains( " +
                                                         "translate(@id,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') " +

@@ -39,19 +39,20 @@
 
 	  <div class="row">
 		<div class="span12">
-			<h3 style="padding-top: 0">${rule.id}</h3>
+                    <h3 style="padding-top: 0"><span style="font-weight: normal;">Rule:</span> ${rule.id}</h3>
 		</div>		
 	  </div>
         <form name="grammar" method="post" action="${rc.contextPath}/save-grammar-content">
             <input name="meta.id" type="hidden" value="${gm.id}" />
             <textarea name="content" id="content" rows="20" style="width: 99%">${rule.content}</textarea>
           
-      <div class="form-actions">
-            <a class="btn pull-left" href="#">Insert ruleref</a>
-          
-            <button type="submit" class="btn pull-right btn-primary">Save changes</button>
-            <button type="button" class="btn pull-right discard" style="margin: 0 20px 0 0;">Cancel</button>
-       </div>
+            <div class="form-actions">
+                <button type="button" class="btn" id="insertRuleref" data-toggle="modal"><i class="icon-plus-sign"></i> Insert ruleref</button>
+                <button type="button" class="btn" id="validateXml" style="margin: 0 0 0 10px;" data-loading-text='<img src="${rc.contextPath}/res/img/loading_spinner.gif" width="15" height="15" alt=""> Validating...'><i class="icon-warning-sign"></i> Check XML format</button>
+
+                <button type="submit" class="btn pull-right btn-primary">Save changes</button>
+                <button type="button" class="btn pull-right discard" style="margin: 0 10px 0 0;">Cancel</button>
+           </div>
 
         </form>          
         
@@ -130,26 +131,5 @@
         }
         
 </script>
-     
-          
-
-    <!-- Button to trigger modal -->
-<!--    <a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>
-     $('#myModal').modal('toggle')-->
-    <!-- Modal to see validation resulsts -->
-    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Bla</button>
-            <h3 id="myModalLabel">Modal header</h3>
-        </div>
-        <div class="modal-body">
-            <p>One fine body</p>
-        </div>
-        <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary">Save changes</button>
-        </div>
-    </div>
-    
-
+ 
 <#include "/layout/footer.ftl">

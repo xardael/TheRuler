@@ -7,6 +7,57 @@
 
     </div> <!-- /container -->
 
+    
+    <!-- Modal to see validation resulsts
+    ================================================== -->
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <h3 id="myModalLabel">Validation result</h3>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
+    
+    <!-- Modal to insert ruleref
+    ================================================== -->
+    <div id="rulerefModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <h3 id="myModalLabel">Insert ruleref</h3>
+        </div>
+        <div class="modal-body">
+            <form id="ruleSearchForm">
+                <div class="input-append">
+                    <input type="hidden" value="${gm.id}" name="grammarId" id="grammarId" >
+                    <input type="text" class="span3" id="ruleSearchText">
+                    <button type="submit" class="btn" id="ruleSearchButton"><i class="icon-search"></i></button>
+                </div>
+            </form>
+            <ul class="unstyled" id="ruleList">
+                <#if rules??>
+                    <#if rules?size != 0>
+                        <#list rules as rule>
+                        <li><buton class="btn btn-link insert">${rule.id}</button></li>
+                        </#list>
+                    </#if>
+                </#if>
+            </ul>
+            <#if rules??>
+                    <#if rules?size == 0>
+                        <div class="alert" id="noRules">No rules.</div>
+                    <#else>
+                        <div class="alert hidden" id="noResultAlert">No results.</div>
+                    </#if>
+            </#if>
+            
+        </div>
+        <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
+    
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -158,12 +209,75 @@
                 }).done(function( msg ) {
                     btn.button('reset');
                     if (msg == 'true') {
-                        $('.modal-body').html('<div class="alert alert-success"><strong>Well done!</strong> The document is valid SRGS grammar.</div>');
+                        $('#myModal .modal-body').html('<div class="alert alert-success"><strong>Well done!</strong> The document is valid SRGS grammar.</div>');
                     } else {
-                        $('.modal-body').html('<div class="alert alert-error"><strong>Error!</strong> The document is not valid.</div><p>' + msg + '</p>');
+                        $('#myModal .modal-body').html('<div class="alert alert-error"><strong>Error!</strong> The document is not valid.</div><p>' + msg + '</p>');
                     }
                     $('#myModal').modal('toggle');
             });
+        });
+        
+        /*
+         * Displays windows with rulerefs to insert
+         */
+        $('#insertRuleref').click(function () {
+            $('#rulerefModal').modal('toggle');
+        });
+        
+        
+        $('.insert').click(function() {
+           insert(this.innerHTML);
+        });
+        
+        function insert(value) {
+           $('#content').insertAtCaret('<ruleref uri="#' + value + '"/>');
+           $('#rulerefModal').modal('toggle');
+        }
+        
+        $.fn.insertAtCaret = function(myValue) {
+            return this.each(function() {
+                    var me = this;
+                    if (document.selection) { // IE
+                            me.focus();
+                            sel = document.selection.createRange();
+                            sel.text = myValue;
+                            me.focus();
+                    } else if (me.selectionStart || me.selectionStart == '0') { // Real browsers
+                            var startPos = me.selectionStart, endPos = me.selectionEnd, scrollTop = me.scrollTop;
+                            me.value = me.value.substring(0, startPos) + myValue + me.value.substring(endPos, me.value.length);
+                            me.focus();
+                            me.selectionStart = startPos + myValue.length;
+                            me.selectionEnd = startPos + myValue.length;
+                            me.scrollTop = scrollTop;
+                    } else {
+                            me.value += myValue;
+                            me.focus();
+                    }
+            });
+        };
+        
+        /*
+         * Get filtered rules and display them into insert ruleref dialog
+         */
+        $('#ruleSearchForm').submit(function() {
+            $.ajax({
+                type: "POST",
+                url: "${rc.contextPath}/ajax/findRules",
+                data: { searchText: $('#ruleSearchText').val(), grammarId: $('#grammarId').val()},
+                dataType: "JSON"
+                }).done(function(data) {
+                    $('#ruleList').empty();
+                    if(data.length == 0) {
+                        $('#noResultAlert').removeClass('hidden');
+                    } else {
+                        $('#noResultAlert').addClass('hidden');
+                        $.each(data, function(index) {
+                            $('#ruleList').append('<li><buton class="btn btn-link insert" onclick="insert(this.innerHTML);">' + data[index] + '</button></li>');
+                        });
+                    }
+            });
+            
+            return false;
         });
           
     </script>

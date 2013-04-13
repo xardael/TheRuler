@@ -30,6 +30,8 @@ package TheRuler.Web;
 
 import TheRuler.Common.Utils;
 import TheRuler.Model.GrammarMeta;
+import TheRuler.Model.Rule;
+import TheRuler.Model.RuleManagerBaseXImpl;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -43,6 +45,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.XMLConstants;
 import javax.xml.bind.Validator;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -67,6 +70,31 @@ public class AjaxController {
             gm.setName(name);
         }
         return gm;
+    }
+    
+    @RequestMapping(value="/ajax/findRules", method=RequestMethod.POST)
+    public @ResponseBody List<String> findRules(@RequestParam Long grammarId, @RequestParam String searchText) {
+        GrammarMeta gm = new GrammarMeta();
+        if (grammarId != null) {
+            gm.setId(grammarId);
+        }
+        List<Rule> rules = new ArrayList<Rule>();
+        List<String> ids = new ArrayList<String>();
+        if (searchText != null) {
+            RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
+            try {
+                ruleManager.setBaseXClient(Utils.connectToBaseX());
+                rules = ruleManager.findAllRulesById(searchText, gm);
+                
+                for (Rule rule : rules) {
+                    ids.add(rule.getId());
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        return ids;
     }
     
     @RequestMapping(value="/ajax/validateXml", method=RequestMethod.POST)

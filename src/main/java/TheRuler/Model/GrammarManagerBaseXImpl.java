@@ -286,16 +286,20 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             if (result.equals("false")) {
                 throw new IllegalArgumentException();
             }
+            
+            InputStream bais = new ByteArrayInputStream(Config.GRAMMAR_ROOT_NAME.getBytes("UTF-8"));
    
-            InputStream bais = new ByteArrayInputStream(grammar.getContent().getBytes("UTF-8"));
+            if (!"".equals(grammar.getContent())) {
+                 bais = new ByteArrayInputStream(grammar.getContent().getBytes("UTF-8"));
+            }
             
             try {
                 baseXClient.replace(id + ".xml", bais);
-                System.out.println(baseXClient.info());
             } catch (IOException iOException) {
                 iOException.printStackTrace();
             }
-	}
+            
+        }
 
 	/**
 	 * 

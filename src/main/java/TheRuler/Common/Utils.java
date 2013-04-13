@@ -13,6 +13,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -36,7 +38,7 @@ public class Utils {
         return baseXClient;
     }
     
-    public static String serializeXml(Element element) throws Exception
+    public static String serializeXml(Element element) throws TransformerException
     {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         StreamResult result = new StreamResult(buffer);

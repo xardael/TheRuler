@@ -65,13 +65,15 @@
     </div>
     <div class="span4">
       <form name="ruleSearch" method="GET" class="form-inline pull-right" style="margin: 15px 0 0 0">
+          <div class="input-append">
              <input type="hidden" name="search" value="true">
              <input type="text" name="name" placeholder="Search for a rule..." 
                     <#if search == true>
                             value="${searchString}"
                             </#if>  
              >
-             <button type="submit" class="btn">Search</button>
+             <button type="submit" class="btn"><i class="icon-search"></i></button>
+          </div>
         </form>
     </div>
 		

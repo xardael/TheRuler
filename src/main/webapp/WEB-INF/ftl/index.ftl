@@ -30,7 +30,15 @@
         </form>
       </div>
 	  </div>
-
+<#if grammarMetas?size == 0>
+    <div class="row">
+          <div class="span12">
+              
+                <div class="alert"><strong>No grammars.</strong></div>
+              
+          </div>
+    </div>
+<#else>
     <table class="table table-hover">
       <tr><th>#</th><th>Name</th><th>Description</th><th>Date</th><th></th></tr>
       <#list grammarMetas as gm>
@@ -49,6 +57,9 @@
             </td><td>${gm.date}</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="${rc.contextPath}/export/${gm.id}" title="Export"><i class="icon-share"></i></a><a class="btn btn-small" href="${rc.contextPath}/edit-grammar/${gm.id}" title="Edit"><i class="icon-pencil"></i></a><a class="btn btn-small delete" href="${rc.contextPath}/delete-grammar/${gm.id}" title="Delete"><i class="icon-remove"></i></a></div></td></tr>
       </#list>
     </table>
+
+
+</#if>
 
 <!--        <div class="pagination pagination-centered">
           <ul>

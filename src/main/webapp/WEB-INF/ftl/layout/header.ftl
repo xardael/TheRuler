@@ -5,7 +5,7 @@
     <title>The Ruler</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="An application to SRGS grammar management.">
-    <meta name="author" content="Peter Gren">
+    <meta name="author" content="Peter Gren www.peter.gren.sk">
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
     <link href="${rc.contextPath}/res/css/bootstrap.min.css" rel="stylesheet">
     <link href="${rc.contextPath}/res/css/bootstrap-responsive.min.css" rel="stylesheet">
