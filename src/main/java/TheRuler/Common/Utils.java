@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -78,34 +79,29 @@ public class Utils {
         return dateFormat.format(date);
     }
     
-    public static boolean validate(String xml) throws SAXException, IOException {
+    public static String validate(String xml) throws SAXException, IOException {
         // 1. Lookup a factory for the W3C XML Schema language
-        SchemaFactory factory = 
-        SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+        SchemaFactory factory =  SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
         
         // 2. Compile the schema. 
         // Here the schema is loaded from a java.io.File, but you could use 
         // a java.net.URL or a javax.xml.transform.Source instead.
-        File schemaLocation = new File("/opt/xml/docbook/xsd/docbook.xsd");
-        Schema schema = factory.newSchema(schemaLocation);
+        Schema schema = factory.newSchema(Utils.class.getClassLoader().getResource("grammar-core.xsd"));
         
         // 3. Get a validator from the schema.
         Validator validator = schema.newValidator();
         
-                
-        InputStream stream = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-        
         // 4. Parse the document you want to check.
+        InputStream stream = new ByteArrayInputStream(xml.getBytes("UTF-8"));
         Source source = new StreamSource(stream);
         
         // 5. Check the document
         try {
             validator.validate(source);
-            return true;
+            return "true";
         }
         catch (SAXException ex) {
-            System.out.println(ex.getMessage());
-            return false;
+            return ex.getMessage();
         }
     }
     

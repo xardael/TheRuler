@@ -148,7 +148,23 @@
                 $(".mcollapse").collapse('toggle');
             });
             
-            
+        $('#validateXml').click(function() {
+            var btn = $(this)
+            btn.button('loading');
+            $.ajax({
+                type: "POST",
+                url: "${rc.contextPath}/ajax/validateXml",
+                data: { content: $('#content').val()}
+                }).done(function( msg ) {
+                    btn.button('reset');
+                    if (msg == 'true') {
+                        $('.modal-body').html('<div class="alert alert-success"><strong>Well done!</strong> The document is valid SRGS grammar.</div>');
+                    } else {
+                        $('.modal-body').html('<div class="alert alert-error"><strong>Error!</strong> The document is not valid.</div><p>' + msg + '</p>');
+                    }
+                    $('#myModal').modal('toggle');
+            });
+        });
           
     </script>
 

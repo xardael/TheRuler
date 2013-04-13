@@ -28,8 +28,10 @@
 
 package TheRuler.Web;
 
+import TheRuler.Common.Utils;
 import TheRuler.Model.GrammarMeta;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -57,119 +59,6 @@ import org.xml.sax.SAXException;
  */
 @Controller
 public class AjaxController {
-    public class User {
-
-        private String name = null;
-        private String education = null;
-        // Getter and Setter are omitted for making the code short
-
-        public String getEducation() {
-            return education;
-        }
-
-        public void setEducation(String education) {
-            this.education = education;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-        
-        
-    }
-  
-    
-    private List<User> userList = new ArrayList<User>();
-
-    @RequestMapping(value="/AddUser.htm",method=RequestMethod.GET)
-    public String showForm(){
-        return "AddUser";
-    }
-
-    @RequestMapping(value="/AddUser.htm",method=RequestMethod.POST)
-    public @ResponseBody void addUser(HttpServletResponse response) throws Exception {
-        String returnText = "SuperMan";
-//        if(!result.hasErrors()){
-//            userList.add(user);
-//            returnText = "User has been added to the list. Total number of users are " + userList.size();
-//        }else{
-//            returnText = "Sorry, an error has occur. User has not been added to list.";
-//        }
-        String helloAjax = "<b>Hello Ajax</b>" ; 
-  
-        response.setCharacterEncoding("UTF-8");  
-        response.setContentType("text/html");  
-        response.getWriter().write(helloAjax);  
-    }
-
-    @RequestMapping(value="/ShowUsers.htm")
-    public String showUsers(ModelMap model){
-        model.addAttribute("Users", userList);
-        return "ShowUsers";
-    }
-    
-    
-    
-    @RequestMapping(value="/availaasbility", method=RequestMethod.GET, headers="Accept=application/json")
-    public @ResponseBody GrammarMeta getAvaasilability(@RequestParam String name, @RequestParam String education) {
-        
-        Map<String,Object> json = new HashMap<String, Object>();
-        json.put("Name:", name);
-        json.put("Education ALE:", education);
-        
-        GrammarMeta gm = new GrammarMeta();
-        gm.setName(name);
-        gm.setDescription(education);
-        
-        //new JSONObject(map);
-        
-        return gm;
-    }
-    
-    @RequestMapping(value="/ajax/validation", method = RequestMethod.POST)
-    public @ResponseBody String getAvailabislity(@RequestParam String xml) {
-        try {
-//            URL schemaFile = new URL("http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd");
-//            Source xmlFile = new StreamSource(new File("web.xml"));
-//            SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-//            Schema schema = schemaFactory.newSchema(schemaFile);
-//            Validator validator = schema.newValidator();
-//            try {
-//            validator.validate(xmlFile);
-//            System.out.println(xmlFile.getSystemId() + " is valid");
-//            } catch (SAXException e) {
-//            System.out.println(xmlFile.getSystemId() + " is NOT valid");
-//            System.out.println("Reason: " + e.getLocalizedMessage());
-//            }
-            
-        } catch (Exception ex) {
-            Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        return "ahoj";
-    }
-    
-    @RequestMapping(value="/ajaxik", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public @ResponseBody Map<String, Object>  getRegionSettings(@RequestBody Map<String, Object> obj) {
-        Map<String, Object> json = new HashMap<String, Object>();
-        json.put("message", "Hello " + obj.get("name") + "!");
-        return json;
-    }
-    
-    @RequestMapping(value = "/helloajax", method = RequestMethod.GET)
-    public @ResponseBody void fetchFlowDowns(HttpServletResponse response) throws Exception {
-		
-		String helloAjax = "Hello Ajax";
-
-		response.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html");
-		response.getWriter().write(helloAjax);
-
-	}
     
     @RequestMapping(value="/ajax/availability", method=RequestMethod.GET)
     public @ResponseBody GrammarMeta getAvailability(@RequestParam String name) {
@@ -178,5 +67,22 @@ public class AjaxController {
             gm.setName(name);
         }
         return gm;
+    }
+    
+    @RequestMapping(value="/ajax/validateXml", method=RequestMethod.POST)
+    public @ResponseBody String validateXml(@RequestParam String content) {
+        String result = "false";
+        
+        try {
+            result = Utils.validate(content);
+        } catch (SAXException ex) {
+            Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
+            return "false";
+        } catch (IOException ex) {
+            Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
+            return "false";
+        }
+        
+        return result;
     }
 }

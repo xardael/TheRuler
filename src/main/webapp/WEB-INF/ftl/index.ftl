@@ -11,14 +11,7 @@
 			<li>Grammars</li>
             </ul>
 
-      <!-- Main hero unit for a primary marketing message or call to action -->
-      <div>
-          <b><@spring.message "test"/>  ${rc.getMessage("test")}</b>
-        <p>ľščťžýáíéäúô Maecenas rhoncus, lorem vel lobortis tincidunt, justo nisl pulvinar ipsum, eget adipiscing erat risus a quam. Sed malesuada massa imperdiet erat pretium quis fermentum nulla molestie. Pellentesque fermentum mollis nisl vel adipiscing. Aliquam ac convallis lacus. Sed vel turpis erat. Praesent non purus quis arcu sagittis facilisis. Duis lacinia accumsan eros, eget convallis tortor congue vitae. Aliquam erat volutpat. Phasellus dictum tempus tellus a venenatis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rutrum malesuada velit eget malesuada.
-        Vivamus at quam vel nisi semper vestibulum et eget enim. Mauris in lorem sed ante ultricies vulputate ac in eros. </p>
-        <p><b>test ${rc.contextPath}</b></p>
-      </div>
-
+            
 	  <div class="row">
   		<div class="span4">
   			<h3 style="padding-top: 0">${rc.getMessage("grammars")}</h3>
@@ -53,7 +46,7 @@
                             
                             </#if>  
                 
-            </td><td>${gm.date}</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="${rc.contextPath}/export/${gm.id}" title="Export"><i class="icon-file"></i></a><a class="btn btn-small" href="${rc.contextPath}/edit-grammar/${gm.id}"><i class="icon-edit"></i></a><a class="btn btn-small delete" href="${rc.contextPath}/delete-grammar/${gm.id}"><i class="icon-remove"></i></a></div></td></tr>
+            </td><td>${gm.date}</td><td><div class="btn-group pull-right"><a class="btn btn-small" href="${rc.contextPath}/export/${gm.id}" title="Export"><i class="icon-share"></i></a><a class="btn btn-small" href="${rc.contextPath}/edit-grammar/${gm.id}" title="Edit"><i class="icon-pencil"></i></a><a class="btn btn-small delete" href="${rc.contextPath}/delete-grammar/${gm.id}" title="Delete"><i class="icon-remove"></i></a></div></td></tr>
       </#list>
     </table>
 

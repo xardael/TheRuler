@@ -54,13 +54,26 @@
         
 
             <div class="form-actions">
-            <a class="btn pull-left" href="#">Insert ruleref</a>
+            <button type="button" class="btn" id="insertRuleref"><i class="icon-plus-sign"></i> Insert ruleref</button>
+            <button type="button" class="btn" id="validateXml" style="margin: 0 0 0 10px;" data-loading-text='<img src="${rc.contextPath}/res/img/loading_spinner.gif" width="15" height="15" alt=""> Validating...'><i class="icon-warning-sign"></i> Validate SRGS</button>
           
             <button type="submit" class="btn pull-right btn-primary">Save changes</button>
-            <button type="button" class="btn pull-right discard" style="margin: 0 20px 0 0;">Cancel</button>
+            <button type="button" class="btn pull-right discard" style="margin: 0 10px 0 0;">Cancel</button>
             </div>
             </form>
         </div>            
+    </div>
+
+     <!-- Modal to see validation resulsts -->
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <h3 id="myModalLabel">Validation result</h3>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
     </div>
 
     <div>&nbsp;</div>
