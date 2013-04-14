@@ -55,7 +55,7 @@ public class DefaultController {
 
             model.addAttribute("grammarMetas", grammarMetas);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new GenericException("Pri priojeni k databaze doslo k chybe"); // =========================
         } finally {
             if (baseXClient != null) {
                 try {
@@ -356,19 +356,18 @@ public class DefaultController {
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
             
-            if (!ruleManager.ruleExists(ruleId, grammarId)) {
-                throw new GenericException();
-            }
-
             GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(grammarId));
             Rule rule = ruleManager.findRuleById(ruleId, gm);
+            if (rule == null) {
+                throw new GenericException("Rule not found."); // ========================================== Lokalizacie chybocyh hlasok
+            }
             List<Rule> rules = ruleManager.findAllRules(gm);
 
             model.addAttribute("gm", gm);
             model.addAttribute("rule", rule);
             model.addAttribute("rules", rules);
         } catch (GenericException ge) {
-            throw new GenericException("Rule not found.");  // ========================================== Lokalizacie chybocyh hlasok
+            throw new GenericException(ge.getMessage());  
         } catch (Exception e) {
             e.printStackTrace();
         }

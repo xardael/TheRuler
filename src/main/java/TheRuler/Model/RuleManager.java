@@ -23,7 +23,7 @@ public interface RuleManager {
      * 
      * @param id Rule ID.
      * @param grammarMeta GrammarMeta object with ID.
-     * @return Selected rule.
+     * @return Selected rule. If rule with given ID does not exist returns null.
      */
     Rule findRuleById(String id, GrammarMeta grammarMeta) throws Exception;
 

@@ -11,6 +11,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -23,9 +26,10 @@ import org.xml.sax.SAXException;
  * @author Peter Gren
  */
 public class RuleManagerBaseXImpl implements RuleManager {
-
+    
     private BaseXClient baseXClient;
-
+    private static final Logger LOGGER = Logger.getLogger(GrammarManagerBaseXImpl.class.getName());
+    
     /**
      * Sets BaseX connection identificator for this manager.
      *
@@ -66,7 +70,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
     /**
      * Checks if rule with given ID exists in given grammar.
      * 
-     * @param id Rule ID to chceck.
+     * @param id Rule ID to check.
      * @param grammarId Grammar ID.
      * @return TRUE if rule exists, FALSE otherwise.
      */
@@ -98,8 +102,14 @@ public class RuleManagerBaseXImpl implements RuleManager {
             throw new IllegalArgumentException();
         }
 
-        BaseXClient.Query query = baseXClient.query("doc('" + Config.getValue(Config.C_DB_NAME) + "/" + grammarMeta.getId() + ".xml')//rule[@id='" + id + "']/child::*");
+        String queryString = String.format("doc('%s/%s.xml')//rule[@id='%s']", Config.getValue(Config.C_DB_NAME), grammarMeta.getId(), id);
+        BaseXClient.Query query = baseXClient.query(queryString);
+        LOGGER.log(Level.INFO, "Executing query: " + queryString);
         String xml = query.execute();
+        
+        if ("".equals(xml)) {
+            return null;
+        }
 
         Rule rule = new Rule();
         rule.setId(id);
