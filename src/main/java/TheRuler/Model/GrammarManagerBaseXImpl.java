@@ -7,19 +7,23 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
+ * Database manager for grammars, which works with BaseX XML database.
  *
  * @author Peter Gren
  */
@@ -29,8 +33,10 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
     private static final Logger LOGGER = Logger.getLogger(GrammarManagerBaseXImpl.class.getName());
 
     /**
+     * Sets BaseX connection identificator for this manager.
      *
-     * @param baseXClient
+     * @param baseXClient BaseXClient instance, identifying valid opened
+     * connection to the database.
      */
     public void setBaseXClient(BaseXClient baseXClient) {
         if (baseXClient == null) {
@@ -41,10 +47,13 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
     }
 
     /**
+     * Persist grammar meta information as a new grammar with blank content
+     * into BaseX database.
      *
-     * @param grammarMeta
+     * @param grammarMeta Grammar meta.
+     * @return GrammerMeta object with newly created ID.
      */
-    public GrammarMeta createGrammar(GrammarMeta grammarMeta) throws Exception {
+    public GrammarMeta createGrammar(GrammarMeta grammarMeta) throws IOException {
         if (grammarMeta == null) {
             throw new IllegalArgumentException();
         } else if (grammarMeta.getName() == null || "".equals(grammarMeta.getName())) {
@@ -92,10 +101,13 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
     }
 
     /**
-     *
-     * @param id
+     * Retrieves grammar meta information and grammar content from
+     * database and returns it as a Grammar object.
+     * 
+     * @param id Grammar object for given ID.
+     * @return All grammar information in Grammr object.
      */
-    public Grammar findGrammar(Long id) throws Exception {
+    public Grammar findGrammar(Long id) throws IOException, ParserConfigurationException, SAXException {
         if (id == null) {
             throw new IllegalArgumentException();
         }
@@ -118,10 +130,13 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
     }
 
     /**
+     * Retrieves grammar meta information from
+     * database and returns it wraped in a GrammarMeta object.
      *
-     * @param id
+     * @param id Grammr ID.
+     * @returns Grammr meta information in GrammarMeta object.
      */
-    public GrammarMeta findGrammarMeta(Long id) throws Exception {
+    public GrammarMeta findGrammarMeta(Long id) throws IOException, ParserConfigurationException, SAXException {
         if (id == null) {
             throw new IllegalArgumentException();
         }
@@ -167,12 +182,14 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 
 
         return grammarMeta;
-
-
-        //return XmlToClassParser.parseGrammarMeta(query.execute());
     }
 
-    public List<GrammarMeta> findAllGrammarMetas() throws Exception {
+    /**
+     * Returns grammar meta for all grammars in database.
+     * 
+     * @return List of GrammarMetas.
+     */
+    public List<GrammarMeta> findAllGrammarMetas() throws IOException, ParserConfigurationException, SAXException, ParseException {
         BaseXClient.Query query = baseXClient.query("<grammars> "
                 + "{for $grammarRecord in //grammars/grammarRecord "
                 + "return $grammarRecord} "
@@ -223,8 +240,10 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
     }
 
     /**
+     * Updates grammar meta information and grammar content in database
+     * according to given Grammar object.
      *
-     * @param grammar
+     * @param grammar Grammar stated for update.
      */
     public void updateGrammar(Grammar grammar) throws IOException {
         updateGrammarMeta(grammar.getMeta());
@@ -232,8 +251,10 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
     }
 
     /**
-     *
-     * @param grammarMeta
+     * Updates grammar meta information in database
+     * according to given GrammarMeta object.
+     * 
+     * @param grammarMeta GrammarMeta stated for update.
      */
     public void updateGrammarMeta(TheRuler.Model.GrammarMeta grammarMeta) throws IOException {
         if (grammarMeta == null) {
@@ -256,19 +277,12 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
                 + "</grammarRecord>";
 
         baseXClient.execute("xquery " + updateNodeCommand);
-        /*
-         * exists(//grammars/grammarRecord[@id=1])
-         *
-         * <grammarRecord id="1"> <name>My Grammar Name Updated</name>
-         * <description>Decription of my grammar</description>
-         * <date>10.12.2011</date> </grammarRecord>
-         *
-         */
     }
 
     /**
+     * Updates grammar content in database according to given Grammar object.
      *
-     * @param grammar
+     * @param grammar Grammar stated for update.
      */
     public void updateGrammarContent(TheRuler.Model.Grammar grammar) throws IOException {
         if (grammar == null) {
@@ -300,8 +314,9 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
     }
 
     /**
+     * Delete grammr from database.
      *
-     * @param grammarMeta
+     * @param grammarMeta GrammarMeta containg ID of grammar stated for deletion.
      */
     public void deletaGrammar(GrammarMeta grammarMeta) throws IOException {
         if (grammarMeta == null) {
