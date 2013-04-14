@@ -1,7 +1,7 @@
 package TheRuler.Exceptions;
 
 /**
- * Exception used for runtime error reporting with FreeMarker
+ * Exception used for runtime error reporting with FreeMarker.
  *
  * @author Peter Gren
  */

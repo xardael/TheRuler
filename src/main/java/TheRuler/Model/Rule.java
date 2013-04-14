@@ -22,7 +22,7 @@ public class Rule {
     /**
      * Sets rule ID.
      *
-     * @param Rule ID.
+     * @param id Rule ID.
      */
     public void setId(String id) {
         this.id = id;

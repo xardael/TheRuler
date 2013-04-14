@@ -7,7 +7,7 @@ import java.net.URL;
 import java.util.Properties;
 
 /**
- * Static fields and methods for application configuration
+ * Static fields and methods for application configuration.
  *
  * @author Peter Gren
  */
