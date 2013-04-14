@@ -64,6 +64,28 @@ public class RuleManagerBaseXImpl implements RuleManager {
     }
 
     /**
+     * Checks if rule with given ID exists in given grammar.
+     * 
+     * @param id Rule ID to chceck.
+     * @param grammarId Grammar ID.
+     * @return TRUE if rule exists, FALSE otherwise.
+     */
+    public Boolean ruleExists(String id, String grammarId) throws IOException {
+        if (id == null || grammarId == null || baseXClient == null) {
+            throw new IllegalArgumentException();
+        }
+
+        String query = String.format("xquery exists(doc('%s/%s.xml')//rule[@id='%s']) ", Config.getValue(Config.C_DB_NAME), grammarId, id);
+        String result = baseXClient.execute(query);
+        
+        if ("true".equals(result)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
      * Retrieves rule with given ID in given grammar from
      * database and returns it as a Rule object.
      * 

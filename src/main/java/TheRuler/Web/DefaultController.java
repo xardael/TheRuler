@@ -3,6 +3,7 @@ package TheRuler.Web;
 import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
+import TheRuler.Exceptions.GenericException;
 import TheRuler.Exceptions.ResourceNotFoundException;
 import TheRuler.Model.*;
 import java.io.IOException;
@@ -34,26 +35,19 @@ public class DefaultController {
      */
     @RequestMapping("/")
     public String index(ModelMap model) {
-        try {
-            //            try {
-            //                Utils.t();
-            //            } catch (NullPointerException e) {
-            //                org.apache.log4j.Logger.getLogger(GrammarManagerBaseXImpl.class.getName()).error( "failed!", e );
-            //            }
-            //            }
-
-        if (!Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
-            return "redirect:/install";
-        }
-        } catch (IOException ex) {
-            Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            if (!Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
+//                return "redirect:/install";
+//            }
+//        } catch (IOException ex) {
+//            Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
         BaseXClient baseXClient = null;
-        
+
         try {
             baseXClient = Utils.connectToBaseX();
-            
+
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
 
@@ -135,7 +129,7 @@ public class DefaultController {
      * Displays grammar meta edit page.
      *
      * @param model Empty ModelMap.
-     * @param ID ID of grammar.
+     * @param id ID of grammar.
      * @return The grammar meta edit view.
      */
     @RequestMapping(value = "/edit-grammar/{id}")
@@ -349,18 +343,22 @@ public class DefaultController {
      * @return The rule edit view.
      */
     @RequestMapping(value = "/grammar/{grammarId}/rule/{ruleId}")
-    public String ruleEdit(ModelMap model, @PathVariable String grammarId, @PathVariable String ruleId) {
+    public String ruleEdit(ModelMap model, @PathVariable String grammarId, @PathVariable String ruleId, HttpServletRequest request) {
 
         if (grammarId.equals("") || grammarId == null || ruleId.equals("") || ruleId == null) {
             throw new IllegalArgumentException();
         }
-
+        
         try {
             BaseXClient baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
+            
+            if (!ruleManager.ruleExists(ruleId, grammarId)) {
+                throw new GenericException();
+            }
 
             GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(grammarId));
             Rule rule = ruleManager.findRuleById(ruleId, gm);
@@ -369,7 +367,8 @@ public class DefaultController {
             model.addAttribute("gm", gm);
             model.addAttribute("rule", rule);
             model.addAttribute("rules", rules);
-
+        } catch (GenericException ge) {
+            throw new GenericException("Rule not found.");  // ========================================== Lokalizacie chybocyh hlasok
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -378,7 +377,8 @@ public class DefaultController {
     }
 
     /**
-     * Deletes rule from grammar nad redirects to grammar page with rule listing.
+     * Deletes rule from grammar nad redirects to grammar page with rule
+     * listing.
      *
      * @param grammarId ID of grammar containg rule.
      * @param ruleId ID of rule.

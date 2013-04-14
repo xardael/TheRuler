@@ -26,7 +26,7 @@
 <div class="row">
     <div class="span12">
         <div class="well">
-            ${gm.description!rc.getMessage("noDesc")}
+            ${(gm.description)!rc.getMessage("noDesc")}
         </div>
     </div>
 </div>

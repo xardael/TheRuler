@@ -32,7 +32,7 @@ public interface GrammarManager {
      * database and returns it wraped in a GrammarMeta object.
      *
      * @param id Grammr ID.
-     * @returns Grammr meta information in GrammarMeta object.
+     * @return Grammr meta information in GrammarMeta object.
      */
     GrammarMeta findGrammarMeta(Long id) throws Exception;
 
