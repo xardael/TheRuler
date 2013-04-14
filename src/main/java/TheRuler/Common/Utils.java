@@ -22,17 +22,29 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
+ * Static methods which provides utility functions.
  *
- * @author pyty
+ * @author Peter Gren
  */
 public class Utils {
 
+    /**
+     * Tries to open database connection.
+     * 
+     * @return BaseXClient instance as a connection identificator.
+     */
     public static BaseXClient connectToBaseX() throws IOException {
         BaseXClient baseXClient = new BaseXClient(Config.getValue(Config.C_DB_HOST), Integer.parseInt(Config.getValue(Config.C_DB_PORT)), Config.getValue(Config.C_DB_USER), Config.getValue(Config.C_DB_PASS));
         baseXClient.execute("OPEN " + Config.getValue(Config.C_DB_NAME));
         return baseXClient;
     }
 
+    /**
+     * Convert XML object hierarchy into string.
+     * 
+     * @param element XML element.
+     * @return String XML without prolog as a text.
+     */
     public static String serializeXml(Element element) throws TransformerException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         StreamResult result = new StreamResult(buffer);
@@ -42,6 +54,11 @@ public class Utils {
         return xml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
     }
 
+    /**
+     * Installs new database and set proper structure.
+     * Login information must be stored in configuration propertis file.
+     * If db with configured name exists, it will be overwritten.
+     */
     public static void installDB() throws IOException {
         BaseXClient baseXClient = new BaseXClient(Config.getValue(Config.C_DB_HOST), Integer.parseInt(Config.getValue(Config.C_DB_PORT)), Config.getValue(Config.C_DB_USER), Config.getValue(Config.C_DB_PASS));
         baseXClient.execute("CREATE DB " + Config.getValue(Config.C_DB_NAME));
@@ -51,18 +68,38 @@ public class Utils {
         baseXClient.close();
     }
 
+    /**
+     * Converts java Date to string using proper format and GMT timezone. 
+     * Used for storing date into XML as a String.
+     * 
+     * @param date Java date.
+     * @return Formated text date.
+     */
     public static String convertDateToGmtString(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(Config.DATE_FORMAT_STORED);
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.format(date);
     }
 
+    /**
+     * Converts date from XML file, which is in gmt timezone and default
+     * format into java object.
+     * 
+     * @param gmtDateString String in default date format Config.DATE_FORMAT_STORED.
+     * @return Date in GMT.
+     */
     public static Date convertGmtStringToDate(String gmtDateString) throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat(Config.DATE_FORMAT_STORED);
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.parse(gmtDateString);
     }
 
+    /**
+     * Converts GMT date string to locale string in locale timezone.
+     * 
+     * @param gmtDateString String in dufalt date format Config.DATE_FORMAT_STORED.
+     * @return GMT date in locale string and timezone.
+     */
     public static String convertGmtStringToLocaleString(String gmtDateString) throws ParseException {
         Date date = convertGmtStringToDate(gmtDateString);
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG); // Using default Locale
@@ -70,6 +107,12 @@ public class Utils {
         return dateFormat.format(date);
     }
 
+    /**
+     * Validates XML against SRGS schema.
+     * 
+     * @param xml String value stated for validation.
+     * @return True if is valid, error output otherwise.
+     */
     public static String validate(String xml) throws SAXException, IOException {
         SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
         Schema schema = factory.newSchema(Utils.class.getClassLoader().getResource(Config.SRGS_SCHEMA_FILE_NAME));

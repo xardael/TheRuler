@@ -19,553 +19,517 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * Controller for handling standard requests
- * 
- * @author pyty
+ * Controller for handling standard requests.
+ *
+ * @author Peter Gren
  */
 @Controller
 public class DefaultController {
-	
 
-	/**
-	 * Home page - grammar listing
-	 * 
-	 * @param model 
-	 * @return The index view (FTL)
-	 */
-	@RequestMapping("/")
-	public String index(ModelMap model) throws IOException{
-//            try {
-//                Utils.t();
-//            } catch (NullPointerException e) {
-//                org.apache.log4j.Logger.getLogger(GrammarManagerBaseXImpl.class.getName()).error( "failed!", e );
-//                throw new  NullPointerException("b;a");
-//            }
-            
-            if (!Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
-                return "redirect:/install";
-            }
+    /**
+     * Displays home page - grammar listing.
+     *
+     * @param model Empty ModelMap.
+     * @return The grammar page view.
+     */
+    @RequestMapping("/")
+    public String index(ModelMap model) {
+        try {
+            //            try {
+            //                Utils.t();
+            //            } catch (NullPointerException e) {
+            //                org.apache.log4j.Logger.getLogger(GrammarManagerBaseXImpl.class.getName()).error( "failed!", e );
+            //            }
+            //            }
 
-            BaseXClient baseXClient = Utils.connectToBaseX();
-
-            try {
-                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
-                grammarManager.setBaseXClient(baseXClient);
-
-                List<GrammarMeta> grammarMetas = grammarManager.findAllGrammarMetas();
-
-                model.addAttribute("grammarMetas", grammarMetas);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                baseXClient.close();
-            }
-
-            return "index";
-	}
-        
-        /**
-	 * Grammar edit
-	 * 
-	 * @param model 
-	 * @return The index view (FTL)
-	 */        
-	@RequestMapping(value = "/grammar/{id}", method = RequestMethod.GET)
-	public String grammar(ModelMap model, @PathVariable String id, HttpServletRequest request) {
-            
-            if (id == null || id.equals("")) {
-                throw new IllegalArgumentException();
-            }
-            
-            boolean search = false;
-            
-            if (request.getParameter("search") != null) {
-                search = true;
-                if (request.getParameter("name").equals("")) {
-                    //throw new IllegalArgumentException();
-                    return "redirect:/grammar/" + id;
-                }        
-            }
-
-            try {
-                BaseXClient baseXClient = Utils.connectToBaseX();
-                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
-                grammarManager.setBaseXClient(baseXClient);
-
-                GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(id));
-
-                model.addAttribute("gm", gm);
-                
-                RuleManagerBaseXImpl ruleManager = new  RuleManagerBaseXImpl();
-                ruleManager.setBaseXClient(baseXClient);
-                
-                List<Rule> rules;
-                
-                if (search) {
-                    rules = ruleManager.findAllRulesById(request.getParameter("name").toLowerCase(), gm);
-                } else {
-                    rules = ruleManager.findAllRules(gm);
-                }
-                
-                model.addAttribute("rules", rules);
-                model.addAttribute("search", search);
-                model.addAttribute("searchString", request.getParameter("name"));
-                
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-                
-            return "grammar";
-	}
-        
-        /**
-	 * Grammar edit
-	 * 
-	 * @param model 
-	 * @return The index view (FTL)
-	 */
-	@RequestMapping(value = "/edit-grammar/{id}")
-	public String editGrammar(ModelMap model, @PathVariable String id) {
-            
-            if (id.equals("") || id == null) {
-                throw new IllegalArgumentException();
-            }
-
-            try {
-                BaseXClient baseXClient = Utils.connectToBaseX();
-                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
-                grammarManager.setBaseXClient(baseXClient);
-
-                GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(id));
-
-                Grammar grammar = grammarManager.findGrammar(Long.parseLong(id));
-                
-                RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
-                ruleManager.setBaseXClient(baseXClient);
-                List<Rule> rules = ruleManager.findAllRules(gm);
-                
-                model.addAttribute("gm", gm);
-                model.addAttribute("grammar", grammar);
-                model.addAttribute("rules", rules);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-                
-            return "grammarMetaEdit";
-	}
-
-        @RequestMapping(value= "/save-grammar", method = RequestMethod.POST)
-        public String saveGrammar(Grammar grammar) {
-            
-            if (grammar == null) {
-                throw new IllegalArgumentException();
-            }
-
-            BaseXClient baseXClient = null;
-            
-            try {
-                baseXClient = Utils.connectToBaseX();
-                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
-                grammarManager.setBaseXClient(baseXClient);
-            
-                grammarManager.updateGrammar(grammar);
-            
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (baseXClient != null) {
-                    try {
-                        baseXClient.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-             }
-             
-             
-            //model.addAttribute("cv", initedCvDocument.getCv());
-            return "redirect:/grammar/" + grammar.getId();
-            //return "redirect:/edit-grammar/" + grammar.getMeta().getId();
+        if (!Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
+            return "redirect:/install";
         }
-        
-        @RequestMapping(value= "/save-grammar-content", method = RequestMethod.POST)
-        public String saveGrammarContent(Grammar grammar) {
-            
-            if (grammar == null) {
-                throw new IllegalArgumentException();
-            }
-//            } else if (grammar.getMeta() == null) {
-//                throw new NullPointerException();
-//            } else if (grammar.getMeta().getId() == null) {
-//                throw new NullPointerException();
-//            }
-
-            BaseXClient baseXClient = null;
-            
-            try {
-                baseXClient = Utils.connectToBaseX();
-                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
-                grammarManager.setBaseXClient(baseXClient);
-            
-                grammarManager.updateGrammarContent(grammar);
-            
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (baseXClient != null) {
-                    try {
-                        baseXClient.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-             }
-             
-             
-            //model.addAttribute("cv", initedCvDocument.getCv());
-            //return "redirect:/grammar/" + gm.getId();
-            return "redirect:/grammar/" + grammar.getId();
+        } catch (IOException ex) {
+            Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        BaseXClient baseXClient = null;
         
-        @RequestMapping(value= "/create-grammar", method = RequestMethod.POST)
-        public String createGrammar(ModelMap model, HttpServletRequest request) {
+        try {
+            baseXClient = Utils.connectToBaseX();
+            
+            GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+            grammarManager.setBaseXClient(baseXClient);
+
+            List<GrammarMeta> grammarMetas = grammarManager.findAllGrammarMetas();
+
+            model.addAttribute("grammarMetas", grammarMetas);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (baseXClient != null) {
+                try {
+                    baseXClient.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+
+        return "index";
+    }
+
+    /**
+     * Displays grammar page - rule listing.
+     *
+     * @param model Empty ModelMap.
+     * @param id ID of grammar.
+     * @param request Request for accesing url params.
+     * @return The grammar page view.
+     */
+    @RequestMapping(value = "/grammar/{id}", method = RequestMethod.GET)
+    public String grammar(ModelMap model, @PathVariable String id, HttpServletRequest request) {
+
+        if (id == null || id.equals("")) {
+            throw new IllegalArgumentException();
+        }
+
+        boolean search = false;
+
+        if (request.getParameter("search") != null) {
+            search = true;
             if (request.getParameter("name").equals("")) {
-                throw new IllegalArgumentException();
+                //throw new IllegalArgumentException();
+                return "redirect:/grammar/" + id;
             }
-            
+        }
+
+        try {
+            BaseXClient baseXClient = Utils.connectToBaseX();
+            GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+            grammarManager.setBaseXClient(baseXClient);
+
+            GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(id));
+
+            model.addAttribute("gm", gm);
+
+            RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
+            ruleManager.setBaseXClient(baseXClient);
+
+            List<Rule> rules;
+
+            if (search) {
+                rules = ruleManager.findAllRulesById(request.getParameter("name").toLowerCase(), gm);
+            } else {
+                rules = ruleManager.findAllRules(gm);
+            }
+
+            model.addAttribute("rules", rules);
+            model.addAttribute("search", search);
+            model.addAttribute("searchString", request.getParameter("name"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "grammar";
+    }
+
+    /**
+     * Displays grammar meta edit page.
+     *
+     * @param model Empty ModelMap.
+     * @param ID ID of grammar.
+     * @return The grammar meta edit view.
+     */
+    @RequestMapping(value = "/edit-grammar/{id}")
+    public String editGrammar(ModelMap model, @PathVariable String id) {
+
+        if (id.equals("") || id == null) {
+            throw new IllegalArgumentException();
+        }
+
+        try {
+            BaseXClient baseXClient = Utils.connectToBaseX();
+            GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+            grammarManager.setBaseXClient(baseXClient);
+
+            GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(id));
+
+            Grammar grammar = grammarManager.findGrammar(Long.parseLong(id));
+
+            RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
+            ruleManager.setBaseXClient(baseXClient);
+            List<Rule> rules = ruleManager.findAllRules(gm);
+
+            model.addAttribute("gm", gm);
+            model.addAttribute("grammar", grammar);
+            model.addAttribute("rules", rules);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "grammarMetaEdit";
+    }
+
+    /**
+     * Saves posted grammar and redirects to grammar page.
+     *
+     * @param grammar Grammar from HTML form.
+     * @return Redirects to the grammar page view.
+     */
+    @RequestMapping(value = "/save-grammar", method = RequestMethod.POST)
+    public String saveGrammar(Grammar grammar) {
+
+        if (grammar == null) {
+            throw new IllegalArgumentException();
+        }
+
+        BaseXClient baseXClient = null;
+
+        try {
+            baseXClient = Utils.connectToBaseX();
+            GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+            grammarManager.setBaseXClient(baseXClient);
+
+            grammarManager.updateGrammar(grammar);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (baseXClient != null) {
+                try {
+                    baseXClient.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+        //model.addAttribute("cv", initedCvDocument.getCv());
+        return "redirect:/grammar/" + grammar.getId();
+        //return "redirect:/edit-grammar/" + grammar.getMeta().getId();
+    }
+
+    /**
+     * Creates new grammar with posted name and redirects to grammar meta edit
+     * page of created grammar.
+     *
+     * @param request HTTP Request with posted data - grammar name.
+     * @return Redirects to the grammar meta edit view.
+     */
+    @RequestMapping(value = "/create-grammar", method = RequestMethod.POST)
+    public String createGrammar(HttpServletRequest request) {
+        if (request.getParameter("name").equals("")) {
+            throw new IllegalArgumentException();
+        }
+
 //            try {
 //                request.setCharacterEncoding("UTF-8");
 //            } catch (UnsupportedEncodingException ex) {
 //                Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
 //            }
 
-            String s = request.getParameter("name");
-            
-            BaseXClient baseXClient = null;
-            GrammarMeta gm = new GrammarMeta();
-            gm.setName(request.getParameter("name"));
-            
-            try {
-                baseXClient = Utils.connectToBaseX();
-                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
-                grammarManager.setBaseXClient(baseXClient);
-            
-                gm = grammarManager.createGrammar(gm);
-            
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (baseXClient != null) {
-                    try {
-                        baseXClient.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        String s = request.getParameter("name");
+
+        BaseXClient baseXClient = null;
+        GrammarMeta gm = new GrammarMeta();
+        gm.setName(request.getParameter("name"));
+
+        try {
+            baseXClient = Utils.connectToBaseX();
+            GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+            grammarManager.setBaseXClient(baseXClient);
+
+            gm = grammarManager.createGrammar(gm);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (baseXClient != null) {
+                try {
+                    baseXClient.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-             }
-             
-             
-            //model.addAttribute("cv", initedCvDocument.getCv());
-            //return "redirect:/grammar/" + gm.getId();
-            return "redirect:/grammar/" + gm.getId();
-        }
-        
-        @RequestMapping(value = "/delete-grammar/{id}")
-	public String deleteGrammar(ModelMap model, @PathVariable String id) {
-            
-            if (id.equals("") || id == null) {
-                throw new IllegalArgumentException();
             }
+        }
 
-            BaseXClient baseXClient = null;
-            GrammarMeta gm = new GrammarMeta();
-            gm.setId(Long.parseLong(id));
-            
-            try {
-                baseXClient = Utils.connectToBaseX();
-                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
-                grammarManager.setBaseXClient(baseXClient);
-            
-                grammarManager.deletaGrammar(gm);
-            
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (baseXClient != null) {
-                    try {
-                        baseXClient.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        return "redirect:/grammar/" + gm.getId();
+    }
+
+    /**
+     * Deletes grammar according to ID.
+     *
+     * @param id ID of grammar.
+     * @return The grammar page view.
+     */
+    @RequestMapping(value = "/delete-grammar/{id}")
+    public String deleteGrammar(@PathVariable String id) {
+
+        if (id.equals("") || id == null) {
+            throw new IllegalArgumentException();
+        }
+
+        BaseXClient baseXClient = null;
+        GrammarMeta gm = new GrammarMeta();
+        gm.setId(Long.parseLong(id));
+
+        try {
+            baseXClient = Utils.connectToBaseX();
+            GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+            grammarManager.setBaseXClient(baseXClient);
+
+            grammarManager.deletaGrammar(gm);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (baseXClient != null) {
+                try {
+                    baseXClient.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-             }
-             
-             
-            //model.addAttribute("cv", initedCvDocument.getCv());
-            //return "redirect:/grammar/" + gm.getId();
-            return "redirect:/";
+            }
         }
-        
-	/**
-	 * Add a new grammar to db
-	 * 
-	 * @param user
-	 * @return Redirect to /index page to display grammar list
-	 */
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String add(ModelMap model, HttpServletRequest request) {
 
-//            if (request.getParameter("name").equals("")) {
-//                throw new IllegalArgumentException();
-//            }
-//
-//            GrammarMeta gm = new GrammarMeta();
-//            gm.setName(request.getParameter("name"));
-//            
-//            
-//            //model.addAttribute("cv", initedCvDocument.getCv());
-            return "redirect:index.html";
-	}
-        
-        
-        @RequestMapping(value= "/rule-search", method = RequestMethod.GET)
-        public String ruleSearch(ModelMap model, HttpServletRequest request) {
-            
-            if (request.getParameter("name").equals("") || request.getParameter("grammarId").equals("")) {
-                throw new IllegalArgumentException();
-            }
+        return "redirect:/";
+    }
 
-            BaseXClient baseXClient = null;
-            GrammarMeta gm = new GrammarMeta();
-            gm.setId(Long.parseLong(request.getParameter("grammarId")));
-            model.addAttribute("gm", gm);
-            
-            String searchText = request.getParameter("name");
-            
-            try {
-                baseXClient = Utils.connectToBaseX();
-                RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
-                ruleManager.setBaseXClient(baseXClient);
-            
-                List<Rule> rules = ruleManager.findAllRulesById(searchText, gm);
-                
-                model.addAttribute("rules", rules);
-                
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (baseXClient != null) {
-                    try {
-                        baseXClient.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }   
+    /**
+     * Adds new rule with posted name and redirects to grammar page with rule
+     * listing.
+     *
+     * @param request Request with posted rule name.
+     * @return Redirects to the grammar page view.
+     */
+    @RequestMapping(value = "/rule-add", method = RequestMethod.POST)
+    public String ruleAdd(HttpServletRequest request) {
 
-            return "ruleSearch";
+        if (request.getParameter("ruleId") == null || request.getParameter("ruleId").equals("")
+                || request.getParameter("grammarId") == null || request.getParameter("grammarId").equals("")) {
+            throw new IllegalArgumentException();
         }
-        
-        @RequestMapping(value= "/rule-add", method = RequestMethod.POST)
-        public String ruleAdd(HttpServletRequest request) {
-            
-            if (request.getParameter("ruleId") == null || request.getParameter("ruleId").equals("") 
-             || request.getParameter("grammarId") == null || request.getParameter("grammarId").equals("")) {
-                throw new IllegalArgumentException();
-            }
 
-            BaseXClient baseXClient = null;
-            GrammarMeta gm = new GrammarMeta();
-            gm.setId(Long.parseLong(request.getParameter("grammarId")));
-            
-            try {
-                baseXClient = Utils.connectToBaseX();
-                RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
-                ruleManager.setBaseXClient(baseXClient);
-            
-                List<Rule> rules = ruleManager.findAllRules(gm);
-                Rule rule = new Rule();
-                rule.setId(request.getParameter("ruleId"));
-                        
-                ruleManager.addRule(rule, gm);
-                
-                
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (baseXClient != null) {
-                    try {
-                        baseXClient.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }   
+        BaseXClient baseXClient = null;
+        GrammarMeta gm = new GrammarMeta();
+        gm.setId(Long.parseLong(request.getParameter("grammarId")));
 
-            return "redirect:/grammar/" + gm.getId();
-        }
-        
-        @RequestMapping(value = "/grammar/{grammarId}/rule/{ruleId}")
-	public String ruleEdit(ModelMap model, @PathVariable String grammarId, @PathVariable String ruleId) {
-            
-            if (grammarId.equals("") || grammarId == null || ruleId.equals("") || ruleId == null) {
-                throw new IllegalArgumentException();
-            }
-                
-            try {
-                BaseXClient baseXClient = Utils.connectToBaseX();
-                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
-                grammarManager.setBaseXClient(baseXClient);
-                RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
-                ruleManager.setBaseXClient(baseXClient);
+        try {
+            baseXClient = Utils.connectToBaseX();
+            RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
+            ruleManager.setBaseXClient(baseXClient);
 
-                GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(grammarId));
-                Rule rule = ruleManager.findRuleById(ruleId, gm);
-                List<Rule> rules = ruleManager.findAllRules(gm);
-
-                model.addAttribute("gm", gm);
-                model.addAttribute("rule", rule);
-                model.addAttribute("rules", rules);
-                
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-                
-            return "ruleEdit";
-	}
-        
-        @RequestMapping(value = "/delete-rule/{grammarId}/{ruleId}")
-	public String deleteRule(ModelMap model, @PathVariable Long grammarId, @PathVariable String ruleId) {
-            if (grammarId == null || grammarId == 0 || ruleId == null || ruleId.equals("")) {
-                throw new IllegalArgumentException();
-            }
-
-            BaseXClient baseXClient = null;
-            GrammarMeta gm = new GrammarMeta();
-            gm.setId(grammarId);
+            List<Rule> rules = ruleManager.findAllRules(gm);
             Rule rule = new Rule();
-            rule.setId(ruleId);
-            
-            try {
-                baseXClient = Utils.connectToBaseX();
-                RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
-                ruleManager.setBaseXClient(baseXClient);
-            
-                ruleManager.deleteRule(rule, gm);
-            
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (baseXClient != null) {
-                    try {
-                        baseXClient.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            rule.setId(request.getParameter("ruleId"));
+
+            ruleManager.addRule(rule, gm);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (baseXClient != null) {
+                try {
+                    baseXClient.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-             }
-             
-             
-            //model.addAttribute("cv", initedCvDocument.getCv());
-            //return "redirect:/grammar/" + gm.getId();
-            return "redirect:/grammar/" + gm.getId();
+            }
         }
 
-        @RequestMapping(value = "/doInstall", method = RequestMethod.POST)
-        public String doInstall(ModelMap model, HttpServletRequest request) {
+        return "redirect:/grammar/" + gm.getId();
+    }
+
+    /**
+     * Displays page for editing given rule.
+     *
+     * @param model Empty ModelMap.
+     * @param grammarId ID of grammar containg rule.
+     * @param ruleId ID of rule.
+     * @return The rule edit view.
+     */
+    @RequestMapping(value = "/grammar/{grammarId}/rule/{ruleId}")
+    public String ruleEdit(ModelMap model, @PathVariable String grammarId, @PathVariable String ruleId) {
+
+        if (grammarId.equals("") || grammarId == null || ruleId.equals("") || ruleId == null) {
+            throw new IllegalArgumentException();
+        }
+
+        try {
+            BaseXClient baseXClient = Utils.connectToBaseX();
+            GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+            grammarManager.setBaseXClient(baseXClient);
+            RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
+            ruleManager.setBaseXClient(baseXClient);
+
+            GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(grammarId));
+            Rule rule = ruleManager.findRuleById(ruleId, gm);
+            List<Rule> rules = ruleManager.findAllRules(gm);
+
+            model.addAttribute("gm", gm);
+            model.addAttribute("rule", rule);
+            model.addAttribute("rules", rules);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "ruleEdit";
+    }
+
+    /**
+     * Deletes rule from grammar nad redirects to grammar page with rule listing.
+     *
+     * @param grammarId ID of grammar containg rule.
+     * @param ruleId ID of rule.
+     * @return Redirects to the grammar page view.
+     */
+    @RequestMapping(value = "/delete-rule/{grammarId}/{ruleId}")
+    public String deleteRule(@PathVariable Long grammarId, @PathVariable String ruleId) {
+        if (grammarId == null || grammarId == 0 || ruleId == null || ruleId.equals("")) {
+            throw new IllegalArgumentException();
+        }
+
+        BaseXClient baseXClient = null;
+        GrammarMeta gm = new GrammarMeta();
+        gm.setId(grammarId);
+        Rule rule = new Rule();
+        rule.setId(ruleId);
+
+        try {
+            baseXClient = Utils.connectToBaseX();
+            RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
+            ruleManager.setBaseXClient(baseXClient);
+
+            ruleManager.deleteRule(rule, gm);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (baseXClient != null) {
+                try {
+                    baseXClient.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return "redirect:/grammar/" + gm.getId();
+    }
+
+    /**
+     * Installs database and redirects to grammar page.
+     *
+     * @param request Request with connection data.
+     * @return Redirects to the grammar page view.
+     */
+    @RequestMapping(value = "/doInstall", method = RequestMethod.POST)
+    public String doInstall(HttpServletRequest request) {
 //            if (request.getParameter("ruleId") == null || request.getParameter("ruleId").equals("") 
 //             || request.getParameter("grammarId") == null || request.getParameter("grammarId").equals("")) {
 //                throw new IllegalArgumentException();
 //            }
-            
-            try {
-                if (Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
-                    throw new ResourceNotFoundException();
-                }
-            } catch (IOException ioe) {
 
+        try {
+            if (Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
+                throw new ResourceNotFoundException();
             }
-
-            String host = request.getParameter("inputHost");
-            String user = request.getParameter("inputUser");
-            String pass = request.getParameter("inputPass");
-            String name = request.getParameter("inputName");
-            String port = request.getParameter("inputPort");
-            try {
-                // If DB is already seted as installed - do not process
-                if (Boolean.parseBoolean(Config.getValue(Config.C_DB_INST))) {
-                    throw new ResourceNotFoundException();
-                }
-                
-                Config.setValue(Config.C_DB_HOST, host);
-                Config.setValue(Config.C_DB_USER, user);
-                Config.setValue(Config.C_DB_PASS, pass);
-                Config.setValue(Config.C_DB_NAME, name);
-                Config.setValue(Config.C_DB_PORT, port);
-                
-                
-            } catch (IOException ex) {
-                Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-                        
-            try {
-                Utils.installDB();
-                Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
-            } catch (Exception e) {
-                String s = e.getMessage();
-            }
-            try {
-                // Set DB asi installed into properties file
-
-                Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
-            } catch (IOException ex) {
-                Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            return "redirect:/";
+        } catch (IOException ioe) {
         }
-        
-        @RequestMapping(value = "/install", method = RequestMethod.GET)
-	public String install(ModelMap model) {
-            try {
-                if (Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
-                    throw new ResourceNotFoundException();
-                }
-            } catch (IOException ioe) {
 
+        String host = request.getParameter("inputHost");
+        String user = request.getParameter("inputUser");
+        String pass = request.getParameter("inputPass");
+        String name = request.getParameter("inputName");
+        String port = request.getParameter("inputPort");
+        try {
+            // If DB is already seted as installed - do not process
+            if (Boolean.parseBoolean(Config.getValue(Config.C_DB_INST))) {
+                throw new ResourceNotFoundException();
             }
 
-            return "install";
+            Config.setValue(Config.C_DB_HOST, host);
+            Config.setValue(Config.C_DB_USER, user);
+            Config.setValue(Config.C_DB_PASS, pass);
+            Config.setValue(Config.C_DB_NAME, name);
+            Config.setValue(Config.C_DB_PORT, port);
+
+
+        } catch (IOException ex) {
+            Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        @RequestMapping(value = "/export/{grammarId}", method = RequestMethod.GET, produces="text/plain;charset=UTF-8")
-        @ResponseBody
-        public String export(HttpServletResponse response, @PathVariable Long grammarId) {
-            response.setHeader("Content-Disposition", "attachment;filename=\"export.xml\"");
-            if (grammarId == null || grammarId == 0) {
-                throw new IllegalArgumentException();
+
+        try {
+            Utils.installDB();
+            Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
+        } catch (Exception e) {
+            String s = e.getMessage();
+        }
+        try {
+            // Set DB asi installed into properties file
+
+            Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
+        } catch (IOException ex) {
+            Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return "redirect:/";
+    }
+
+    /**
+     * Displays installation page.
+     *
+     * @param model Empty ModelMap.
+     * @return The installation page view.
+     */
+    @RequestMapping(value = "/install", method = RequestMethod.GET)
+    public String install(ModelMap model) {
+        try {
+            if (Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
+                throw new ResourceNotFoundException();
             }
-            
-            BaseXClient baseXClient = null;
-            try {
-                baseXClient = Utils.connectToBaseX();
-                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
-                grammarManager.setBaseXClient(baseXClient);
+        } catch (IOException ioe) {
+        }
 
-                Grammar grammar = grammarManager.findGrammar(grammarId);
+        return "install";
+    }
 
-                return grammar.getContent();
-                
-            } catch (Exception e) {
-                return "ERROR";
-            } finally {
-                if (baseXClient != null) {
-                    try {
-                        baseXClient.close();
-                    } catch (IOException e) {
-                        return "ERROR";
-                    }
+    /**
+     * Export given grammar into text/plain file named export.xml.
+     *
+     * @param response HTTP response used for HTTP header manipulation.
+     * @param grammarId ID of grammar stated for export.
+     * @return Response body - UTF-8 encoded text/plain file named export.xml.
+     */
+    @RequestMapping(value = "/export/{grammarId}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+    @ResponseBody
+    public String export(HttpServletResponse response, @PathVariable Long grammarId) {
+        response.setHeader("Content-Disposition", "attachment;filename=\"export.xml\"");
+        if (grammarId == null || grammarId == 0) {
+            throw new IllegalArgumentException();
+        }
+
+        BaseXClient baseXClient = null;
+        try {
+            baseXClient = Utils.connectToBaseX();
+            GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+            grammarManager.setBaseXClient(baseXClient);
+
+            Grammar grammar = grammarManager.findGrammar(grammarId);
+
+            return grammar.getContent();
+
+        } catch (Exception e) {
+            return "ERROR";
+        } finally {
+            if (baseXClient != null) {
+                try {
+                    baseXClient.close();
+                } catch (IOException e) {
+                    return "ERROR";
                 }
             }
         }
+    }
 }

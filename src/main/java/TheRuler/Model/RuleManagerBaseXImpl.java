@@ -19,7 +19,7 @@ import org.xml.sax.SAXException;
 
 /**
  *
- * @author pyty
+ * @author Peter Gren
  */
 public class RuleManagerBaseXImpl implements RuleManager {
 

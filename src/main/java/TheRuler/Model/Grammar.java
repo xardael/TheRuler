@@ -3,7 +3,7 @@ package TheRuler.Model;
 /**
  * Represents srgs grammar with XML content and meta informations.
  *
- * @author pyty
+ * @author Peter Gren
  */
 public class Grammar {
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  *
- * @author pyty
+ * @author Peter Gren
  */
 public interface GrammarManager {
 

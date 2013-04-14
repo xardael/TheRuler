@@ -37,7 +37,7 @@
     </div>		
 </div>
 
-<form name="grammar" method="post" action="${rc.contextPath}/save-grammar-content">
+<form name="grammar" method="post" action="${rc.contextPath}/saveRule">
     <input name="meta.id" type="hidden" value="${gm.id}" />
     <textarea name="content" id="content" rows="20" style="width: 99%">${rule.content}</textarea>
     <div class="form-actions">

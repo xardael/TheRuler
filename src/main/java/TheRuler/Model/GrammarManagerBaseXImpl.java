@@ -21,7 +21,7 @@ import org.xml.sax.InputSource;
 
 /**
  *
- * @author pyty
+ * @author Peter Gren
  */
 public class GrammarManagerBaseXImpl implements GrammarManager {
 

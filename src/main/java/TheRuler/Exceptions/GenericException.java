@@ -1,8 +1,9 @@
 package TheRuler.Exceptions;
 
 /**
+ * Exception used for runtime error reporting with FreeMarker
  *
- * @author pyty
+ * @author Peter Gren
  */
 public class GenericException extends RuntimeException {
 

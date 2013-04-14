@@ -17,19 +17,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.xml.sax.SAXException;
 
 /**
- * Controller for handling AJAX requests
+ * Controller for handling AJAX requests.
  *
- * @author pyty
+ * @author Peter Gren
  */
 @Controller
 public class AjaxController {
 
     /**
-     * Find rules. Provides insert ruleref functionality.
+     * Finds rules. Provides functionality for insert ruleref feature.
      *
-     * @param grammarId
-     * @param searchText
-     * @return JSON formated collection of strings
+     * @param grammarId ID of grammar.
+     * @param searchText Search text.
+     * @return JSON formated collection of strings.
      */
     @RequestMapping(value = "/ajax/findRules", method = RequestMethod.POST)
     public @ResponseBody
@@ -58,10 +58,10 @@ public class AjaxController {
     }
 
     /**
-     * Validate posted XML and return String AJAX response
+     * Validates posted XML and return String AJAX response.
      *
-     * @param content xml string to validate
-     * @return true if is content is valid, otherwise returns validation error
+     * @param content XML string to validate.
+     * @return True if is content is valid, otherwise returns validation error.
      */
     @RequestMapping(value = "/ajax/validateXml", method = RequestMethod.POST)
     public @ResponseBody

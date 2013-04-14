@@ -2,7 +2,7 @@ package TheRuler.Model;
 
 /**
  *
- * @author pyty
+ * @author Peter Gren
  */
 public class GrammarMeta {
 
