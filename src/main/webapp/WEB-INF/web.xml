@@ -30,6 +30,11 @@
         <param-value>/TheRuler</param-value>
     </context-param>
     
+    <context-param>
+        <param-name>defaultHtmlEscape</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    
     <filter>
         <filter-name>encoding-filter</filter-name>
         <filter-class>

@@ -23,7 +23,8 @@ public interface GrammarManager {
      * database and returns it as a Grammar object.
      * 
      * @param id Grammar object for given ID.
-     * @return All grammar information in Grammr object.
+     * @return All grammar information in Grammr object. If grammar meta with
+     *         given ID does not exist, returns null.
      */
     Grammar findGrammar(Long id) throws Exception;
 
@@ -32,7 +33,8 @@ public interface GrammarManager {
      * database and returns it wraped in a GrammarMeta object.
      *
      * @param id Grammr ID.
-     * @return Grammr meta information in GrammarMeta object.
+     * @return Grammr meta information in GrammarMeta object. If grammar with
+     *         given ID does not exist, returns null.
      */
     GrammarMeta findGrammarMeta(Long id) throws Exception;
 

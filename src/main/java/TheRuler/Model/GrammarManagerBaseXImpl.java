@@ -73,7 +73,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 
         String insertNodeCommand = "insert node "
                 + "<grammarRecord id='" + newId + "'>"
-                + "  <name>" + grammarMeta.getName() + "</name>"
+                + "  <name><![CDATA[" + grammarMeta.getName() + "]]></name>"
                 + "  <description>" + ((grammarMeta.getDescription() == null) ? "" : grammarMeta.getDescription()) + "</description>"
                 + "  <date>" + Utils.convertDateToGmtString(new Date()) + "</date>"
                 + "</grammarRecord>"
@@ -105,7 +105,8 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
      * database and returns it as a Grammar object.
      * 
      * @param id Grammar object for given ID.
-     * @return All grammar information in Grammr object.
+     * @return All grammar information in Grammr object. If grammar meta with
+     *         given ID does not exist, returns null.
      */
     public Grammar findGrammar(Long id) throws IOException, ParserConfigurationException, SAXException {
         if (id == null) {
@@ -115,6 +116,9 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
         // Get grammar meta
         Grammar grammar = new Grammar();
         GrammarMeta gm = findGrammarMeta(id);
+        if (gm == null) {
+            return null;
+        }
 
         grammar.setMeta(gm);
 
@@ -134,7 +138,8 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
      * database and returns it wraped in a GrammarMeta object.
      *
      * @param id Grammr ID.
-     * @return Grammr meta information in GrammarMeta object.
+     * @return Grammr meta information in GrammarMeta object. If grammar meta with
+     *         given ID does not exist, returns null.
      */
     public GrammarMeta findGrammarMeta(Long id) throws IOException, ParserConfigurationException, SAXException {
         if (id == null) {
@@ -146,6 +151,10 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
                 + "return $grammarRecord");
         String xml = query.execute();
 
+        if ("".equals(xml)) {
+            return null;
+        }
+        
         String grammarId = null;
         String name = null;
         String description = null;
@@ -284,7 +293,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
      *
      * @param grammar Grammar stated for update.
      */
-    public void updateGrammarContent(TheRuler.Model.Grammar grammar) throws IOException {
+    public void updateGrammarContent(Grammar grammar) throws IOException {
         if (grammar == null) {
             throw new IllegalArgumentException();
         } else if (grammar.getId() == null) {
