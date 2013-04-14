@@ -43,7 +43,6 @@
     <div class="form-actions">
         <button type="button" class="btn" id="insertRuleref" data-toggle="modal"><i class="icon-plus-sign"></i> ${rc.getMessage("insertRuleref")}</button>
         <button type="submit" class="btn pull-right btn-primary">${rc.getMessage("saveChanges")}</button>
-        <button type="button" class="btn pull-right discard" style="margin: 0 10px 0 0;" disabled>${rc.getMessage("cancel")}</button>
     </div>
 </form>          
 

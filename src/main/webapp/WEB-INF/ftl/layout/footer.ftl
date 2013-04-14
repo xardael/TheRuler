@@ -67,20 +67,9 @@
 
 <script type="text/javascript">
         
-    // Rule collapser status   
+    // Rule collapser    
     var toggle = 0;
          
-    $(document).ready(function() {
-        // Allows set textarea to default value
-        $('#content').each(function() {
-            $this = $(this);
-            $this.data('defaultval', $this.val());
-        });
-            
-        // For the sake of browser refresh    
-        showCancelButton();
-    }); 
-            
     // Get popover and tooltip working with attribute
     $(function () {
         $('body').popover({
@@ -128,36 +117,6 @@
                 
         return false;
     });
-            
-    // Discard changes in textarea
-    $(".discard").click( function(e) {
-        if ($('#content').val() != $('#content').data('defaultval')) {
-            bootbox.dialog("${rc.getMessage('confirmDiscard')}", [{
-                    "label" : "${rc.getMessage('cancel')}"
-                }, {
-                    "label" : "${rc.getMessage('ok')}",
-                    "class" : "btn-primary",
-                    "callback": function() {
-                        $('#content').val($('#content').data('defaultval'));
-                    }
-                }
-            ]);
-                    
-        }
-    });
-
-    // Activate discard changes button
-    $("#content").keyup(function() {
-        showCancelButton();
-    });
-    $("#content").change(function() {
-        showCancelButton();
-    });     
-    function showCancelButton() {
-        if ($('#content').val() != $('#content').data('defaultval')) {
-            $('.discard').removeAttr("disabled");   
-        }
-    }
             
     // Autmatic form field emptiness validation
     $('form.validate').submit(function() {

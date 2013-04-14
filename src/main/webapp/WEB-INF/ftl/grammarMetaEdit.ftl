@@ -54,7 +54,6 @@
                 <button type="button" class="btn" id="validateXml" style="margin: 0 0 0 10px;" data-loading-text='<img src="${rc.contextPath}/res/img/loading_spinner.gif" width="15" height="15" alt=""> Validating...'><i class="icon-warning-sign"></i> ${rc.getMessage("validateSrgs")}</button>
 
                 <button type="submit" class="btn pull-right btn-primary">${rc.getMessage("saveChanges")}</button>
-                <button type="button" class="btn pull-right discard" style="margin: 0 10px 0 0;" disabled>${rc.getMessage("cancel")}</button>
             </div>
         </form>
     </div>            
