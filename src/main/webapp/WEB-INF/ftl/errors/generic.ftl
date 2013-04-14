@@ -2,7 +2,7 @@
 
 		<div class="row">
 			<div class="span12">
-				<h2>Error</h2>
+				<h2>${rc.getMessage("error")}</h2>
 			</div>
 		</div>
 		

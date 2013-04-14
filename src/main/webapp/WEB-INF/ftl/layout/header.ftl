@@ -2,10 +2,10 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>The Ruler</title>
+    <title>${rc.getMessage('appName')}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="An application to SRGS grammar management.">
-    <meta name="author" content="Peter Gren www.peter.gren.sk">
+    <meta name="description" content="${rc.getMessage('appSlogan')}">
+    <meta name="author" content="Peter Gren">
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
     <link href="${rc.contextPath}/res/css/bootstrap.min.css" rel="stylesheet">
     <link href="${rc.contextPath}/res/css/bootstrap-responsive.min.css" rel="stylesheet">
@@ -35,15 +35,15 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="${rc.contextPath}/">The Ruler</a>
+          <a class="brand" href="${rc.contextPath}/">${rc.getMessage('appName')}</a>
 
-          <p class="navbar-text" style="display: inline;">Manage your SRGS grammar easier and faster</p>
+          <p class="navbar-text" style="display: inline;">${rc.getMessage('appSlogan')}</p>
           <div class="nav-collapse collapse pull-right">
 
             <ul class="nav">
-              <li><a href="${rc.contextPath}/">Home</a></li>
-              <li><a href="https://github.com/xardael/TheRuler/wiki">Help</a></li>
-              <li><a href="https://github.com/xardael/TheRuler">GitHub</a></li>
+              <li><a href="${rc.contextPath}/">${rc.getMessage('home')}</a></li>
+              <li><a href="https://github.com/xardael/TheRuler/wiki">${rc.getMessage('help')}</a></li>
+              <li><a href="https://github.com/xardael/TheRuler">${rc.getMessage('gitHub')}</a></li>
             </ul>
           </div><!--/nav-collapse -->
         </div> <!--/container -->

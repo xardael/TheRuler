@@ -3,7 +3,7 @@
     
 		<div class="row">
 			<div class="span9">
-				<h2>Grammar</h2>
+				<h2>${rc.getMessage("grammar")}</h2>
 			</div>
 			<div class="span3">
 				<!-- <div class="btn-group pull-right"  style="margin-top: 10px;">				
@@ -12,21 +12,21 @@
 				</div> -->
 				
 				    <ul class="nav nav-pills pull-right" style="margin: 15px 0 0 0">
-                                                <li> <a href="${rc.contextPath}/export/${gm.id}">Export</a></li>
-                                                <li> <a href="${rc.contextPath}/edit-grammar/${gm.id}">Edit</a></li>
-                                                <li> <a href="${rc.contextPath}/delete-grammar/${gm.id}" class="delete">Delete</a></li>
+                                                <li> <a href="${rc.contextPath}/export/${gm.id}">${rc.getMessage("export")}</a></li>
+                                                <li> <a href="${rc.contextPath}/edit-grammar/${gm.id}">${rc.getMessage("edit")}</a></li>
+                                                <li> <a href="${rc.contextPath}/delete-grammar/${gm.id}" class="delete">${rc.getMessage("delete")}</a></li>
 					</ul>
 			</div>
 		</div>
 		
 		
 	    <ul class="breadcrumb">
-			<li><a href="${rc.contextPath}/">Grammars</a> <span class="divider">&gt;</span></li>
+			<li><a href="${rc.contextPath}/">${rc.getMessage("grammars")}</a> <span class="divider">&gt;</span></li>
                         <#if search == false>
                             <li class="active">${gm.name}</li>
                             <#else>
                             <li><a href="${rc.contextPath}/grammar/${gm.id}">${gm.name}</a> <span class="divider">&gt;</span></li>
-                            <li class="active">Search Results</li>
+                            <li class="active">${rc.getMessage("searchResults")}</li>
                         </#if>  
 			
 		</ul>
@@ -40,7 +40,7 @@
       <div class="row">
           <div class="span12">
               <div class="well">
-            ${gm.description!"No description."}
+            ${gm.description!(rc.getMessage("noDesc"))}
             </div>
           </div>
       </div>
@@ -48,26 +48,28 @@
 	  <div class="row">
 		<div class="span4">
 			<h3 style="padding-top: 0">
-                            <button type="button" class="btn btn-small" id="collapseBtn" style="margin-bottom: 5px;" title="Toggle all"><i class="icon-chevron-down" style=""></i></button>
+                            <button type="button" class="btn btn-small" id="collapseBtn" style="margin-bottom: 5px;"><i class="icon-chevron-down" style=""></i></button>
                             <#if search == false>
-                            Rules
+                            ${rc.getMessage("rules")}
                             <#else>
-                            Search Results
+                            ${rc.getMessage("searchResults")}
                             </#if>  
                         </h3>
 		</div>
     <div class="span4">
       <form name="ruleAdd" method="post" action="${rc.contextPath}/rule-add" class="form-inline pull-right" style="margin: 15px 0 0 0">
-        <input type="hidden" name="grammarId" value="${gm.id}">
-        <input type="text" name="ruleId" placeholder="New rule name...">
-        <button type="submit" class="btn">New Rule</button>
+          <div class="input-append">
+            <input type="hidden" name="grammarId" value="${gm.id}">
+            <input type="text" name="ruleId" placeholder="${rc.getMessage('newRuleName')}">
+            <button type="submit" class="btn">${rc.getMessage("newRule")}</button>
+         </div>
     </form>
     </div>
     <div class="span4">
       <form name="ruleSearch" method="GET" class="form-inline pull-right" style="margin: 15px 0 0 0">
           <div class="input-append">
              <input type="hidden" name="search" value="true">
-             <input type="text" name="name" placeholder="Search for a rule..." 
+             <input type="text" name="name" placeholder="${rc.getMessage('searchForARule')}" 
                     <#if search == true>
                             value="${searchString}"
                             </#if>  
@@ -85,9 +87,9 @@
                 
                 <div class="alert"><strong>
                         <#if (search == true)>
-                            No results.
+                            ${rc.getMessage("noResults")}
                          <#else>
-                            No rules.    
+                            ${rc.getMessage("noRules")}
                         </#if>  
                 </strong></div>
               </#if>

@@ -2,7 +2,7 @@
       <hr>
 
       <footer>
-        <p>&copy; Peter Gren 2013 | All rights reserved <!-- | <a href="#">Help</a> | <a href="#">Feedback</a> | <a href="#">GitHub</a> --></p>
+        <p>&copy; Peter Gren 2013 | ${rc.getMessage("copyright")}</p>
       </footer>
 
     </div> <!-- /container -->
@@ -12,12 +12,12 @@
     ================================================== -->
     <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
-            <h3 id="myModalLabel">Validation result</h3>
+            <h3 id="myModalLabel">${rc.getMessage("validationResult")}</h3>
         </div>
         <div class="modal-body">
         </div>
         <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">${rc.getMessage("close")}</button>
         </div>
     </div>
     
@@ -25,12 +25,12 @@
     ================================================== -->
     <div id="rulerefModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
-            <h3 id="myModalLabel">Insert ruleref</h3>
+            <h3 id="myModalLabel">${rc.getMessage("insertRuleref")}</h3>
         </div>
         <div class="modal-body">
             <form id="ruleSearchForm">
                 <div class="input-append">
-                    <input type="hidden" value="${gm.id}" name="grammarId" id="grammarId" >
+                    <input type="hidden" value="${(gm.id)!}" name="grammarId" id="grammarId" >
                     <input type="text" class="span3" id="ruleSearchText">
                     <button type="submit" class="btn" id="ruleSearchButton"><i class="icon-search"></i></button>
                 </div>
@@ -39,22 +39,22 @@
                 <#if rules??>
                     <#if rules?size != 0>
                         <#list rules as rule>
-                        <li><buton class="btn btn-link insert">${rule.id}</button></li>
+                        <li><buton class="btn btn-link insert">${(rule.id)!}</button></li>
                         </#list>
                     </#if>
                 </#if>
             </ul>
             <#if rules??>
                     <#if rules?size == 0>
-                        <div class="alert" id="noRules">No rules.</div>
+                        <div class="alert" id="noRules">${rc.getMessage("noRules")}.</div>
                     <#else>
-                        <div class="alert hidden" id="noResultAlert">No results.</div>
+                        <div class="alert hidden" id="noResultAlert">${rc.getMessage("noResults")}.</div>
                     </#if>
             </#if>
             
         </div>
         <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">${rc.getMessage("close")}</button>
         </div>
     </div>
     
@@ -78,6 +78,8 @@
                 $this = $(this);
                 $this.data('defaultval', $this.val());
             });
+            
+            showCancelButton();
         }); 
             
             //get popover working with attribute
@@ -109,21 +111,21 @@
             
             $('[name="newGrammar"]').submit(function() {
                 if ($.trim($('[name="name"]').val()).length == 0) {
-                    bootbox.alert("Grammar name must not by emtpy.");
+                    bootbox.alert("${rc.getMessage('emptyGrammarName')}.");
                     return false;
                 }
             });
             
             $('[name="ruleAdd"]').submit(function() {
                 if ($.trim($('[name="ruleId"]').val()).length == 0) {
-                    bootbox.alert("Rule name must not by emtpy.");
+                    bootbox.alert("${rc.getMessage('emptyRuleName')}.");
                     return false;
                 }
             });
             
             $(".noempty").closest("form").submit(function() {
                 if ($.trim($('[name="name"]').val()).length == 0) {
-                    bootbox.alert("Grammar name must not by emtpy.");
+                    bootbox.alert("${rc.getMessage('emptyGrammarName')}.");
                     return false;
                 }
             });
@@ -131,28 +133,52 @@
             $(".delete").click( function(e) {
                 var href = $(this).attr('href');
                 e.preventDefault();
-                bootbox.confirm("Do you really want to delete selected item?", function(result) {
-                    if (result == true) {
-                        if (e.isDefaultPrevented()) {
-                            window.location = href;
+                
+                bootbox.dialog("${rc.getMessage('confirmDelete')}", [{
+                    "label" : "${rc.getMessage('cancel')}"
+                    }, {
+                        "label" : "${rc.getMessage('ok')}",
+                        "class" : "btn-primary",
+                        "callback": function() {
+                            if (e.isDefaultPrevented()) {
+                                window.location = href;
+                            }
                         }
                     }
-                }); 
+                ]);
                 
+                return false;
             });
             
             $(".discard").click( function(e) {
                 if ($('#content').val() != $('#content').data('defaultval')) {
-                    bootbox.confirm("Do you really want to discard changes?", function(result) {
-                        if (result == true) {
-                            $('#content').val($('#content').data('defaultval'));
+                    bootbox.dialog("${rc.getMessage('confirmDiscard')}", [{
+                        "label" : "${rc.getMessage('cancel')}"
+                        }, {
+                            "label" : "${rc.getMessage('ok')}",
+                            "class" : "btn-primary",
+                            "callback": function() {
+                                $('#content').val($('#content').data('defaultval'));
+                            }
                         }
-                    }); 
-
-                    
+                    ]);
                     
                 }
             });
+            
+            $("#content").keyup(function() {
+                showCancelButton();
+            });
+            
+            $("#content").change(function() {
+                showCancelButton();
+            });
+            
+            function showCancelButton() {
+                if ($('#content').val() != $('#content').data('defaultval')) {
+                    $('.discard').removeAttr("disabled");   
+                }
+            }
             
             $('#AinstallForm').submit(function() {
                 if ($.trim($("input:first").val()).length == 0) {
@@ -209,9 +235,9 @@
                 }).done(function( msg ) {
                     btn.button('reset');
                     if (msg == 'true') {
-                        $('#myModal .modal-body').html('<div class="alert alert-success"><strong>Well done!</strong> The document is valid SRGS grammar.</div>');
+                        $('#myModal .modal-body').html('<div class="alert alert-success"><strong>${rc.getMessage("wellDone")}!</strong> ${rc.getMessage("documentValid")}</div>');
                     } else {
-                        $('#myModal .modal-body').html('<div class="alert alert-error"><strong>Error!</strong> The document is not valid.</div><p>' + msg + '</p>');
+                        $('#myModal .modal-body').html('<div class="alert alert-error"><strong>${rc.getMessage("error")}!</strong> ${rc.getMessage("documentNotValid")}.</div><p>' + msg + '</p>');
                     }
                     $('#myModal').modal('toggle');
             });

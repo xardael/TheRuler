@@ -47,7 +47,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 	public GrammarMeta createGrammar(GrammarMeta grammarMeta) throws Exception {
             if (grammarMeta == null) {
                 throw new IllegalArgumentException();
-            } else if (grammarMeta.getName() == null || grammarMeta.getName() == "") {
+            } else if (grammarMeta.getName() == null || "".equals(grammarMeta.getName())) {
                 throw new IllegalArgumentException();
             }
             

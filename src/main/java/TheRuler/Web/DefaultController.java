@@ -3,23 +3,20 @@ package TheRuler.Web;
 import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
-import TheRuler.Exceptions.GenericException;
 import TheRuler.Exceptions.ResourceNotFoundException;
 import TheRuler.Model.*;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Controller for handling standard requests
@@ -184,8 +181,8 @@ public class DefaultController {
              
              
             //model.addAttribute("cv", initedCvDocument.getCv());
-            //return "redirect:/grammar/" + gm.getId();
-            return "redirect:/edit-grammar/" + grammar.getMeta().getId();
+            return "redirect:/grammar/" + grammar.getId();
+            //return "redirect:/edit-grammar/" + grammar.getMeta().getId();
         }
         
         @RequestMapping(value= "/save-grammar-content", method = RequestMethod.POST)

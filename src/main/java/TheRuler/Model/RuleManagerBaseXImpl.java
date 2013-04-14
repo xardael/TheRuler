@@ -162,7 +162,20 @@ public class RuleManagerBaseXImpl implements RuleManager {
 	 * @param grammarMeta
 	 */
 	public void updateRule(Rule rule, GrammarMeta grammarMeta) throws Exception {
-		throw new UnsupportedOperationException();
+            if (grammarMeta == null || rule == null) {
+                throw new IllegalArgumentException();
+            } else if (grammarMeta.getId() == null || rule.getId() == null || rule.getId() == "") {
+                throw new IllegalArgumentException();
+            }
+            
+            // Tu ma byt este kontrola ci ID uz neexistuje. Presnejsie mohla by byt.
+            
+            String insertNodeCommand = "insert node <rule id='" + rule.getId() + "'> " +
+                                       (rule.getContent() == null ? "" : rule.getContent())  +
+                                       "</rule> " +
+                                       "into doc('" + Config.getValue(Config.C_DB_NAME) + "/" + grammarMeta.getId() +  ".xml')/grammar";
+                    
+            String result = baseXClient.execute("xquery " + insertNodeCommand);
 	}
 
 	/**
