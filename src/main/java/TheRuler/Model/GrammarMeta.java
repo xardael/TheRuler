@@ -1,73 +1,69 @@
 package TheRuler.Model;
 
-import java.util.Date;
-
 /**
- * 
+ *
  * @author pyty
  */
 public class GrammarMeta {
 
-	private Long id;
-	private String name;
-	private String description;
-	private String date;
+    private Long id;
+    private String name;
+    private String description;
+    private String date;
 
-	public Long getId() {
-		return this.id;
-	}
+    public Long getId() {
+        return this.id;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     *
+     * @param id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	/**
-	 * 
-	 * @param name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getDescription() {
-            if (description == null) {
-                //return "";
-            }
-            
-	    return this.description;
-	}
+    public String getDescription() {
+        if (description == null) {
+            //return "";
+        }
 
-	/**
-	 * 
-	 * @param description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+        return this.description;
+    }
 
-	public String getDate() {
-            if (this.date == null) {
-                return "";
-            } else {
-                return this.date;
-            }
-	}
+    /**
+     *
+     * @param description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	/**
-	 * 
-	 * @param date
-	 */
-	public void setDate(String date) {
-		this.date = date;
-	}
+    public String getDate() {
+        if (this.date == null) {
+            return "";
+        } else {
+            return this.date;
+        }
+    }
 
-        
+    /**
+     *
+     * @param date
+     */
+    public void setDate(String date) {
+        this.date = date;
+    }
 }

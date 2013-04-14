@@ -1,24 +1,22 @@
 package TheRuler.Common;
 
-import java.io.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
-import java.util.Locale;
 import java.util.Properties;
-import org.springframework.util.StringUtils;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  *
  * @author pyty
  */
 public class Config {
-    
 
     /**
-     * Load properties from file. 
-     * 
+     * Load properties from file.
+     *
      * @return Properties object containing data loaded from file
-     * @throws IOException 
+     * @throws IOException
      */
     private static Properties init() throws IOException {
         Properties props = new Properties();
@@ -27,29 +25,31 @@ public class Config {
     }
 
     /*
-     * Constants 
+     * Constants
      */
     public static final String GRAMMAR_ROOT_NAME = "<grammar></grammar>";
     public static final String GRAMMARS_ROOT_NAME = "<grammars></grammars>";
     public static final String GRAMMARS_FILE_NAME = "Meta.xml";
     public static final String CONFIG_FILE_NAME = "config.properties";
-    
+    public static final String SRGS_SCHEMA_FILE_NAME = "grammar-core.xsd";
+    public static final String DATE_FORMAT_STORED = "yyyy-MM-dd HH:mm:ssZ";
     /*
-     * Constatn names for config.properties 
+     * Constatn names for config.properties
      */
     public static final String C_DB_HOST = "DB_HOST";
     public static final String C_DB_USER = "DB_USER";
     public static final String C_DB_PASS = "DB_PASS";
     public static final String C_DB_NAME = "DB_NAME";
-    public static final String C_DB_PORT = "DB_PORT"; 
-    public static final String C_DB_INST = "DB_INST"; 
-    
+    public static final String C_DB_PORT = "DB_PORT";
+    public static final String C_DB_INST = "DB_INST";
+
     /**
      * Get value of given key from properties file
-     * 
+     *
      * @param key
-     * @return If key exists, its value is returned. Otherwise returns empty string.
-     * @throws IOException 
+     * @return If key exists, its value is returned. Otherwise returns empty
+     * string.
+     * @throws IOException
      */
     public static String getValue(String key) throws IOException {
         if (key == null) {
@@ -58,10 +58,10 @@ public class Config {
         Properties props = init();
         return props.getProperty(key, "");
     }
-    
+
     /**
      * Set given key value into properties file
-     * 
+     *
      * @param key
      * @param value
      * @throws IOException, IllegalArgumentException
@@ -72,8 +72,8 @@ public class Config {
         }
         Properties props = init();
         props.setProperty(key, value);
-        URL url = Config.class.getClassLoader().getResource(CONFIG_FILE_NAME);  
-        String path = url.getPath();  
+        URL url = Config.class.getClassLoader().getResource(CONFIG_FILE_NAME);
+        String path = url.getPath();
         Writer writer = new FileWriter(path);
         props.store(writer, "");
     }

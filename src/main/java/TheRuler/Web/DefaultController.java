@@ -42,23 +42,26 @@ public class DefaultController {
 //                throw new  NullPointerException("b;a");
 //            }
             
+            if (!Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
+                return "redirect:/install";
+            }
 
-                BaseXClient baseXClient = Utils.connectToBaseX();
-                
-                try {
-                    GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
-                    grammarManager.setBaseXClient(baseXClient);
-                    
-                    List<GrammarMeta> grammarMetas = grammarManager.findAllGrammarMetas();
-                    
-                    model.addAttribute("grammarMetas", grammarMetas);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    baseXClient.close();
-                }
-                               
-		return "index";
+            BaseXClient baseXClient = Utils.connectToBaseX();
+
+            try {
+                GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+                grammarManager.setBaseXClient(baseXClient);
+
+                List<GrammarMeta> grammarMetas = grammarManager.findAllGrammarMetas();
+
+                model.addAttribute("grammarMetas", grammarMetas);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                baseXClient.close();
+            }
+
+            return "index";
 	}
         
         /**
@@ -221,7 +224,7 @@ public class DefaultController {
              
             //model.addAttribute("cv", initedCvDocument.getCv());
             //return "redirect:/grammar/" + gm.getId();
-            return "redirect:/grammar/" + grammar.getMeta().getId();
+            return "redirect:/grammar/" + grammar.getId();
         }
         
         @RequestMapping(value= "/create-grammar", method = RequestMethod.POST)
@@ -476,8 +479,8 @@ public class DefaultController {
 //            }
             
             try {
-                if (Boolean.parseBoolean(Config.getValue(Config.C_DB_INST))) {
-                    //throw new ResourceNotFoundException();
+                if (Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
+                    throw new ResourceNotFoundException();
                 }
             } catch (IOException ioe) {
 
@@ -525,7 +528,7 @@ public class DefaultController {
         @RequestMapping(value = "/install", method = RequestMethod.GET)
 	public String install(ModelMap model) {
             try {
-                if (Boolean.parseBoolean(Config.getValue(Config.C_DB_INST))) {
+                if (Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
                     throw new ResourceNotFoundException();
                 }
             } catch (IOException ioe) {

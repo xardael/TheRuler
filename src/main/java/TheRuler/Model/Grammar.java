@@ -1,99 +1,96 @@
 package TheRuler.Model;
 
 /**
- * 
+ * Represents srgs grammar with XML content and meta informations.
+ *
  * @author pyty
  */
 public class Grammar {
 
-	private GrammarMeta meta;
-	private String content;
-        
-        public Grammar() {
-            meta = new GrammarMeta();
-        }
+    private GrammarMeta meta;
+    private String content;
 
-	public GrammarMeta getMeta() {
-		return this.meta;
-	}
+    public Grammar() {
+        meta = new GrammarMeta();
+    }
 
-	/**
-	 * 
-	 * @param meta
-	 */
-	public void setMeta(GrammarMeta meta) {
-		this.meta = meta;
-	}
+    public GrammarMeta getMeta() {
+        return this.meta;
+    }
 
-        /**
-         * Raw XML SRGS Grammar
-         * 
-         * @return 
-         */
-	public String getContent() {
-		return this.content;
-	}
+    /**
+     *
+     * @param meta
+     */
+    public void setMeta(GrammarMeta meta) {
+        this.meta = meta;
+    }
 
-	/**
-	 * 
-	 * @param content
-	 */
-	public void setContent(String content) {
-		this.content = content;
-	}
-        
-        
-        
-        /*
-         * Nested grammarMeta stuff
-         */
-        
-        public Long getId() {
-		return this.meta.getId();
-	}
+    /**
+     * Raw XML SRGS Grammar
+     *
+     * @return
+     */
+    public String getContent() {
+        return this.content;
+    }
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId(Long id) {
-		this.meta.setId(id);
-	}
+    /**
+     *
+     * @param content
+     */
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-	public String getName() {
-		return this.meta.getName();
-	}
+    /*
+     * Nested grammarMeta stuff
+     */
+    public Long getId() {
+        return this.meta.getId();
+    }
 
-	/**
-	 * 
-	 * @param name
-	 */
-	public void setName(String name) {
-		this.meta.setName(name);
-	}
+    /**
+     *
+     * @param id
+     */
+    public void setId(Long id) {
+        this.meta.setId(id);
+    }
 
-	public String getDescription() {
-            return this.meta.getDescription();
-	}
+    public String getName() {
+        return this.meta.getName();
+    }
 
-	/**
-	 * 
-	 * @param description
-	 */
-	public void setDescription(String description) {
-		this.meta.setDescription(description);
-	}
+    /**
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        this.meta.setName(name);
+    }
 
-	public String getDate() {
-            return this.meta.getDate();
-	}
+    public String getDescription() {
+        return this.meta.getDescription();
+    }
 
-	/**
-	 * 
-	 * @param date
-	 */
-	public void setDate(String date) {
-		this.meta.setDate(date);
-	}
+    /**
+     *
+     * @param description
+     */
+    public void setDescription(String description) {
+        this.meta.setDescription(description);
+    }
 
+    public String getDate() {
+        return this.meta.getDate();
+    }
+
+    /**
+     *
+     * @param date
+     */
+    public void setDate(String date) {
+        this.meta.setDate(date);
+    }
 }
