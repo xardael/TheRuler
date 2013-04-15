@@ -1,3 +1,4 @@
+<#escape x as x?html>
 <!DOCTYPE html>
 <html>
     <head>
@@ -51,3 +52,5 @@
         </div> <!--/navbar -->
 
         <div class="container">
+            
+</#escape>            

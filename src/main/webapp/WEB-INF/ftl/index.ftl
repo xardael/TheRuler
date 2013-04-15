@@ -43,7 +43,7 @@
         <tr><td>${gm_index + 1}.</td><td><a href="${rc.contextPath}/grammar/${gm.id}">${gm.name}</a></td><td>
             <#if gm.description??>
                 <#if (gm.description?length > 100)>
-                    ${gm.description?substring(0,100)}...
+                    ${(gm.description?substring(0,100))}...
                 <#else>
                     ${gm.description}
                 </#if>  

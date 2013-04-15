@@ -1,4 +1,5 @@
 <#include "/layout/header.ftl">
+<#escape x as x?html>
 
 <div class="row">
     <div class="span10">
@@ -26,7 +27,7 @@
 <div class="row">
     <div class="span12">
         <div class="well">
-            ${(gm.description)!rc.getMessage("noDesc")}
+            ${((gm.description)!rc.getMessage("noDesc"))}
         </div>
     </div>
 </div>
@@ -46,4 +47,5 @@
     </div>
 </form>          
 
+</#escape>
 <#include "/layout/footer.ftl">

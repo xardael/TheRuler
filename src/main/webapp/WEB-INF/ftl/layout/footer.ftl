@@ -1,4 +1,4 @@
-
+<#escape x as x?html>
 <hr>
 
 <footer>
@@ -234,3 +234,5 @@
 
 </body>
 </html>
+
+</#escape>

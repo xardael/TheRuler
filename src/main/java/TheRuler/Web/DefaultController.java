@@ -144,15 +144,12 @@ public class DefaultController {
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
 
-            GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(id));
-
             Grammar grammar = grammarManager.findGrammar(Long.parseLong(id));
 
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
-            List<Rule> rules = ruleManager.findAllRules(gm);
+            List<Rule> rules = ruleManager.findAllRules(grammar.getMeta());
 
-            model.addAttribute("gm", gm);
             model.addAttribute("grammar", grammar);
             model.addAttribute("rules", rules);
         } catch (Exception e) {

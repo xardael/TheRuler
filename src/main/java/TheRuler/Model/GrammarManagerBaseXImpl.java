@@ -16,6 +16,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.web.util.HtmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -74,7 +75,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
         String insertNodeCommand = "insert node "
                 + "<grammarRecord id='" + newId + "'>"
                 + "  <name><![CDATA[" + grammarMeta.getName() + "]]></name>"
-                + "  <description>" + ((grammarMeta.getDescription() == null) ? "" : grammarMeta.getDescription()) + "</description>"
+                + "  <description><![CDATA[" + ((grammarMeta.getDescription() == null) ? "" : grammarMeta.getDescription()) + "]]></description>"
                 + "  <date>" + Utils.convertDateToGmtString(new Date()) + "</date>"
                 + "</grammarRecord>"
                 + "into //grammars";
@@ -280,8 +281,8 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 
         String updateNodeCommand = "replace node //grammars/grammarRecord[@id=" + grammarMeta.getId() + "] with"
                 + "<grammarRecord id='" + grammarMeta.getId() + "'>"
-                + "  <name>" + grammarMeta.getName() + "</name>"
-                + "  <description>" + grammarMeta.getDescription() + "</description>"
+                + "  <name><![CDATA[" + grammarMeta.getName() + "]]></name>"
+                + "  <description><![CDATA[" + grammarMeta.getDescription() + "]]></description>"
                 + "  <date>" + grammarMeta.getDate() + "</date>"
                 + "</grammarRecord>";
 

@@ -1,5 +1,5 @@
 <#include "/layout/header.ftl">
-
+<#escape x as x?html>
 
 <div class="row">
     <div class="span9">
@@ -33,7 +33,7 @@
 <div class="row">
     <div class="span12">
         <div class="well">
-            ${gm.description!(rc.getMessage("noDesc"))}
+            ${(gm.description!(rc.getMessage("noDesc")))}
         </div>
     </div>
 </div>
@@ -100,7 +100,7 @@
                             </div>
                             <div id="collapse${rule.id}" class="accordion-body collapse mcollapse">
                                 <div class="accordion-inner">
-                                    <pre>${rule.content?html}</pre>
+                                    <pre>${rule.content}</pre>
                                 </div>
                             </div>
 
@@ -117,5 +117,7 @@
         </div>
     </div>
 </div>
+
+</#escape>  
 
 <#include "/layout/footer.ftl">

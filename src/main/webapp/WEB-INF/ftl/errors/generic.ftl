@@ -1,4 +1,5 @@
 <#include "/layout/header.ftl">
+<#escape x as x?html>
 
 <div class="row">
     <div class="span12">
@@ -16,5 +17,5 @@
 </div>
 
 
-
+</#escape>
 <#include "/layout/footer.ftl">
