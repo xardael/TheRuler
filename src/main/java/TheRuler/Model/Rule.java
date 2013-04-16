@@ -9,6 +9,7 @@ public class Rule {
 
     private String id;
     private String content;
+    private Long grammarId;
 
     /**
      * Gets rule id. 
@@ -44,5 +45,23 @@ public class Rule {
      */ 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    /**
+     * Gets an ID of grammar containing this rule.
+     * 
+     * @return An ID of grammar containing this rule.
+     */
+    public Long getGrammarId() {
+        return grammarId;
+    }
+
+    /**
+     * Sets an ID of grammar containing this rule.
+     * 
+     * @param grammarId An ID of grammar containing this rule.
+     */
+    public void setGrammarId(Long grammarId) {
+        this.grammarId = grammarId;
     }
 }

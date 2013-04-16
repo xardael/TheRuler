@@ -133,7 +133,7 @@ public class DefaultController {
      * @return The grammar meta edit view.
      */
     @RequestMapping(value = "/edit-grammar/{id}")
-    public String editGrammar(ModelMap model, @PathVariable String id) {
+    public String grammarEdit(ModelMap model, @PathVariable String id) {
 
         if (id.equals("") || id == null) {
             throw new IllegalArgumentException();
@@ -162,11 +162,11 @@ public class DefaultController {
     /**
      * Saves posted grammar and redirects to grammar page.
      *
-     * @param grammar Grammar from HTML form.
+     * @param grammar A grammar from HTML form.
      * @return Redirects to the grammar page view.
      */
     @RequestMapping(value = "/save-grammar", method = RequestMethod.POST)
-    public String saveGrammar(Grammar grammar) {
+    public String doSaveGrammar(Grammar grammar) {
 
         if (grammar == null) {
             throw new IllegalArgumentException();
@@ -198,6 +198,47 @@ public class DefaultController {
         return "redirect:/grammar/" + grammar.getId();
         //return "redirect:/edit-grammar/" + grammar.getMeta().getId();
     }
+    
+    /**
+     * Saves posted rule and redirects to grammar page.
+     *
+     * @param rule A rule from HTML form.
+     * @return Redirects to the grammar page view.
+     */
+    @RequestMapping(value = "/save-rule", method = RequestMethod.POST)
+    public String doSaveRule(Rule rule) {
+
+        if (rule == null) {
+            throw new IllegalArgumentException();
+        }
+
+        BaseXClient baseXClient = null;
+
+        try {
+            baseXClient = Utils.connectToBaseX();
+            RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
+            ruleManager.setBaseXClient(baseXClient);
+
+            // TODO
+            GrammarMeta gm = new GrammarMeta();
+            gm.setId(rule.getGrammarId());
+            
+            ruleManager.updateRule(rule, gm);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (baseXClient != null) {
+                try {
+                    baseXClient.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return "redirect:/grammar/" + rule.getGrammarId().toString();
+    }
 
     /**
      * Creates new grammar with posted name and redirects to grammar meta edit
@@ -207,7 +248,7 @@ public class DefaultController {
      * @return Redirects to the grammar meta edit view.
      */
     @RequestMapping(value = "/create-grammar", method = RequestMethod.POST)
-    public String createGrammar(HttpServletRequest request) {
+    public String doCreateGrammar(HttpServletRequest request) {
         if (request.getParameter("name").equals("")) {
             throw new IllegalArgumentException();
         }
@@ -253,7 +294,7 @@ public class DefaultController {
      * @return The grammar page view.
      */
     @RequestMapping(value = "/delete-grammar/{id}")
-    public String deleteGrammar(@PathVariable String id) {
+    public String doDeleteGrammar(@PathVariable String id) {
 
         if (id.equals("") || id == null) {
             throw new IllegalArgumentException();
@@ -293,7 +334,7 @@ public class DefaultController {
      * @return Redirects to the grammar page view.
      */
     @RequestMapping(value = "/rule-add", method = RequestMethod.POST)
-    public String ruleAdd(HttpServletRequest request) {
+    public String doCreateRule(HttpServletRequest request) {
 
         if (request.getParameter("ruleId") == null || request.getParameter("ruleId").equals("")
                 || request.getParameter("grammarId") == null || request.getParameter("grammarId").equals("")) {
@@ -309,14 +350,13 @@ public class DefaultController {
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
 
-            List<Rule> rules = ruleManager.findAllRules(gm);
             Rule rule = new Rule();
             rule.setId(request.getParameter("ruleId"));
 
             ruleManager.addRule(rule, gm);
 
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             if (baseXClient != null) {
@@ -381,7 +421,7 @@ public class DefaultController {
      * @return Redirects to the grammar page view.
      */
     @RequestMapping(value = "/delete-rule/{grammarId}/{ruleId}")
-    public String deleteRule(@PathVariable Long grammarId, @PathVariable String ruleId) {
+    public String doDeleteRule(@PathVariable Long grammarId, @PathVariable String ruleId) {
         if (grammarId == null || grammarId == 0 || ruleId == null || ruleId.equals("")) {
             throw new IllegalArgumentException();
         }
@@ -500,7 +540,7 @@ public class DefaultController {
      */
     @RequestMapping(value = "/export/{grammarId}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
     @ResponseBody
-    public String export(HttpServletResponse response, @PathVariable Long grammarId) {
+    public String doExport(HttpServletResponse response, @PathVariable Long grammarId) {
         response.setHeader("Content-Disposition", "attachment;filename=\"export.xml\"");
         if (grammarId == null || grammarId == 0) {
             throw new IllegalArgumentException();

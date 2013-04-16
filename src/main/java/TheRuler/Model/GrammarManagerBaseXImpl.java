@@ -74,8 +74,8 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 
         String insertNodeCommand = "insert node "
                 + "<grammarRecord id='" + newId + "'>"
-                + "  <name><![CDATA[" + grammarMeta.getName() + "]]></name>"
-                + "  <description><![CDATA[" + ((grammarMeta.getDescription() == null) ? "" : grammarMeta.getDescription()) + "]]></description>"
+                + "  <name>" + HtmlUtils.htmlEscape(grammarMeta.getName()) + "</name>"
+                + "  <description>" + ((grammarMeta.getDescription() == null) ? "" : HtmlUtils.htmlEscape(grammarMeta.getDescription())) + "</description>"
                 + "  <date>" + Utils.convertDateToGmtString(new Date()) + "</date>"
                 + "</grammarRecord>"
                 + "into //grammars";
@@ -161,7 +161,6 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
         String description = null;
         String dateString = null;
         GrammarMeta grammarMeta = new GrammarMeta();
-
 
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         InputSource is = new InputSource();
@@ -281,8 +280,8 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
 
         String updateNodeCommand = "replace node //grammars/grammarRecord[@id=" + grammarMeta.getId() + "] with"
                 + "<grammarRecord id='" + grammarMeta.getId() + "'>"
-                + "  <name><![CDATA[" + grammarMeta.getName() + "]]></name>"
-                + "  <description><![CDATA[" + grammarMeta.getDescription() + "]]></description>"
+                + "  <name>" + HtmlUtils.htmlEscape(grammarMeta.getName()) + "</name>"
+                + "  <description>" + HtmlUtils.htmlEscape(grammarMeta.getDescription()) + "</description>"
                 + "  <date>" + grammarMeta.getDate() + "</date>"
                 + "</grammarRecord>";
 

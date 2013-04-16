@@ -89,11 +89,45 @@
         }
     });
     
-    // Check new rule emptiness
+    // Check new rule emptiness and existention
     $('[name="ruleAdd"]').submit(function() {
         if ($.trim($('[name="ruleId"]').val()).length == 0) {
             bootbox.alert("${rc.getMessage('emptyRuleName')}.");
             return false;
+        } else {
+            $.getJSON("${rc.contextPath}/ajax/ruleExists", { ruleId: $('input[name="ruleId"]').val(), grammarId: $('input[name="grammarId"]').val()}, function(result) {
+                alert(result.exists);
+                if(result.exists == "true") {
+                    bootbox.alert("${rc.getMessage('ruleExists')}");
+                    return false;
+                }
+                return false;
+//                if (availability.available) {
+//                    fieldValidated("name", { valid : true });
+//                } else {
+//                    fieldValidated("name", { valid : false,
+//                        message : $('#name').val() + " is not available, try " + availability.suggestions });
+//                }
+            });
+            return false;
+            
+            
+            // debug
+//            $a = $('input[name="ruleId"]').val();
+//            $b = $('input[name="grammarId"]').val();
+//            // Check if rule exists
+//            $.ajax({
+//                type: "POST",
+//                url: "${rc.contextPath}/ajax/ruleExists",
+//                data: { ruleId: $('input[name="ruleId"]').val(), grammarId: $('input[name="grammarId"]').val()},
+//                dataType: "JSON"
+//            }).always(function() {
+//                alert(msg);
+//                if (msg == 'true') {
+//                    bootbox.alert("${rc.getMessage('ruleExists')}");
+//                    return false;
+//                }
+//            });
         }
     });
        
@@ -154,18 +188,27 @@
     $('#validateXml').click(function() {
         var btn = $(this)
         btn.button('loading');
+//        $.getJSON("${rc.contextPath}/ajax/ruleExists", { ruleId: $('input[name="ruleId"]').val(),
+//                                                          grammarId: $('input[name="grammarId"]').val()}, function(result) {
+            
+//        });
+                                                          
         $.ajax({
             type: "POST",
             url: "${rc.contextPath}/ajax/validateXml",
-            data: { content: $('#content').val()}
-        }).done(function( msg ) {
+            data: { content: $('#content').val()},
+            dataType: "JSON",
+            timeout: 60000
+        }).done(function(result) {
             btn.button('reset');
-            if (msg == 'true') {
+            if (result.valid == 'true') {
                 $('#myModal .modal-body').html('<div class="alert alert-success"><strong>${rc.getMessage("wellDone")}!</strong> ${rc.getMessage("documentValid")}</div>');
             } else {
                 $('#myModal .modal-body').html('<div class="alert alert-error"><strong>${rc.getMessage("error")}!</strong> ${rc.getMessage("documentNotValid")}.</div><p>' + msg + '</p>');
             }
             $('#myModal').modal('toggle');
+        }).always(function(result) {
+            alert(result.valid);
         });
     });
         

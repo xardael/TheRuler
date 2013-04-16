@@ -1,12 +1,15 @@
 package TheRuler.Web;
 
+import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Utils;
 import TheRuler.Model.GrammarMeta;
 import TheRuler.Model.Rule;
 import TheRuler.Model.RuleManagerBaseXImpl;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.stereotype.Controller;
@@ -38,7 +41,7 @@ public class AjaxController {
         if (grammarId != null) {
             gm.setId(grammarId);
         }
-        List<Rule> rules = new ArrayList<Rule>();
+        List<Rule> rules;
         List<String> ids = new ArrayList<String>();
         if (searchText != null) {
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
@@ -56,6 +59,47 @@ public class AjaxController {
 
         return ids;
     }
+    
+    /**
+     * Check if rule with given ID exists in given grammar.
+     *
+     * @param grammarId ID of grammar.
+     * @param ruleId Rule ID to check.
+     * @return String "true" if exists, "false" otherwise.
+     */
+    @RequestMapping(value = "/ajax/ruleExists", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> ruleExists(@RequestParam Long grammarId, @RequestParam String ruleId) {
+        GrammarMeta gm = new GrammarMeta();
+        if (grammarId != null) {
+            gm.setId(grammarId);
+        }
+        
+        String exists = "false";
+        if (ruleId != null && !"".equals(ruleId)) {
+            BaseXClient baseXClient = null;
+            RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
+            try {
+                baseXClient = Utils.connectToBaseX();
+                ruleManager.setBaseXClient(baseXClient);
+                exists = ruleManager.ruleExists(ruleId, grammarId) ? "true" : "false";
+            } catch (Exception ex) {
+                Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                if (baseXClient != null) {
+                    try {
+                        baseXClient.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("exists", exists);
+        return map;
+    }
 
     /**
      * Validates posted XML and return String AJAX response.
@@ -65,19 +109,20 @@ public class AjaxController {
      */
     @RequestMapping(value = "/ajax/validateXml", method = RequestMethod.POST)
     public @ResponseBody
-    String validateXml(@RequestParam String content) {
+    Map<String, String> validateXml(@RequestParam String content) {
+        
         String result = "false";
 
         try {
             result = Utils.validate(content);
         } catch (SAXException ex) {
             Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
-            return "false";
         } catch (IOException ex) {
             Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
-            return "false";
         }
 
-        return result;
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("valid", result);
+        return map;
     }
 }

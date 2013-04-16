@@ -38,8 +38,9 @@
     </div>		
 </div>
 
-<form name="grammar" method="post" action="${rc.contextPath}/saveRule">
-    <input name="meta.id" type="hidden" value="${gm.id}" />
+<form name="rule" method="post" action="${rc.contextPath}/save-rule">
+    <input type="hidden" name="grammarId" value="${gm.id}">
+    <input name="id" type="hidden" value="${rule.id}" />
     <textarea name="content" id="content" rows="20" style="width: 99%">${rule.content}</textarea>
     <div class="form-actions">
         <button type="button" class="btn" id="insertRuleref" data-toggle="modal"><i class="icon-plus-sign"></i> ${rc.getMessage("insertRuleref")}</button>

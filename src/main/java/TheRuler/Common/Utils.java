@@ -1,14 +1,13 @@
 package TheRuler.Common;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -50,7 +49,13 @@ public class Utils {
         StreamResult result = new StreamResult(buffer);
         DOMSource source = new DOMSource(element);
         TransformerFactory.newInstance().newTransformer().transform(source, result);
-        String xml = new String(buffer.toByteArray());
+        //String xml = new String(buffer.toByteArray());
+        String xml = "";
+        try {
+            xml = buffer.toString("UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return xml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
     }
 
@@ -66,6 +71,23 @@ public class Utils {
         InputStream bais = new ByteArrayInputStream(Config.GRAMMARS_ROOT_NAME.getBytes("UTF-8"));
         baseXClient.add(Config.GRAMMARS_FILE_NAME, bais);
         baseXClient.close();
+    }
+    
+    /**
+     * Escapes XML reserved characters into entities.
+     * 
+     * See <a href="https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet">OWASP XSS (Cross Site Scripting) Prevention Cheat Sheet</a>.
+     * 
+     * @param input String to escape.
+     * @return Escaped string.
+     */
+    public static String escapeXml(String input) {
+        return input.replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;")
+                    .replace("\"", "&quot;")
+                    .replace("'", "&#x27;")
+                    .replace("/", "&#x2F;"); 
     }
 
     /**

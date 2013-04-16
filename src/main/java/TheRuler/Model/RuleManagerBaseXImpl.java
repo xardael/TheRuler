@@ -3,6 +3,7 @@ package TheRuler.Model;
 import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
+import TheRuler.Exceptions.GenericException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -57,7 +58,9 @@ public class RuleManagerBaseXImpl implements RuleManager {
             throw new IllegalArgumentException();
         }
 
-        //@TODO Tu ma byt este kontrola ci ID uz neexistuje. Presnejsie mohla by byt.
+        if (ruleExists(rule.getId(), grammarMeta.getId())) {
+            throw new GenericException("rule exists");
+        }
 
         String insertNodeCommand = "insert node <rule id='" + rule.getId() + "'> "
                 + (rule.getContent() == null ? "" : rule.getContent())
@@ -74,12 +77,12 @@ public class RuleManagerBaseXImpl implements RuleManager {
      * @param grammarId Grammar ID.
      * @return TRUE if rule exists, FALSE otherwise.
      */
-    public Boolean ruleExists(String id, String grammarId) throws IOException {
+    public Boolean ruleExists(String id, Long grammarId) throws IOException {
         if (id == null || grammarId == null || baseXClient == null) {
             throw new IllegalArgumentException();
         }
 
-        String query = String.format("xquery exists(doc('%s/%s.xml')//rule[@id='%s']) ", Config.getValue(Config.C_DB_NAME), grammarId, id);
+        String query = String.format("xquery exists(doc('%s/%s.xml')//rule[@id='%s'])", Config.getValue(Config.C_DB_NAME), grammarId, id);
         String result = baseXClient.execute(query);
         
         if ("true".equals(result)) {
@@ -102,7 +105,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
             throw new IllegalArgumentException();
         }
 
-        String queryString = String.format("doc('%s/%s.xml')//rule[@id='%s']", Config.getValue(Config.C_DB_NAME), grammarMeta.getId(), id);
+        String queryString = String.format("doc('%s/%s.xml')//rule[@id='%s'][1]", Config.getValue(Config.C_DB_NAME), grammarMeta.getId(), id);
         BaseXClient.Query query = baseXClient.query(queryString);
         LOGGER.log(Level.INFO, "Executing query: " + queryString);
         String xml = query.execute();
@@ -204,14 +207,19 @@ public class RuleManagerBaseXImpl implements RuleManager {
             throw new IllegalArgumentException();
         }
 
-        // Tu ma byt este kontrola ci ID uz neexistuje. Presnejsie mohla by byt.
+        if(!ruleExists(rule.getId(), grammarMeta.getId())) {
+            throw new IllegalArgumentException();
+        }
+        
+//        String updateNodeCommand = "replace node doc('%1$s/%2$s.xml')//rule[@id='%3$s'] with"
+//                                 + "<rule id='%3$s'>%4$s</rule>";
+        
+        String updateNodeCommand = "replace node doc('%1$s/%2$s.xml')//rule[@id='%3$s'][1] with %4$s";
+        
+        updateNodeCommand = String.format(updateNodeCommand, Config.getValue(Config.C_DB_NAME), grammarMeta.getId(), rule.getId(), rule.getContent());
 
-        String insertNodeCommand = "insert node <rule id='" + rule.getId() + "'> "
-                + (rule.getContent() == null ? "" : rule.getContent())
-                + "</rule> "
-                + "into doc('" + Config.getValue(Config.C_DB_NAME) + "/" + grammarMeta.getId() + ".xml')/grammar";
-
-        String result = baseXClient.execute("xquery " + insertNodeCommand);
+        LOGGER.log(Level.INFO, "Executing query: " + updateNodeCommand);
+        String result = baseXClient.execute("xquery " + updateNodeCommand);
     }
 
     /**
@@ -233,6 +241,6 @@ public class RuleManagerBaseXImpl implements RuleManager {
             throw new IllegalArgumentException();
         }
 
-        baseXClient.execute("xquery delete node doc('" + Config.getValue(Config.C_DB_NAME) + "/" + grammarMeta.getId() + ".xml')//rule[@id='" + rule.getId() + "']");
+        baseXClient.execute("xquery delete node doc('" + Config.getValue(Config.C_DB_NAME) + "/" + grammarMeta.getId() + ".xml')//rule[@id='" + rule.getId() + "'][1]");
     }
 }
