@@ -4,7 +4,7 @@ import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
 import TheRuler.Exceptions.GenericException;
-import TheRuler.Exceptions.ResourceNotFoundException;
+import TheRuler.Exceptions.NotFoundException;
 import TheRuler.Model.*;
 import java.io.IOException;
 import java.util.List;
@@ -469,7 +469,7 @@ public class DefaultController {
 
         try {
             if (Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
-                throw new ResourceNotFoundException();
+                throw new NotFoundException();
             }
         } catch (IOException ioe) {
         }
@@ -482,7 +482,7 @@ public class DefaultController {
         try {
             // If DB is already seted as installed - do not process
             if (Boolean.parseBoolean(Config.getValue(Config.C_DB_INST))) {
-                throw new ResourceNotFoundException();
+                throw new NotFoundException();
             }
 
             Config.setValue(Config.C_DB_HOST, host);
@@ -523,7 +523,7 @@ public class DefaultController {
     public String install(ModelMap model) {
         try {
             if (Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
-                throw new ResourceNotFoundException();
+                throw new NotFoundException();
             }
         } catch (IOException ioe) {
         }

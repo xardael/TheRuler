@@ -39,7 +39,8 @@ public class Utils {
     }
 
     /**
-     * Convert XML object hierarchy into string.
+     * Convert XML object hierarchy into string. Used for printing XML
+     * directly into UI.
      * 
      * @param element XML element.
      * @return String XML without prolog as a text.

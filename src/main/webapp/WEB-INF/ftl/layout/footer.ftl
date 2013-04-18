@@ -60,7 +60,7 @@
 
 <!-- Javascript
 ================================================== -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="${rc.contextPath}/res/js/jquery.min.js"></script>
 <script src="${rc.contextPath}/res/js/bootstrap.min.js"></script>
 <script src="${rc.contextPath}/res/js/bootbox.min.js"></script>
 
@@ -96,38 +96,14 @@
             return false;
         } else {
             $.getJSON("${rc.contextPath}/ajax/ruleExists", { ruleId: $('input[name="ruleId"]').val(), grammarId: $('input[name="grammarId"]').val()}, function(result) {
-                alert(result.exists);
+                console.log(JSON.stringify(result));
                 if(result.exists == "true") {
                     bootbox.alert("${rc.getMessage('ruleExists')}");
-                    return false;
+                } else {
+                    // NB
                 }
-                return false;
-//                if (availability.available) {
-//                    fieldValidated("name", { valid : true });
-//                } else {
-//                    fieldValidated("name", { valid : false,
-//                        message : $('#name').val() + " is not available, try " + availability.suggestions });
-//                }
             });
             return false;
-            
-            
-            // debug
-//            $a = $('input[name="ruleId"]').val();
-//            $b = $('input[name="grammarId"]').val();
-//            // Check if rule exists
-//            $.ajax({
-//                type: "POST",
-//                url: "${rc.contextPath}/ajax/ruleExists",
-//                data: { ruleId: $('input[name="ruleId"]').val(), grammarId: $('input[name="grammarId"]').val()},
-//                dataType: "JSON"
-//            }).always(function() {
-//                alert(msg);
-//                if (msg == 'true') {
-//                    bootbox.alert("${rc.getMessage('ruleExists')}");
-//                    return false;
-//                }
-//            });
         }
     });
        
@@ -199,16 +175,15 @@
             data: { content: $('#content').val()},
             dataType: "JSON",
             timeout: 60000
-        }).done(function(result) {
+        }).always(function(result) {
             btn.button('reset');
+            console.log(JSON.stringify(result));
             if (result.valid == 'true') {
                 $('#myModal .modal-body').html('<div class="alert alert-success"><strong>${rc.getMessage("wellDone")}!</strong> ${rc.getMessage("documentValid")}</div>');
             } else {
-                $('#myModal .modal-body').html('<div class="alert alert-error"><strong>${rc.getMessage("error")}!</strong> ${rc.getMessage("documentNotValid")}.</div><p>' + msg + '</p>');
+                $('#myModal .modal-body').html('<div class="alert alert-error"><strong>${rc.getMessage("error")}!</strong> ${rc.getMessage("documentNotValid")}.</div><p>' + result.valid + '</p>');
             }
             $('#myModal').modal('toggle');
-        }).always(function(result) {
-            alert(result.valid);
         });
     });
         

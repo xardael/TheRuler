@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  *
  * @author Peter Gren
  */
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-public final class ResourceNotFoundException extends RuntimeException {
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+public final class BadRequestException extends RuntimeException {
 }
