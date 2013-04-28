@@ -1,13 +1,13 @@
 package TheRuler.Common;
 
+import TheRuler.Exceptions.DatabaseException;
+import TheRuler.Model.GrammarManagerBaseXImpl;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -19,6 +19,8 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * Static methods which provides utility functions.
@@ -26,18 +28,25 @@ import org.xml.sax.SAXException;
  * @author Peter Gren
  */
 public class Utils {
+    
+    private static final Logger LOGGER = Logger.getLogger(Utils.class);
 
     /**
      * Tries to open database connection.
      * 
      * @return BaseXClient instance as a connection identificator.
      */
-    public static BaseXClient connectToBaseX() throws IOException {
-        BaseXClient baseXClient = new BaseXClient(Config.getValue(Config.C_DB_HOST), Integer.parseInt(Config.getValue(Config.C_DB_PORT)), Config.getValue(Config.C_DB_USER), Config.getValue(Config.C_DB_PASS));
-        baseXClient.execute("OPEN " + Config.getValue(Config.C_DB_NAME));
-        return baseXClient;
+    public static BaseXClient connectToBaseX() throws DatabaseException {
+        try {
+            BaseXClient baseXClient = new BaseXClient(Config.getValue(Config.C_DB_HOST), Integer.parseInt(Config.getValue(Config.C_DB_PORT)), Config.getValue(Config.C_DB_USER), Config.getValue(Config.C_DB_PASS));
+            baseXClient.execute("OPEN " + Config.getValue(Config.C_DB_NAME));
+            return baseXClient;
+        } catch (IOException e) {
+            LOGGER.log(Level.ERROR, e);
+            throw new DatabaseException(e);
+        } 
     }
-
+    
     /**
      * Convert XML object hierarchy into string. Used for printing XML
      * directly into UI.
@@ -54,10 +63,28 @@ public class Utils {
         String xml = "";
         try {
             xml = buffer.toString("UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.log(Level.ERROR, e);
         }
         return xml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
+    }
+    
+    /**
+     * Adds prolog and refs to schema into given SRGS grammar's header.
+     * 
+     * @param xml XML string.
+     * @return 
+     */
+    public static String fixSrgsHeader(String xml) {
+        String header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<!DOCTYPE grammar PUBLIC \"-//W3C//DTD GRAMMAR 1.0//EN\"  \"http://www.w3.org/TR/speech-grammar/grammar.dtd\">\n" +
+                        "<grammar xmlns=\"http://www.w3.org/2001/06/grammar\"\n" +
+                        "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                        "         xsi:schemaLocation=\"http://www.w3.org/2001/06/grammar\n" + 
+                        "                             http://www.w3.org/TR/speech-grammar/grammar.xsd\"\n " +
+                        "         xml:lang=\"en-US\" version=\"1.0\">\n";
+        
+        return xml.replace("<grammar>", header);
     }
 
     /**
@@ -65,13 +92,20 @@ public class Utils {
      * Login information must be stored in configuration propertis file.
      * If db with configured name exists, it will be overwritten.
      */
-    public static void installDB() throws IOException {
-        BaseXClient baseXClient = new BaseXClient(Config.getValue(Config.C_DB_HOST), Integer.parseInt(Config.getValue(Config.C_DB_PORT)), Config.getValue(Config.C_DB_USER), Config.getValue(Config.C_DB_PASS));
-        baseXClient.execute("CREATE DB " + Config.getValue(Config.C_DB_NAME));
-        baseXClient.execute("OPEN " + Config.getValue(Config.C_DB_NAME));
-        InputStream bais = new ByteArrayInputStream(Config.GRAMMARS_ROOT_NAME.getBytes("UTF-8"));
-        baseXClient.add(Config.GRAMMARS_FILE_NAME, bais);
-        baseXClient.close();
+    public static void installDB() throws DatabaseException {
+        BaseXClient baseXClient = null;
+        try {
+            baseXClient = new BaseXClient(Config.getValue(Config.C_DB_HOST), Integer.parseInt(Config.getValue(Config.C_DB_PORT)), Config.getValue(Config.C_DB_USER), Config.getValue(Config.C_DB_PASS));
+            baseXClient.execute("CREATE DB " + Config.getValue(Config.C_DB_NAME));
+            baseXClient.execute("OPEN " + Config.getValue(Config.C_DB_NAME));
+            InputStream bais = new ByteArrayInputStream(Config.GRAMMARS_ROOT_NAME.getBytes("UTF-8"));
+            baseXClient.add(Config.GRAMMARS_FILE_NAME, bais);
+        } catch (IOException e) {
+            LOGGER.log(Level.ERROR, e);
+            throw new DatabaseException(e);
+        }  finally {
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
+        }
     }
     
     /**

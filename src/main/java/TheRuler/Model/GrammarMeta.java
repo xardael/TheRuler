@@ -5,7 +5,7 @@ package TheRuler.Model;
  *
  * @author Peter Gren
  */
-public class GrammarMeta {
+public class GrammarMeta implements java.io.Serializable {
 
     private Long id;
     private String name;

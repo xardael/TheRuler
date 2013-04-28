@@ -34,7 +34,7 @@
 <#if grammarMetas?size == 0>
     <div class="row">
         <div class="span12">
-            <div class="alert"><strong>${rc.getMessage('newGrammar')}</strong></div>
+            <div class="alert"><strong>${rc.getMessage('noGrammars')}</strong></div>
         </div>
     </div>
 <#else>

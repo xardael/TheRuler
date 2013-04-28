@@ -3,7 +3,7 @@
 
 <div class="row">
     <div class="span12">
-        <h2>${rc.getMessage("grammars")}</h2>
+        <h2>${rc.getMessage("appName")}</h2>
     </div>
 </div>
 

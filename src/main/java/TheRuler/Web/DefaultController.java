@@ -3,21 +3,28 @@ package TheRuler.Web;
 import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
+import TheRuler.Exceptions.DatabaseException;
 import TheRuler.Exceptions.GenericException;
 import TheRuler.Exceptions.NotFoundException;
 import TheRuler.Model.*;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ResourceBundle;
+import javax.imageio.IIOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.xml.sax.SAXException;
 
 /**
  * Controller for handling standard requests.
@@ -26,7 +33,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 public class DefaultController {
-
+    
+    private static final Logger LOGGER = Logger.getLogger(DefaultController.class);
+    private ResourceBundle rb = null;
+    private BaseXClient baseXClient = null;
+    
+    public DefaultController() {
+        rb = ResourceBundle.getBundle("locale/messages");
+    }
+        
     /**
      * Displays home page - grammar listing.
      *
@@ -40,10 +55,8 @@ public class DefaultController {
 //                return "redirect:/install";
 //            }
 //        } catch (IOException ex) {
-//            Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
+//            LOGGER.log(Level.ERROR, ex);
 //        }
-
-        BaseXClient baseXClient = null;
 
         try {
             baseXClient = Utils.connectToBaseX();
@@ -54,16 +67,10 @@ public class DefaultController {
             List<GrammarMeta> grammarMetas = grammarManager.findAllGrammarMetas();
 
             model.addAttribute("grammarMetas", grammarMetas);
-        } catch (Exception e) {
-            throw new GenericException("Pri priojeni k databaze doslo k chybe"); // =========================
+        } catch (DatabaseException e) {
+            throw new GenericException(rb.getString("dbError"));
         } finally {
-            if (baseXClient != null) {
-                try {
-                    baseXClient.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
         }
 
         return "index";
@@ -94,12 +101,18 @@ public class DefaultController {
             }
         }
 
+        
+        
         try {
-            BaseXClient baseXClient = Utils.connectToBaseX();
+            baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
 
             GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(id));
+            
+            if (gm == null) {
+                throw new NotFoundException();
+            }
 
             model.addAttribute("gm", gm);
 
@@ -118,8 +131,10 @@ public class DefaultController {
             model.addAttribute("search", search);
             model.addAttribute("searchString", request.getParameter("name"));
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (DatabaseException e) {
+            throw new GenericException(rb.getString("dbError"));
+        } finally {
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
         }
 
         return "grammar";
@@ -140,11 +155,14 @@ public class DefaultController {
         }
 
         try {
-            BaseXClient baseXClient = Utils.connectToBaseX();
+            baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
 
             Grammar grammar = grammarManager.findGrammar(Long.parseLong(id));
+            if (grammar == null) {
+                throw new NotFoundException();
+            }
 
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
@@ -152,8 +170,10 @@ public class DefaultController {
 
             model.addAttribute("grammar", grammar);
             model.addAttribute("rules", rules);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (DatabaseException e) {
+            throw new GenericException(rb.getString("dbError"));
+        } finally {
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
         }
 
         return "grammarMetaEdit";
@@ -172,8 +192,6 @@ public class DefaultController {
             throw new IllegalArgumentException();
         }
 
-        BaseXClient baseXClient = null;
-
         try {
             baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
@@ -181,16 +199,10 @@ public class DefaultController {
 
             grammarManager.updateGrammar(grammar);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (DatabaseException e) {
+            throw new GenericException(rb.getString("dbError"));
         } finally {
-            if (baseXClient != null) {
-                try {
-                    baseXClient.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
         }
 
 
@@ -212,8 +224,6 @@ public class DefaultController {
             throw new IllegalArgumentException();
         }
 
-        BaseXClient baseXClient = null;
-
         try {
             baseXClient = Utils.connectToBaseX();
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
@@ -225,16 +235,10 @@ public class DefaultController {
             
             ruleManager.updateRule(rule, gm);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (DatabaseException e) {
+            throw new GenericException(rb.getString("dbError"));
         } finally {
-            if (baseXClient != null) {
-                try {
-                    baseXClient.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
         }
 
         return "redirect:/grammar/" + rule.getGrammarId().toString();
@@ -253,15 +257,8 @@ public class DefaultController {
             throw new IllegalArgumentException();
         }
 
-//            try {
-//                request.setCharacterEncoding("UTF-8");
-//            } catch (UnsupportedEncodingException ex) {
-//                Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-
         String s = request.getParameter("name");
 
-        BaseXClient baseXClient = null;
         GrammarMeta gm = new GrammarMeta();
         gm.setName(request.getParameter("name"));
 
@@ -272,16 +269,10 @@ public class DefaultController {
 
             gm = grammarManager.createGrammar(gm);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (DatabaseException e) {
+            throw new GenericException(rb.getString("dbError"));
         } finally {
-            if (baseXClient != null) {
-                try {
-                    baseXClient.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
         }
 
         return "redirect:/grammar/" + gm.getId();
@@ -300,7 +291,7 @@ public class DefaultController {
             throw new IllegalArgumentException();
         }
 
-        BaseXClient baseXClient = null;
+        baseXClient = null;
         GrammarMeta gm = new GrammarMeta();
         gm.setId(Long.parseLong(id));
 
@@ -311,16 +302,10 @@ public class DefaultController {
 
             grammarManager.deletaGrammar(gm);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (DatabaseException e) {
+            throw new GenericException(rb.getString("dbError"));
         } finally {
-            if (baseXClient != null) {
-                try {
-                    baseXClient.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
         }
 
         return "redirect:/";
@@ -341,7 +326,6 @@ public class DefaultController {
             throw new IllegalArgumentException();
         }
 
-        BaseXClient baseXClient = null;
         GrammarMeta gm = new GrammarMeta();
         gm.setId(Long.parseLong(request.getParameter("grammarId")));
 
@@ -356,16 +340,10 @@ public class DefaultController {
             ruleManager.addRule(rule, gm);
 
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (DatabaseException e) {
+            throw new GenericException(rb.getString("dbError"));
         } finally {
-            if (baseXClient != null) {
-                try {
-                    baseXClient.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
         }
 
         return "redirect:/grammar/" + gm.getId();
@@ -380,20 +358,23 @@ public class DefaultController {
      * @return The rule edit view.
      */
     @RequestMapping(value = "/grammar/{grammarId}/rule/{ruleId}")
-    public String ruleEdit(ModelMap model, @PathVariable String grammarId, @PathVariable String ruleId, HttpServletRequest request) {
+    public String ruleEdit(ModelMap model, @PathVariable Long grammarId, @PathVariable String ruleId, HttpServletRequest request) {
 
-        if (grammarId.equals("") || grammarId == null || ruleId.equals("") || ruleId == null) {
+        if (grammarId == null || grammarId == 0 || ruleId == null || "".equals(ruleId) ) {
             throw new IllegalArgumentException();
         }
         
         try {
-            BaseXClient baseXClient = Utils.connectToBaseX();
+            baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
             
-            GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(grammarId));
+            GrammarMeta gm = grammarManager.findGrammarMeta(grammarId);
+            if (gm == null) {
+                throw new NotFoundException();
+            }
             Rule rule = ruleManager.findRuleById(ruleId, gm);
             if (rule == null) {
                 throw new GenericException("Rule not found."); // ========================================== Lokalizacie chybocyh hlasok
@@ -403,10 +384,10 @@ public class DefaultController {
             model.addAttribute("gm", gm);
             model.addAttribute("rule", rule);
             model.addAttribute("rules", rules);
-        } catch (GenericException ge) {
-            throw new GenericException(ge.getMessage());  
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (DatabaseException e) {
+            throw new GenericException(rb.getString("dbError"));
+        } finally {
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
         }
 
         return "ruleEdit";
@@ -426,7 +407,6 @@ public class DefaultController {
             throw new IllegalArgumentException();
         }
 
-        BaseXClient baseXClient = null;
         GrammarMeta gm = new GrammarMeta();
         gm.setId(grammarId);
         Rule rule = new Rule();
@@ -439,16 +419,10 @@ public class DefaultController {
 
             ruleManager.deleteRule(rule, gm);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (DatabaseException e) {
+            throw new GenericException(rb.getString("dbError"));
         } finally {
-            if (baseXClient != null) {
-                try {
-                    baseXClient.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
         }
 
         return "redirect:/grammar/" + gm.getId();
@@ -471,7 +445,8 @@ public class DefaultController {
             if (Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
                 throw new NotFoundException();
             }
-        } catch (IOException ioe) {
+        } catch (IOException e) {
+            LOGGER.log(Level.ERROR, e);
         }
 
         String host = request.getParameter("inputHost");
@@ -485,31 +460,26 @@ public class DefaultController {
                 throw new NotFoundException();
             }
 
-            Config.setValue(Config.C_DB_HOST, host);
             Config.setValue(Config.C_DB_USER, user);
+            Config.setValue(Config.C_DB_HOST, host);
             Config.setValue(Config.C_DB_PASS, pass);
             Config.setValue(Config.C_DB_NAME, name);
             Config.setValue(Config.C_DB_PORT, port);
 
 
-        } catch (IOException ex) {
-            Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException e) {
+            LOGGER.log(Level.ERROR, e);
         }
 
         try {
             Utils.installDB();
             Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
-        } catch (Exception e) {
-            String s = e.getMessage();
+        } catch (DatabaseException e) {
+            throw new GenericException(rb.getString("dbError"));
+        } catch (IOException e) {
+            LOGGER.log(Level.ERROR, e);
         }
-        try {
-            // Set DB asi installed into properties file
-
-            Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
-        } catch (IOException ex) {
-            Logger.getLogger(DefaultController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        
         return "redirect:/";
     }
 
@@ -525,7 +495,8 @@ public class DefaultController {
             if (Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
                 throw new NotFoundException();
             }
-        } catch (IOException ioe) {
+        } catch (IOException e) {
+            LOGGER.log(Level.ERROR, e);
         }
 
         return "install";
@@ -546,7 +517,6 @@ public class DefaultController {
             throw new IllegalArgumentException();
         }
 
-        BaseXClient baseXClient = null;
         try {
             baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
@@ -556,16 +526,10 @@ public class DefaultController {
 
             return grammar.getContent();
 
-        } catch (Exception e) {
-            return "ERROR";
+        } catch (DatabaseException e) {
+            throw new GenericException(rb.getString("dbError"));
         } finally {
-            if (baseXClient != null) {
-                try {
-                    baseXClient.close();
-                } catch (IOException e) {
-                    return "ERROR";
-                }
-            }
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
         }
     }
 }

@@ -20,7 +20,7 @@ public class Config {
      */
     private static Properties init() throws IOException {
         Properties props = new Properties();
-        props.load(Config.class.getClassLoader().getResourceAsStream("config.properties"));
+        props.load(Config.class.getClassLoader().getResourceAsStream(CONFIG_FILE_NAME));
         return props;
     }
 
@@ -35,11 +35,12 @@ public class Config {
     public static final String GRAMMARS_FILE_NAME = "Meta.xml";
     /** Configuration file name. */
     public static final String CONFIG_FILE_NAME = "config.properties";
+    /** Localization file name. */
+    public static final String MESSAGES_FILE_NAME = "loacale/messages";
     /** SRGS XML Schema file name for validation. */
     public static final String SRGS_SCHEMA_FILE_NAME = "grammar-core.xsd";
     /** Format in which is date stored in XML files. */
     public static final String DATE_FORMAT_STORED = "yyyy-MM-dd HH:mm:ssZ";
-
     
     /***********************************************
      * Constatn names for config.properties

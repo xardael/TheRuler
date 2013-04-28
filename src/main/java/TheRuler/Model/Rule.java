@@ -5,7 +5,7 @@ package TheRuler.Model;
  * 
  * @author Peter Gren
  */
-public class Rule {
+public class Rule implements java.io.Serializable {
 
     private String id;
     private String content;

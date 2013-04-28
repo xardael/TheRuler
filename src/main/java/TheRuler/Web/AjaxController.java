@@ -2,6 +2,8 @@ package TheRuler.Web;
 
 import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Utils;
+import TheRuler.Exceptions.DatabaseException;
+import TheRuler.Exceptions.InternalErrorException;
 import TheRuler.Model.GrammarMeta;
 import TheRuler.Model.Rule;
 import TheRuler.Model.RuleManagerBaseXImpl;
@@ -10,14 +12,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.xml.sax.SAXException;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * Controller for handling AJAX requests.
@@ -26,6 +30,13 @@ import org.xml.sax.SAXException;
  */
 @Controller
 public class AjaxController {
+    
+    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AjaxController.class);
+    private BaseXClient baseXClient = null;
+    
+    public AjaxController() {
+        baseXClient = null;
+    }
 
     /**
      * Finds rules. Provides functionality for insert ruleref feature.
@@ -46,14 +57,17 @@ public class AjaxController {
         if (searchText != null) {
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             try {
-                ruleManager.setBaseXClient(Utils.connectToBaseX());
+                baseXClient = Utils.connectToBaseX();
+                ruleManager.setBaseXClient(baseXClient);
                 rules = ruleManager.findAllRulesById(searchText, gm);
 
                 for (Rule rule : rules) {
                     ids.add(rule.getId());
                 }
-            } catch (Exception ex) {
-                Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (DatabaseException e) {
+                throw new InternalErrorException();
+            } finally {
+                try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
             }
         }
 
@@ -77,28 +91,23 @@ public class AjaxController {
         
         String exists = "false";
         if (ruleId != null && !"".equals(ruleId)) {
-            BaseXClient baseXClient = null;
-            RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             try {
                 baseXClient = Utils.connectToBaseX();
+                RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
                 ruleManager.setBaseXClient(baseXClient);
-                exists = ruleManager.ruleExists(ruleId, grammarId) ? "true" : "false";
-            } catch (Exception ex) {
-                Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
+                exists = (ruleManager.findRuleById(ruleId, gm) != null) ? "true" : "false";
+                
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("exists", exists);
+                return map;
+            } catch (DatabaseException e) {
+                throw new InternalErrorException();
             } finally {
-                if (baseXClient != null) {
-                    try {
-                        baseXClient.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+                try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
             }
         }
-
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("exists", exists);
-        return map;
+        
+        return null;
     }
 
     /**
@@ -116,9 +125,7 @@ public class AjaxController {
         try {
             result = Utils.validate(content);
         } catch (SAXException ex) {
-            Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(AjaxController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         Map<String, String> map = new HashMap<String, String>();
