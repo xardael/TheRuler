@@ -26,7 +26,6 @@
     <div class="span12">
         <form name="grammar" class="validate" method="post" action="${rc.contextPath}/save-grammar">
             <input type="hidden" name="id" value="${grammar.id}">
-            <input type="hidden" name="date" value="${grammar.date}">
             <div class="control-group">
                 <label class="control-label" for="name">${rc.getMessage("name")}:</label>
                 <div class="controls">

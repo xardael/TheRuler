@@ -299,7 +299,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
      * 
      * @param grammarMeta GrammarMeta stated for update.
      */
-    public void updateGrammarMeta(TheRuler.Model.GrammarMeta grammarMeta) throws DatabaseException {
+    public void updateGrammarMeta(GrammarMeta grammarMeta) throws DatabaseException {
         if (grammarMeta == null) {
             throw new IllegalArgumentException();
         } else if (grammarMeta.getId() == null || grammarMeta.getName() == null) {
@@ -307,11 +307,10 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
         }
 
         try {
-            if (!grammarExists(grammarMeta)) {
+            GrammarMeta old = findGrammarMeta(grammarMeta.getId());
+            if (old == null) {
                 throw new IllegalArgumentException();
             }
-            
-            GrammarMeta old = findGrammarMeta(grammarMeta.getId());
             
             String query = "xquery replace node //grammars/grammarRecord[@id=" + grammarMeta.getId() + "] with"
                     + "<grammarRecord id='" + grammarMeta.getId() + "'>"
