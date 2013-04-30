@@ -89,9 +89,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             LOGGER.log(Level.DEBUG, "Executing query: " + query);
             baseXClient.execute(query);
 
-            String grammar = "<grammar></grammar>";
-            
-            InputStream bais = new ByteArrayInputStream(grammar.getBytes("UTF-8"));
+            InputStream bais = new ByteArrayInputStream(Config.GRAMMAR_ROOT_NAME.getBytes("UTF-8"));
                         
             // Create new XML file in database for created grammar.
             baseXClient.add(newId.toString() + ".xml", bais);

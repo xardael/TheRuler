@@ -118,12 +118,23 @@ public class Utils {
      * @return Escaped string.
      */
     public static String escapeXml(String input) {
-        return input.replace("&", "&amp;")
-                    .replace("<", "&lt;")
-                    .replace(">", "&gt;")
-                    .replace("\"", "&quot;")
-                    .replace("'", "&#x27;")
-                    .replace("/", "&#x2F;"); 
+        String output = "";
+        
+        for (char ch: input.toCharArray()) {
+            switch (ch) {
+                case '&' : output += "&amp;";  break;
+                case '<' : output += "&lt;";   break;
+                case '>' : output += "&gt;";   break;
+                case '"' : output += "&quot;"; break;
+                case '\'': output += "&#x27;"; break;
+                case '/' : output += "&#x2F;"; break;
+                default:
+                    output += String.valueOf(ch);
+                    break;
+            }
+        }
+        
+        return output;
     }
 
     /**

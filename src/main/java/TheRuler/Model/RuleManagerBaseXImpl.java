@@ -62,7 +62,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
         if (ruleExists(rule)) {
             throw new RuleExistsException(rule.getId());
         }
-        
+
         try {
             String query = "xquery insert node <rule id='" + rule.getId() + "'> "
                     + (rule.getContent() == null ? "" : rule.getContent())
@@ -263,7 +263,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
     public void updateRule(Rule rule) throws DatabaseException {
         if (rule == null) {
             throw new IllegalArgumentException();
-        } else if (rule.getId() == null || "".equals(rule.getId()) || rule.getGrammarId() == null) {
+        } else if (rule.getId() == null || "".equals(rule.getId()) || rule.getGrammarId() == null || rule.getContent() == null) {
             throw new IllegalArgumentException();
         }
 
@@ -271,9 +271,14 @@ public class RuleManagerBaseXImpl implements RuleManager {
             throw new IllegalArgumentException();
         }
         
+        String wholeRule = "<rule id='" + rule.getId() + "' />";
+        if(!"".equals(rule.getContent().trim())) {
+            wholeRule = rule.getContent();
+        }
+        
         try {
             String query = "xquery replace node doc('%1$s/%2$s.xml')//rule[@id='%3$s'][1] with %4$s";
-            query = String.format(query, Config.getValue(Config.C_DB_NAME), rule.getGrammarId(), rule.getId(), rule.getContent());
+            query = String.format(query, Config.getValue(Config.C_DB_NAME), rule.getGrammarId(), rule.getId(), wholeRule);
             LOGGER.log(Level.DEBUG, "Executing query: " + query);
             baseXClient.execute(query);
         } catch (IOException e) {

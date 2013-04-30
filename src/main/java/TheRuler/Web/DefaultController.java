@@ -149,11 +149,14 @@ public class DefaultController {
      */
     @RequestMapping(value = "/save-grammar", method = RequestMethod.POST)
     public String doSaveGrammar(Grammar grammar) {
-
         if (grammar == null) {
             throw new IllegalArgumentException();
         }
 
+        if (grammar.getName() == null || "".equals(grammar.getName().trim())) {
+            throw new GenericException(rb.getString("emptyGrammarName"));
+        }
+        
         try {
             baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
@@ -204,7 +207,7 @@ public class DefaultController {
     @RequestMapping(value = "/create-grammar", method = RequestMethod.POST)
     public String doCreateGrammar(@RequestParam String name) {
         if ("".equals(name)) {
-            throw new GenericException(rb.getString("emptyRuleName"));
+            throw new GenericException(rb.getString("emptyGrammarName"));
         }
 
         GrammarMeta gm = new GrammarMeta();

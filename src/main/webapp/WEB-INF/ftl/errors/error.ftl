@@ -11,7 +11,7 @@
 <div class="row">
     <div class="span12">
         <div class="alert alert-block alert-error">
-            <h4>${exception.localizedMessage!}</h4>
+            <h4>${exception}</h4>
             <#if exception.stackTrace??>
                 <#list exception.stackTrace as line>
                     ${line}<br>
