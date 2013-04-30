@@ -5,7 +5,7 @@ import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
 import TheRuler.Exceptions.ConfigException;
 import TheRuler.Exceptions.DatabaseException;
-import TheRuler.Exceptions.GenericException;
+import TheRuler.Exceptions.RuleExistsException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -52,22 +52,22 @@ public class RuleManagerBaseXImpl implements RuleManager {
      * @param grammarMeta Grammar meta.
      * @param rule Rule object.
      */
-    public void addRule(Rule rule, GrammarMeta grammarMeta) throws DatabaseException {
-        if (grammarMeta == null || rule == null) {
+    public void addRule(Rule rule) throws DatabaseException, RuleExistsException {
+        if (rule == null) {
             throw new IllegalArgumentException();
-        } else if (grammarMeta.getId() == null || rule.getId() == null || "".equals(rule.getId())) {
+        } else if (rule.getId() == null || "".equals(rule.getId()) || rule.getGrammarId() == null) {
             throw new IllegalArgumentException();
         }
 
-        if (ruleExists(rule.getId(), grammarMeta.getId())) {
-            throw new GenericException("rule exists");
+        if (ruleExists(rule)) {
+            throw new RuleExistsException(rule.getId());
         }
         
         try {
             String query = "xquery insert node <rule id='" + rule.getId() + "'> "
                     + (rule.getContent() == null ? "" : rule.getContent())
                     + "</rule> "
-                    + "into doc('" + Config.getValue(Config.C_DB_NAME) + "/" + grammarMeta.getId() + ".xml')/grammar";
+                    + "into doc('" + Config.getValue(Config.C_DB_NAME) + "/" + rule.getGrammarId() + ".xml')/grammar";
             
             LOGGER.log(Level.DEBUG, "Executing query: " + query);
             baseXClient.execute(query);
@@ -87,13 +87,13 @@ public class RuleManagerBaseXImpl implements RuleManager {
      * @param grammarId Grammar ID.
      * @return TRUE if rule exists, FALSE otherwise.
      */
-    private Boolean ruleExists(String id, Long grammarId) throws DatabaseException {
-        if (id == null || grammarId == null || baseXClient == null) {
+    private Boolean ruleExists(Rule rule) throws DatabaseException {
+        if (rule == null || rule.getGrammarId() == null || baseXClient == null) {
             throw new IllegalArgumentException();
         }
 
         try {
-            String query = String.format("xquery exists(doc('%s/%s.xml')//rule[@id='%s'])", Config.getValue(Config.C_DB_NAME), grammarId, id);
+            String query = String.format("xquery exists(doc('%s/%s.xml')//rule[@id='%s'])", Config.getValue(Config.C_DB_NAME), rule.getGrammarId(), rule.getId());
             String result = baseXClient.execute(query);
             
             if ("true".equals(result)) {
@@ -135,6 +135,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
             
             Rule rule = new Rule();
             rule.setId(id);
+            rule.setGrammarId(grammarMeta.getId());
             rule.setContent(xml);
             
             return rule;
@@ -177,8 +178,8 @@ public class RuleManagerBaseXImpl implements RuleManager {
                 Element element = (Element) grammarRecords.item(i);
                 
                 rule.setId(element.getAttribute("id"));
-                
                 rule.setContent(Utils.serializeXml(element));
+                rule.setGrammarId(grammarMeta.getId());
                 
                 rules.add(rule);
             }
@@ -229,11 +230,9 @@ public class RuleManagerBaseXImpl implements RuleManager {
             for (int i = 0; i < grammarRecords.getLength(); i++) {
                 Rule rule = new Rule();
                 Element element = (Element) grammarRecords.item(i);
-                
                 rule.setId(element.getAttribute("id"));
-                
+                rule.setGrammarId(grammarMeta.getId());
                 rule.setContent(Utils.serializeXml(element));
-                
                 rules.add(rule);
             }
             
@@ -261,23 +260,22 @@ public class RuleManagerBaseXImpl implements RuleManager {
      * @param rule Rule object with ID.
      * @param grammarMeta GrammarMeta object of grammar containing given rule with ID.
      */
-    public void updateRule(Rule rule, GrammarMeta grammarMeta) throws DatabaseException {
-        if (grammarMeta == null || rule == null) {
+    public void updateRule(Rule rule) throws DatabaseException {
+        if (rule == null) {
             throw new IllegalArgumentException();
-        } else if (grammarMeta.getId() == null || rule.getId() == null || "".equals(rule.getId())) {
+        } else if (rule.getId() == null || "".equals(rule.getId()) || rule.getGrammarId() == null) {
             throw new IllegalArgumentException();
         }
 
-        if(!ruleExists(rule.getId(), grammarMeta.getId())) {
+        if(!ruleExists(rule)) {
             throw new IllegalArgumentException();
         }
         
         try {
-            String updateNodeCommand = "replace node doc('%1$s/%2$s.xml')//rule[@id='%3$s'][1] with %4$s";
-            
-            updateNodeCommand = String.format(updateNodeCommand, Config.getValue(Config.C_DB_NAME), grammarMeta.getId(), rule.getId(), rule.getContent());
-            
-            baseXClient.execute("xquery " + updateNodeCommand);
+            String query = "xquery replace node doc('%1$s/%2$s.xml')//rule[@id='%3$s'][1] with %4$s";
+            query = String.format(query, Config.getValue(Config.C_DB_NAME), rule.getGrammarId(), rule.getId(), rule.getContent());
+            LOGGER.log(Level.DEBUG, "Executing query: " + query);
+            baseXClient.execute(query);
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
@@ -292,22 +290,22 @@ public class RuleManagerBaseXImpl implements RuleManager {
      * @param rule Rule object with ID.
      * @param grammarMeta GrammarMeta object of grammar containing given rule with ID.
      */
-    public void deleteRule(Rule rule, GrammarMeta grammarMeta) throws DatabaseException {
-        if (grammarMeta == null || rule == null) {
+    public void deleteRule(Rule rule) throws DatabaseException {
+        if (rule == null) {
             throw new IllegalArgumentException();
-        } else if (grammarMeta.getId() == null || rule.getId() == null || "".equals(rule.getId())) {
+        } else if (rule.getId() == null || "".equals(rule.getId()) || rule.getGrammarId() == null) {
             throw new IllegalArgumentException();
         }
 
-        if(!ruleExists(rule.getId(), grammarMeta.getId())) {
+        if(!ruleExists(rule)) {
             throw new IllegalArgumentException();
         }
 
         try {
-            String query = String.format("xquery delete node doc('%s/%s.xml')//rule[@id='%s'][1]", Config.getValue(Config.C_DB_NAME), grammarMeta.getId(), rule.getId());
+            String query = String.format("xquery delete node doc('%s/%s.xml')//rule[@id='%s'][1]", Config.getValue(Config.C_DB_NAME), rule.getGrammarId(), rule.getId());
             LOGGER.log(Level.DEBUG, "Executing query: " + query);
             baseXClient.execute(query);
-            LOGGER.log(Level.INFO, "deleteRule - deleted rule with id = '" + rule.getId() + "' in grammar " + grammarMeta.getId());
+            LOGGER.log(Level.INFO, "deleteRule - deleted rule with id = '" + rule.getId() + "' in grammar " + rule.getGrammarId());
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);

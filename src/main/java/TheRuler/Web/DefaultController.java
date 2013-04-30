@@ -177,7 +177,6 @@ public class DefaultController {
      */
     @RequestMapping(value = "/save-rule", method = RequestMethod.POST)
     public String doSaveRule(Rule rule) {
-
         if (rule == null) {
             throw new IllegalArgumentException();
         }
@@ -185,13 +184,8 @@ public class DefaultController {
         try {
             baseXClient = Utils.connectToBaseX();
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
-            ruleManager.setBaseXClient(baseXClient);
-
-            GrammarMeta gm = new GrammarMeta();
-            gm.setId(rule.getGrammarId());
-            
-            ruleManager.updateRule(rule, gm);
-
+            ruleManager.setBaseXClient(baseXClient);           
+            ruleManager.updateRule(rule);
             return "redirect:/grammar/" + rule.getGrammarId().toString();
         } catch (DatabaseException e) {
             throw new GenericException(rb.getString("dbError"), e);
@@ -270,20 +264,20 @@ public class DefaultController {
             throw new GenericException(rb.getString("emptyRuleName"));
         }
         
-        GrammarMeta gm = new GrammarMeta();
-        gm.setId(grammarId);
-
         try {
             baseXClient = Utils.connectToBaseX();
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
             Rule rule = new Rule();
             rule.setId(ruleId.trim());
-            ruleManager.addRule(rule, gm);
+            rule.setGrammarId(grammarId);
+            ruleManager.addRule(rule);
             
-            return "redirect:/grammar/" + gm.getId();
+            return "redirect:/grammar/" + grammarId;
         } catch (DatabaseException e) {
             throw new GenericException(rb.getString("dbError"), e);
+        } catch (RuleExistsException e) {
+            throw new GenericException(rb.getString("ruleExists"), e);
         } finally {
             try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
@@ -341,19 +335,18 @@ public class DefaultController {
         if ("".equals(ruleId)) {
             throw new GenericException(rb.getString("emptyRuleName"));
         }
-        GrammarMeta gm = new GrammarMeta();
-        gm.setId(grammarId);
         Rule rule = new Rule();
         rule.setId(ruleId.trim());
+        rule.setGrammarId(grammarId);
 
         try {
             baseXClient = Utils.connectToBaseX();
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
 
-            ruleManager.deleteRule(rule, gm);
+            ruleManager.deleteRule(rule);
             
-            return "redirect:/grammar/" + gm.getId();
+            return "redirect:/grammar/" + grammarId;
         } catch (DatabaseException e) {
             throw new GenericException(rb.getString("dbError"), e);
         } finally {

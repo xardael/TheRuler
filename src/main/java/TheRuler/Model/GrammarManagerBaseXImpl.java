@@ -65,10 +65,12 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
         }
 
         try {
-            BaseXClient.Query query = baseXClient.query("max(//grammars/grammarRecord/string(@id))");
-            String lastId = query.execute();
+            String lastIdQuery = "max(//grammars/grammarRecord/string(@id))";
+            LOGGER.log(Level.DEBUG, "Executing query: " + lastIdQuery);
+            BaseXClient.Query basexQuery = baseXClient.query(lastIdQuery);
+            String lastId = basexQuery.execute();
             Long newId;
-            // Becaouse of first node insertion
+            // Because of first node insertion
             try {
                 newId = Long.parseLong(lastId);
             } catch (NumberFormatException nfe) {
@@ -76,7 +78,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             }
             newId++;
             
-            String insertNodeCommand = "insert node "
+            String query = "xquery insert node "
                     + "<grammarRecord id='" + newId + "'>"
                     + "  <name>" + HtmlUtils.htmlEscape(grammarMeta.getName()) + "</name>"
                     + "  <description>" + ((grammarMeta.getDescription() == null) ? "" : HtmlUtils.htmlEscape(grammarMeta.getDescription().trim())) + "</description>"
@@ -84,7 +86,8 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
                     + "</grammarRecord>"
                     + "into //grammars";
             
-            baseXClient.execute("xquery " + insertNodeCommand);
+            LOGGER.log(Level.DEBUG, "Executing query: " + query);
+            baseXClient.execute(query);
 
             String grammar = "<grammar></grammar>";
             
@@ -115,7 +118,6 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
         if (id == null) {
             throw new IllegalArgumentException();
         }
-
         
         try {
             Grammar grammar = new Grammar();
@@ -309,14 +311,17 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
                 throw new IllegalArgumentException();
             }
             
-            String updateNodeCommand = "replace node //grammars/grammarRecord[@id=" + grammarMeta.getId() + "] with"
+            GrammarMeta old = findGrammarMeta(grammarMeta.getId());
+            
+            String query = "xquery replace node //grammars/grammarRecord[@id=" + grammarMeta.getId() + "] with"
                     + "<grammarRecord id='" + grammarMeta.getId() + "'>"
-                    + "  <name>" + HtmlUtils.htmlEscape(grammarMeta.getName()) + "</name>"
-                    + "  <description>" + HtmlUtils.htmlEscape(grammarMeta.getDescription().trim()) + "</description>"
-                    + "  <date>" + grammarMeta.getDate() + "</date>"
+                    + "  <name>" + ((grammarMeta.getName() == null) ? old.getName() : HtmlUtils.htmlEscape(grammarMeta.getName())) + "</name>"
+                    + "  <description>" + ((grammarMeta.getDescription() == null) ? old.getDescription() : HtmlUtils.htmlEscape(grammarMeta.getDescription().trim())) + "</description>"
+                    + "  <date>" + ((grammarMeta.getDate()) == null ? old.getDate() : grammarMeta.getDate()) + "</date>"
                     + "</grammarRecord>";
             
-            baseXClient.execute("xquery " + updateNodeCommand);
+            LOGGER.log(Level.DEBUG, "Executing query: " + query);
+            baseXClient.execute(query);
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
@@ -328,7 +333,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
      *
      * @param grammar Grammar stated for update.
      */
-    public void updateGrammarContent(Grammar grammar) throws DatabaseException {
+    private void updateGrammarContent(Grammar grammar) throws DatabaseException {
         if (grammar == null) {
             throw new IllegalArgumentException();
         } else if (grammar.getId() == null) {
@@ -373,8 +378,13 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             if (!grammarExists(grammarMeta)) {
                 throw new IllegalArgumentException();
             }
-            baseXClient.execute("xquery delete node //grammars/grammarRecord[@id=" + grammarMeta.getId() + "]");
-            baseXClient.execute("delete " + grammarMeta.getId() + ".xml");
+            String query = "xquery delete node //grammars/grammarRecord[@id=" + grammarMeta.getId() + "]";
+            LOGGER.log(Level.DEBUG, "Executing query: " + query);
+            baseXClient.execute(query);
+            
+            query = "delete " + grammarMeta.getId() + ".xml";
+            LOGGER.log(Level.DEBUG, "Executing query: " + query);
+            baseXClient.execute(query);
             
             LOGGER.log(Level.INFO, "deleteGrammar - deleted grammar with id = " + grammarMeta.getId());
         } catch (IOException e) {

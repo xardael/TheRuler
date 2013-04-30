@@ -4,8 +4,10 @@ import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Utils;
 import TheRuler.Exceptions.BadRequestException;
 import TheRuler.Exceptions.DatabaseException;
+import TheRuler.Exceptions.GenericException;
 import TheRuler.Exceptions.InternalErrorException;
 import TheRuler.Exceptions.NotFoundException;
+import TheRuler.Exceptions.RuleExistsException;
 import TheRuler.Model.*;
 import java.io.IOException;
 import java.util.HashMap;
@@ -116,15 +118,13 @@ public class RestController {
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
 
-            GrammarMeta gm = new GrammarMeta();
-            gm.setId(grammarId);
-
             Rule rule = new Rule();
             rule.setGrammarId(grammarId);
             rule.setId(ruleId);
             rule.setContent(content);
+            rule.setGrammarId(grammarId);
 
-            ruleManager.addRule(rule, gm);
+            ruleManager.updateRule(rule);
 
             return "";
         } catch (DatabaseException e) {
@@ -225,16 +225,17 @@ public class RestController {
 
             Rule rule = new Rule();
             rule.setId(ruleId);
-            if (content != null) {
-                rule.setContent(content);
-            }
+            rule.setContent(content);
+            rule.setGrammarId(grammarId);
 
-            ruleManager.addRule(rule, gm);
+            ruleManager.addRule(rule);
 
 
         } catch (DatabaseException e) {
             throw new InternalErrorException();
-        } finally {
+        } catch (RuleExistsException e) {
+            throw new BadRequestException();
+        }finally {
             try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
 
@@ -294,13 +295,14 @@ public class RestController {
         gm.setId(grammarId);
         Rule rule = new Rule();
         rule.setId(ruleId);
-
+        rule.setGrammarId(grammarId);
+        
         try {
             baseXClient = Utils.connectToBaseX();
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
 
-            ruleManager.deleteRule(rule, gm);
+            ruleManager.deleteRule(rule);
 
             return "";
         } catch (DatabaseException e) {

@@ -1,5 +1,7 @@
 package TheRuler.Model;
 
+import TheRuler.Exceptions.DatabaseException;
+import TheRuler.Exceptions.RuleExistsException;
 import java.util.List;
 
 /**
@@ -15,7 +17,7 @@ public interface RuleManager {
      * @param grammarMeta Grammar meta.
      * @param rule Rule object.
      */
-    void addRule(Rule rule, GrammarMeta grammarMeta) throws Exception;
+    void addRule(Rule rule) throws DatabaseException, RuleExistsException;
 
     /**
      * Retrieves rule with given ID in given grammar from
@@ -25,7 +27,7 @@ public interface RuleManager {
      * @param grammarMeta GrammarMeta object with ID.
      * @return Selected rule. If rule with given ID does not exist returns null.
      */
-    Rule findRuleById(String id, GrammarMeta grammarMeta) throws Exception;
+    Rule findRuleById(String id, GrammarMeta grammarMeta) throws DatabaseException;
 
     /**
      * Returns list of all rules in given grammar.
@@ -33,7 +35,7 @@ public interface RuleManager {
      * @param grammarMeta GrammarMeta with ID of grammar.
      * @return List of all rules in given grammar.
      */
-    List<Rule> findAllRules(GrammarMeta grammarMeta) throws Exception;
+    List<Rule> findAllRules(GrammarMeta grammarMeta) throws DatabaseException;
 
     /**
      * Provides pattern match search rule IDs.
@@ -42,7 +44,7 @@ public interface RuleManager {
      * @param grammarMeta GrammarMeta of grammar you want to search in.
      * @return List of rules which contain given string in ID.
      */
-    List<Rule> findAllRulesById(String id, GrammarMeta grammarMeta) throws Exception;
+    List<Rule> findAllRulesById(String id, GrammarMeta grammarMeta) throws DatabaseException;
 
     /**
      * Update rule in a database.
@@ -50,7 +52,7 @@ public interface RuleManager {
      * @param rule Rule object with ID.
      * @param grammarMeta GrammarMeta object of grammar containing given rule with ID.
      */
-    void updateRule(Rule rule, GrammarMeta grammarMeta) throws Exception;
+    void updateRule(Rule rule) throws DatabaseException;
 
     /**
      * Deletes given rule from BaseX database.
@@ -58,5 +60,5 @@ public interface RuleManager {
      * @param rule Rule object with ID.
      * @param grammarMeta GrammarMeta object of grammar containing given rule with ID.
      */
-    void deleteRule(Rule rule, GrammarMeta grammarMeta) throws Exception;
+    void deleteRule(Rule rule) throws DatabaseException;
 }

@@ -1,5 +1,6 @@
 package TheRuler.Model;
 
+import TheRuler.Exceptions.DatabaseException;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ public interface GrammarManager {
      * @param grammarMeta Grammar meta.
      * @return GrammerMeta object with newly created ID.
      */
-    GrammarMeta createGrammar(GrammarMeta grammarMeta) throws Exception;
+    GrammarMeta createGrammar(GrammarMeta grammarMeta) throws DatabaseException;
 
     /**
      * Retrieves grammar meta information and grammar content from
@@ -26,7 +27,7 @@ public interface GrammarManager {
      * @return All grammar information in Grammr object. If grammar meta with
      *         given ID does not exist, returns null.
      */
-    Grammar findGrammar(Long id) throws Exception;
+    Grammar findGrammar(Long id) throws DatabaseException;
 
     /**
      * Retrieves grammar meta information from
@@ -36,14 +37,14 @@ public interface GrammarManager {
      * @return Grammr meta information in GrammarMeta object. If grammar with
      *         given ID does not exist, returns null.
      */
-    GrammarMeta findGrammarMeta(Long id) throws Exception;
+    GrammarMeta findGrammarMeta(Long id) throws DatabaseException;
 
     /**
      * Returns grammar meta for all grammars in database.
      * 
      * @return List of GrammarMetas.
      */
-    List<GrammarMeta> findAllGrammarMetas() throws Exception;
+    List<GrammarMeta> findAllGrammarMetas() throws DatabaseException;
 
     /**
      * Updates grammar meta information and grammar content in database
@@ -51,7 +52,7 @@ public interface GrammarManager {
      *
      * @param grammar Grammar stated for update.
      */
-    void updateGrammar(Grammar grammar) throws Exception;
+    void updateGrammar(Grammar grammar) throws DatabaseException;
 
     /**
      * Updates grammar meta information in database
@@ -59,19 +60,12 @@ public interface GrammarManager {
      * 
      * @param grammarMeta GrammarMeta stated for update.
      */
-    void updateGrammarMeta(GrammarMeta grammarMeta) throws Exception;
-
-    /**
-     * Updates grammar content in database according to given Grammar object.
-     *
-     * @param grammar Grammar stated for update.
-     */
-    void updateGrammarContent(Grammar grammar) throws Exception;
+    void updateGrammarMeta(GrammarMeta grammarMeta) throws DatabaseException;
 
     /**
      * Delete grammr from database.
      *
      * @param grammarMeta GrammarMeta containg ID of grammar stated for deletion.
      */
-    void deletaGrammar(GrammarMeta grammarMeta) throws Exception;
+    void deletaGrammar(GrammarMeta grammarMeta) throws DatabaseException;
 }
