@@ -69,6 +69,7 @@
         
     // Rule collapser    
     var toggle = 0;
+    var submit = false;
          
     // Get popover and tooltip working with attribute
     $(function () {
@@ -83,24 +84,32 @@
 
     // Check new grammar emptiness
     $('[name="newGrammar"]').submit(function() {
-        if ($.trim($('[name="name"]').val()).length == 0) {
+        if ($.trim($('[name="name"]').val()).length === 0) {
             bootbox.alert("${rc.getMessage('emptyGrammarName')}.");
             return false;
         }
     });
     
     // Check new rule emptiness and existention
-    $('[name="ruleAdd"]').submit(function() {
-        if ($.trim($('[name="ruleId"]').val()).length == 0) {
+    $('[name="ruleAdd"]').submit(function(event) {
+        if ($.trim($('[name="ruleId"]').val()).length === 0) {
             bootbox.alert("${rc.getMessage('emptyRuleName')}.");
             return false;
         } else {
-            $.getJSON("${rc.contextPath}/ajax/ruleExists", { ruleId: $('input[name="ruleId"]').val(), grammarId: $('input[name="grammarId"]').val()}, function(result) {
+            if (submit === false) {
+                event.preventDefault();
+            } else {
+                submit === false;
+                return true;
+            }
+            $.getJSON("${rc.contextPath}/ajax/ruleExists", { ruleId: $('input[name="ruleId"]').val(),
+                                                          grammarId: $('input[name="grammarId"]').val()}, function(result) {
                 console.log(JSON.stringify(result));
-                if(result.exists == "true") {
+                if(result.exists === "true") {
                     bootbox.alert("${rc.getMessage('ruleExists')}");
                 } else {
-                    // NB
+                    submit = true;
+                    $('[name="ruleAdd"]').submit();
                 }
             });
             //return false;
@@ -133,7 +142,7 @@
         var isFormValid = true;
                 
         $("input.required", this).each(function(){ 
-            if ($.trim($(this).val()).length == 0){
+            if ($.trim($(this).val()).length === 0){
                 $(this).closest('div.control-group').addClass('error');
                 $(".help-inline", $(this).parent()).text('${rc.getMessage("fillEmpty")}');
                 isFormValid = false;
@@ -148,7 +157,7 @@
             
     // Toggles rules collapse
     $('#collapseBtn').click(function() {
-        if (toggle % 2 == 0) {
+        if (toggle % 2 === 0) {
             $('i', this).removeClass('icon-chevron-down');
             $('i', this).addClass('icon-chevron-up');
         } else {
@@ -162,13 +171,8 @@
        
     // Validete xml against XML Schema of SRGS via AJAX
     $('#validateXml').click(function() {
-        var btn = $(this)
+        var btn = $(this);
         btn.button('loading');
-//        $.getJSON("${rc.contextPath}/ajax/ruleExists", { ruleId: $('input[name="ruleId"]').val(),
-//                                                          grammarId: $('input[name="grammarId"]').val()}, function(result) {
-            
-//        });
-                                                          
         $.ajax({
             type: "POST",
             url: "${rc.contextPath}/ajax/validateXml",
@@ -178,7 +182,7 @@
         }).always(function(result) {
             btn.button('reset');
             console.log(JSON.stringify(result));
-            if (result.valid == 'true') {
+            if (result.valid === 'true') {
                 $('#myModal .modal-body').html('<div class="alert alert-success"><strong>${rc.getMessage("wellDone")}!</strong> ${rc.getMessage("documentValid")}</div>');
             } else {
                 $('#myModal .modal-body').html('<div class="alert alert-error"><strong>${rc.getMessage("error")}!</strong> ${rc.getMessage("documentNotValid")}.</div><p>' + result.valid + '</p>');
@@ -212,7 +216,7 @@
                 sel = document.selection.createRange();
                 sel.text = myValue;
                 me.focus();
-            } else if (me.selectionStart || me.selectionStart == '0') { // Real browsers
+            } else if (me.selectionStart || me.selectionStart === '0') { // Real browsers
                 var startPos = me.selectionStart, endPos = me.selectionEnd, scrollTop = me.scrollTop;
                 me.value = me.value.substring(0, startPos) + myValue + me.value.substring(endPos, me.value.length);
                 me.focus();
@@ -235,7 +239,7 @@
             dataType: "JSON"
         }).done(function(data) {
             $('#ruleList').empty();
-            if(data.length == 0) {
+            if(data.length === 0) {
                 $('#noResultAlert').removeClass('hidden');
             } else {
                 $('#noResultAlert').addClass('hidden');
