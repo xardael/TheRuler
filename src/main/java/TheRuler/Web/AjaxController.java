@@ -12,16 +12,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
+import org.apache.log4j.Level;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.xml.sax.SAXException;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 /**
  * Controller for handling AJAX requests.
@@ -67,7 +64,7 @@ public class AjaxController {
             } catch (DatabaseException e) {
                 throw new InternalErrorException();
             } finally {
-                try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+                try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
             }
         }
 
@@ -90,20 +87,20 @@ public class AjaxController {
         }
         
         String exists = "false";
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("exists", exists);
         if (ruleId != null && !"".equals(ruleId)) {
             try {
                 baseXClient = Utils.connectToBaseX();
                 RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
                 ruleManager.setBaseXClient(baseXClient);
                 exists = (ruleManager.findRuleById(ruleId, gm) != null) ? "true" : "false";
-                
-                Map<String, String> map = new HashMap<String, String>();
                 map.put("exists", exists);
                 return map;
             } catch (DatabaseException e) {
                 throw new InternalErrorException();
             } finally {
-                try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+                try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
             }
         }
         
@@ -124,8 +121,8 @@ public class AjaxController {
 
         try {
             result = Utils.validate(content);
-        } catch (SAXException ex) {
-        } catch (IOException ex) {
+        } catch (SAXException e) {
+        } catch (IOException e) {
         }
 
         Map<String, String> map = new HashMap<String, String>();

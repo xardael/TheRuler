@@ -1,10 +1,13 @@
 package TheRuler.Common;
 
+import TheRuler.Exceptions.ConfigException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
 import java.util.Properties;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * Static fields and methods for application configuration.
@@ -12,6 +15,7 @@ import java.util.Properties;
  * @author Peter Gren
  */
 public class Config {
+    private static final Logger LOGGER = Logger.getLogger(Config.class);
 
     /**
      * Loads properties from file.
@@ -59,17 +63,32 @@ public class Config {
     public static final String C_DB_INST = "DB_INST";
 
     /**
+     * Check if is database installed as boolean.
+     * 
+     * @return TRUE if is database installed, FALSE otherwise.
+     */
+    public static Boolean dbInstalled() throws ConfigException {
+        return Boolean.parseBoolean(Config.getValue(Config.C_DB_INST));
+    }
+        
+    /**
      * Gets value of given key from properties file.
      *
      * @param key Key in config file.
      * @return If key exists, its value is returned. Otherwise returns empty string.
      */
-    public static String getValue(String key) throws IOException {
+    public static String getValue(String key) throws ConfigException {
         if (key == null) {
             throw new IllegalArgumentException();
         }
-        Properties props = init();
-        return props.getProperty(key, "");
+        
+        try {
+            Properties props = init();
+            return props.getProperty(key, "");
+        } catch (IOException e) {
+            LOGGER.log(Level.ERROR, e);
+            throw new ConfigException(e);
+        }
     }
 
     /**
@@ -78,15 +97,21 @@ public class Config {
      * @param key Name of key in config file.
      * @param value Value to store.
      */
-    public static void setValue(String key, String value) throws IOException {
+    public static void setValue(String key, String value) throws ConfigException {
         if (key == null || value == null) {
             throw new IllegalArgumentException();
         }
-        Properties props = init();
-        props.setProperty(key, value);
-        URL url = Config.class.getClassLoader().getResource(CONFIG_FILE_NAME);
-        String path = url.getPath();
-        Writer writer = new FileWriter(path);
-        props.store(writer, "");
+        
+        try {
+            Properties props = init();
+            props.setProperty(key, value);
+            URL url = Config.class.getClassLoader().getResource(CONFIG_FILE_NAME);
+            String path = url.getPath();
+            Writer writer = new FileWriter(path);
+            props.store(writer, "");
+        } catch (IOException e) {
+            LOGGER.log(Level.ERROR, e);
+            throw new ConfigException(e);
+        }
     }
 }

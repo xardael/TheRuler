@@ -54,10 +54,6 @@ public class GrammarMeta implements java.io.Serializable {
      * @return Grammar desciption.
      */
     public String getDescription() {
-        if (description == null) {
-            //return "";
-        }
-
         return this.description;
     }
 
@@ -77,11 +73,7 @@ public class GrammarMeta implements java.io.Serializable {
      * @return Grammar date in defulat date format Config.DATE_FORMAT_STORED.
      */
     public String getDate() {
-        if (this.date == null) {
-            return "";
-        } else {
-            return this.date;
-        }
+        return this.date;
     }
 
     /**

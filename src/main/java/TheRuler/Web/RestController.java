@@ -1,20 +1,17 @@
 package TheRuler.Web;
 
 import TheRuler.Common.BaseXClient;
-import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
-import TheRuler.Exceptions.*;
+import TheRuler.Exceptions.BadRequestException;
+import TheRuler.Exceptions.DatabaseException;
+import TheRuler.Exceptions.InternalErrorException;
+import TheRuler.Exceptions.NotFoundException;
 import TheRuler.Model.*;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -30,10 +27,10 @@ import org.xml.sax.SAXException;
  */
 @Controller
 public class RestController {
-    
+
     private static final Logger LOGGER = Logger.getLogger(RestController.class);
     private BaseXClient baseXClient = null;
-    
+
     /**
      * Displays grammar page - rule listing.
      *
@@ -49,23 +46,23 @@ public class RestController {
         if (grammarId == null) {
             throw new BadRequestException();
         }
-        
+
         try {
             baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
 
             Grammar grammar = grammarManager.findGrammar(grammarId);
-            
+
             if (grammar == null) {
                 throw new NotFoundException();
             }
-            
+
             return Utils.fixSrgsHeader(grammar.getContent());
         } catch (DatabaseException e) {
             throw new BadRequestException();
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
     }
 
@@ -93,12 +90,12 @@ public class RestController {
         } catch (DatabaseException e) {
             throw new InternalErrorException();
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
 
         return "redirect:/grammar/" + grammar.getId();
     }
-    
+
     /**
      * Saves posted rule.
      *
@@ -121,19 +118,19 @@ public class RestController {
 
             GrammarMeta gm = new GrammarMeta();
             gm.setId(grammarId);
-            
+
             Rule rule = new Rule();
             rule.setGrammarId(grammarId);
             rule.setId(ruleId);
             rule.setContent(content);
-            
+
             ruleManager.addRule(rule, gm);
 
             return "";
         } catch (DatabaseException e) {
             throw new InternalErrorException();
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
     }
 
@@ -168,7 +165,7 @@ public class RestController {
         } catch (DatabaseException e) {
             throw new InternalErrorException();
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
     }
 
@@ -180,14 +177,9 @@ public class RestController {
      */
     @RequestMapping(value = "/rest/delete-grammar/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String deleteGrammar(@PathVariable String id) {
-
-        if (id.equals("") || id == null) {
-            throw new IllegalArgumentException();
-        }
-
+    public String deleteGrammar(@PathVariable Long id) {
         GrammarMeta gm = new GrammarMeta();
-        gm.setId(Long.parseLong(id));
+        gm.setId(id);
 
         try {
             baseXClient = Utils.connectToBaseX();
@@ -196,13 +188,12 @@ public class RestController {
 
             grammarManager.deletaGrammar(gm);
 
+            return "redirect:/";
         } catch (DatabaseException e) {
             throw new InternalErrorException();
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
-
-        return "redirect:/";
     }
 
     /**
@@ -227,7 +218,7 @@ public class RestController {
             baseXClient = Utils.connectToBaseX();
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
-            
+
             if (ruleManager.findRuleById(ruleId, gm) == null) {
                 throw new BadRequestException();
             }
@@ -237,14 +228,14 @@ public class RestController {
             if (content != null) {
                 rule.setContent(content);
             }
-                 
+
             ruleManager.addRule(rule, gm);
 
 
         } catch (DatabaseException e) {
             throw new InternalErrorException();
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
 
         return "";
@@ -261,35 +252,29 @@ public class RestController {
     @RequestMapping(value = "/rest/grammar/{grammarId}/rule/{ruleId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String getRule(ModelMap model, @PathVariable String grammarId, @PathVariable String ruleId, HttpServletRequest request) {
-
-        if (grammarId.equals("") || grammarId == null || ruleId.equals("") || ruleId == null) {
-            throw new IllegalArgumentException();
-        }
-        
+    public String getRule(ModelMap model, @PathVariable Long grammarId, @PathVariable String ruleId) {
         try {
-            BaseXClient baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
-            
-            GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(grammarId));
+
+            GrammarMeta gm = grammarManager.findGrammarMeta(grammarId);
             Rule rule = ruleManager.findRuleById(ruleId, gm);
             if (rule == null) {
-                
+                throw new NotFoundException();
             }
             List<Rule> rules = ruleManager.findAllRules(gm);
 
             model.addAttribute("gm", gm);
             model.addAttribute("rule", rule);
             model.addAttribute("rules", rules);
-            
+
             return rule.getContent();
         } catch (DatabaseException e) {
             throw new InternalErrorException();
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
     }
 
@@ -304,32 +289,28 @@ public class RestController {
     @RequestMapping(value = "/rest/delete-rule/{grammarId}/{ruleId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String deleteRule(@PathVariable Long grammarId, @PathVariable String ruleId) throws DatabaseException {
-        if (grammarId == null || grammarId == 0 || ruleId == null || ruleId.equals("")) {
-            throw new IllegalArgumentException();
-        }
-
+    public String deleteRule(@PathVariable Long grammarId, @PathVariable String ruleId) {
         GrammarMeta gm = new GrammarMeta();
         gm.setId(grammarId);
         Rule rule = new Rule();
         rule.setId(ruleId);
 
-        //try {
+        try {
             baseXClient = Utils.connectToBaseX();
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
 
-            //ruleManager.deleteRule(rule, gm);
+            ruleManager.deleteRule(rule, gm);
 
             return "";
-//        } catch (DatabaseException e) {
-//            throw new InternalErrorException();
-//        } finally {
-//            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
-//        }
+        } catch (DatabaseException e) {
+            throw new InternalErrorException();
+        } finally {
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
+        }
     }
-    
-    
+
+
     @ExceptionHandler (value = {IOException.class, ParserConfigurationException.class, SAXException.class})
     @ResponseStatus (HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody

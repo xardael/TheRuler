@@ -3,28 +3,16 @@ package TheRuler.Web;
 import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
-import TheRuler.Exceptions.DatabaseException;
-import TheRuler.Exceptions.GenericException;
-import TheRuler.Exceptions.NotFoundException;
+import TheRuler.Exceptions.*;
 import TheRuler.Model.*;
-import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-import javax.imageio.IIOException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.xml.sax.SAXException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Controller for handling standard requests.
@@ -35,12 +23,8 @@ import org.xml.sax.SAXException;
 public class DefaultController {
     
     private static final Logger LOGGER = Logger.getLogger(DefaultController.class);
-    private ResourceBundle rb = null;
+    private ResourceBundle rb = ResourceBundle.getBundle("locale/messages");
     private BaseXClient baseXClient = null;
-    
-    public DefaultController() {
-        rb = ResourceBundle.getBundle("locale/messages");
-    }
         
     /**
      * Displays home page - grammar listing.
@@ -50,14 +34,6 @@ public class DefaultController {
      */
     @RequestMapping("/")
     public String index(ModelMap model) {
-//        try {
-//            if (!Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
-//                return "redirect:/install";
-//            }
-//        } catch (IOException ex) {
-//            LOGGER.log(Level.ERROR, ex);
-//        }
-
         try {
             baseXClient = Utils.connectToBaseX();
 
@@ -68,9 +44,9 @@ public class DefaultController {
 
             model.addAttribute("grammarMetas", grammarMetas);
         } catch (DatabaseException e) {
-            throw new GenericException(rb.getString("dbError"));
+            throw new GenericException(rb.getString("dbError"), e);
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
 
         return "index";
@@ -85,30 +61,22 @@ public class DefaultController {
      * @return The grammar page view.
      */
     @RequestMapping(value = "/grammar/{id}", method = RequestMethod.GET)
-    public String grammar(ModelMap model, @PathVariable String id, HttpServletRequest request) {
+    public String grammar(ModelMap model, @PathVariable Long id, @RequestParam(required = false) String search, @RequestParam(required = false) String name) {
+        boolean isSearch = false;
 
-        if (id == null || id.equals("")) {
-            throw new IllegalArgumentException();
-        }
-
-        boolean search = false;
-
-        if (request.getParameter("search") != null) {
-            search = true;
-            if (request.getParameter("name").equals("")) {
-                //throw new IllegalArgumentException();
+        if (search != null) {
+            isSearch = true;
+            if (name.trim().equals("")) {
                 return "redirect:/grammar/" + id;
             }
         }
-
-        
         
         try {
             baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
 
-            GrammarMeta gm = grammarManager.findGrammarMeta(Long.parseLong(id));
+            GrammarMeta gm = grammarManager.findGrammarMeta(id);
             
             if (gm == null) {
                 throw new NotFoundException();
@@ -121,23 +89,22 @@ public class DefaultController {
 
             List<Rule> rules;
 
-            if (search) {
-                rules = ruleManager.findAllRulesById(request.getParameter("name").toLowerCase(), gm);
+            if (isSearch) {
+                rules = ruleManager.findAllRulesById(name.toLowerCase(), gm);
             } else {
                 rules = ruleManager.findAllRules(gm);
             }
 
             model.addAttribute("rules", rules);
-            model.addAttribute("search", search);
-            model.addAttribute("searchString", request.getParameter("name"));
+            model.addAttribute("search", isSearch);
+            model.addAttribute("searchString", name);
 
+            return "grammar";
         } catch (DatabaseException e) {
-            throw new GenericException(rb.getString("dbError"));
+            throw new GenericException(rb.getString("dbError"), e);
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
-
-        return "grammar";
     }
 
     /**
@@ -148,18 +115,13 @@ public class DefaultController {
      * @return The grammar meta edit view.
      */
     @RequestMapping(value = "/edit-grammar/{id}")
-    public String grammarEdit(ModelMap model, @PathVariable String id) {
-
-        if (id.equals("") || id == null) {
-            throw new IllegalArgumentException();
-        }
-
+    public String grammarEdit(ModelMap model, @PathVariable Long id) {
         try {
             baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
 
-            Grammar grammar = grammarManager.findGrammar(Long.parseLong(id));
+            Grammar grammar = grammarManager.findGrammar(id);
             if (grammar == null) {
                 throw new NotFoundException();
             }
@@ -170,13 +132,13 @@ public class DefaultController {
 
             model.addAttribute("grammar", grammar);
             model.addAttribute("rules", rules);
+            
+            return "grammarMetaEdit";
         } catch (DatabaseException e) {
-            throw new GenericException(rb.getString("dbError"));
+            throw new GenericException(rb.getString("dbError"), e);
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
-
-        return "grammarMetaEdit";
     }
 
     /**
@@ -199,16 +161,12 @@ public class DefaultController {
 
             grammarManager.updateGrammar(grammar);
 
+            return "redirect:/grammar/" + grammar.getId();
         } catch (DatabaseException e) {
-            throw new GenericException(rb.getString("dbError"));
+            throw new GenericException(rb.getString("dbError"), e);
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
-
-
-        //model.addAttribute("cv", initedCvDocument.getCv());
-        return "redirect:/grammar/" + grammar.getId();
-        //return "redirect:/edit-grammar/" + grammar.getMeta().getId();
     }
     
     /**
@@ -229,19 +187,17 @@ public class DefaultController {
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
 
-            // TODO
             GrammarMeta gm = new GrammarMeta();
             gm.setId(rule.getGrammarId());
             
             ruleManager.updateRule(rule, gm);
 
+            return "redirect:/grammar/" + rule.getGrammarId().toString();
         } catch (DatabaseException e) {
-            throw new GenericException(rb.getString("dbError"));
+            throw new GenericException(rb.getString("dbError"), e);
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
-
-        return "redirect:/grammar/" + rule.getGrammarId().toString();
     }
 
     /**
@@ -252,15 +208,13 @@ public class DefaultController {
      * @return Redirects to the grammar meta edit view.
      */
     @RequestMapping(value = "/create-grammar", method = RequestMethod.POST)
-    public String doCreateGrammar(HttpServletRequest request) {
-        if (request.getParameter("name").equals("")) {
-            throw new IllegalArgumentException();
+    public String doCreateGrammar(@RequestParam String name) {
+        if ("".equals(name)) {
+            throw new GenericException(rb.getString("emptyRuleName"));
         }
 
-        String s = request.getParameter("name");
-
         GrammarMeta gm = new GrammarMeta();
-        gm.setName(request.getParameter("name"));
+        gm.setName(name.trim());
 
         try {
             baseXClient = Utils.connectToBaseX();
@@ -269,13 +223,12 @@ public class DefaultController {
 
             gm = grammarManager.createGrammar(gm);
 
+            return "redirect:/grammar/" + gm.getId();
         } catch (DatabaseException e) {
-            throw new GenericException(rb.getString("dbError"));
+            throw new GenericException(rb.getString("dbError"), e);
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
-
-        return "redirect:/grammar/" + gm.getId();
     }
 
     /**
@@ -285,15 +238,9 @@ public class DefaultController {
      * @return The grammar page view.
      */
     @RequestMapping(value = "/delete-grammar/{id}")
-    public String doDeleteGrammar(@PathVariable String id) {
-
-        if (id.equals("") || id == null) {
-            throw new IllegalArgumentException();
-        }
-
-        baseXClient = null;
+    public String doDeleteGrammar(@PathVariable Long id) {
         GrammarMeta gm = new GrammarMeta();
-        gm.setId(Long.parseLong(id));
+        gm.setId(id);
 
         try {
             baseXClient = Utils.connectToBaseX();
@@ -302,13 +249,12 @@ public class DefaultController {
 
             grammarManager.deletaGrammar(gm);
 
+            return "redirect:/";
         } catch (DatabaseException e) {
-            throw new GenericException(rb.getString("dbError"));
+            throw new GenericException(rb.getString("dbError"), e);
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
-
-        return "redirect:/";
     }
 
     /**
@@ -319,34 +265,28 @@ public class DefaultController {
      * @return Redirects to the grammar page view.
      */
     @RequestMapping(value = "/rule-add", method = RequestMethod.POST)
-    public String doCreateRule(HttpServletRequest request) {
-
-        if (request.getParameter("ruleId") == null || request.getParameter("ruleId").equals("")
-                || request.getParameter("grammarId") == null || request.getParameter("grammarId").equals("")) {
-            throw new IllegalArgumentException();
+    public String doCreateRule(@RequestParam String ruleId, @RequestParam Long grammarId) {
+        if ("".equals(ruleId)) {
+            throw new GenericException(rb.getString("emptyRuleName"));
         }
-
+        
         GrammarMeta gm = new GrammarMeta();
-        gm.setId(Long.parseLong(request.getParameter("grammarId")));
+        gm.setId(grammarId);
 
         try {
             baseXClient = Utils.connectToBaseX();
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
-
             Rule rule = new Rule();
-            rule.setId(request.getParameter("ruleId"));
-
+            rule.setId(ruleId.trim());
             ruleManager.addRule(rule, gm);
-
-
+            
+            return "redirect:/grammar/" + gm.getId();
         } catch (DatabaseException e) {
-            throw new GenericException(rb.getString("dbError"));
+            throw new GenericException(rb.getString("dbError"), e);
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
-
-        return "redirect:/grammar/" + gm.getId();
     }
 
     /**
@@ -358,12 +298,7 @@ public class DefaultController {
      * @return The rule edit view.
      */
     @RequestMapping(value = "/grammar/{grammarId}/rule/{ruleId}")
-    public String ruleEdit(ModelMap model, @PathVariable Long grammarId, @PathVariable String ruleId, HttpServletRequest request) {
-
-        if (grammarId == null || grammarId == 0 || ruleId == null || "".equals(ruleId) ) {
-            throw new IllegalArgumentException();
-        }
-        
+    public String ruleEdit(ModelMap model, @PathVariable Long grammarId, @PathVariable String ruleId) {
         try {
             baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
@@ -377,20 +312,20 @@ public class DefaultController {
             }
             Rule rule = ruleManager.findRuleById(ruleId, gm);
             if (rule == null) {
-                throw new GenericException("Rule not found."); // ========================================== Lokalizacie chybocyh hlasok
+                throw new NotFoundException();
             }
             List<Rule> rules = ruleManager.findAllRules(gm);
 
             model.addAttribute("gm", gm);
             model.addAttribute("rule", rule);
             model.addAttribute("rules", rules);
+            
+            return "ruleEdit";
         } catch (DatabaseException e) {
-            throw new GenericException(rb.getString("dbError"));
+            throw new GenericException(rb.getString("dbError"), e);
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
-
-        return "ruleEdit";
     }
 
     /**
@@ -403,14 +338,13 @@ public class DefaultController {
      */
     @RequestMapping(value = "/delete-rule/{grammarId}/{ruleId}")
     public String doDeleteRule(@PathVariable Long grammarId, @PathVariable String ruleId) {
-        if (grammarId == null || grammarId == 0 || ruleId == null || ruleId.equals("")) {
-            throw new IllegalArgumentException();
+        if ("".equals(ruleId)) {
+            throw new GenericException(rb.getString("emptyRuleName"));
         }
-
         GrammarMeta gm = new GrammarMeta();
         gm.setId(grammarId);
         Rule rule = new Rule();
-        rule.setId(ruleId);
+        rule.setId(ruleId.trim());
 
         try {
             baseXClient = Utils.connectToBaseX();
@@ -418,14 +352,13 @@ public class DefaultController {
             ruleManager.setBaseXClient(baseXClient);
 
             ruleManager.deleteRule(rule, gm);
-
+            
+            return "redirect:/grammar/" + gm.getId();
         } catch (DatabaseException e) {
-            throw new GenericException(rb.getString("dbError"));
+            throw new GenericException(rb.getString("dbError"), e);
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
-
-        return "redirect:/grammar/" + gm.getId();
     }
 
     /**
@@ -435,28 +368,14 @@ public class DefaultController {
      * @return Redirects to the grammar page view.
      */
     @RequestMapping(value = "/doInstall", method = RequestMethod.POST)
-    public String doInstall(HttpServletRequest request) {
-//            if (request.getParameter("ruleId") == null || request.getParameter("ruleId").equals("") 
-//             || request.getParameter("grammarId") == null || request.getParameter("grammarId").equals("")) {
-//                throw new IllegalArgumentException();
-//            }
-
-        try {
-            if (Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
-                throw new NotFoundException();
-            }
-        } catch (IOException e) {
-            LOGGER.log(Level.ERROR, e);
-        }
-
-        String host = request.getParameter("inputHost");
-        String user = request.getParameter("inputUser");
-        String pass = request.getParameter("inputPass");
-        String name = request.getParameter("inputName");
-        String port = request.getParameter("inputPort");
+    public String doInstall(@RequestParam("inputHost") String host,
+                            @RequestParam("inputUser") String user,
+                            @RequestParam("inputPass") String pass,
+                            @RequestParam("inputName") String name,
+                            @RequestParam("inputPort") String port) {
         try {
             // If DB is already seted as installed - do not process
-            if (Boolean.parseBoolean(Config.getValue(Config.C_DB_INST))) {
+            if (Config.dbInstalled()) {
                 throw new NotFoundException();
             }
 
@@ -466,21 +385,15 @@ public class DefaultController {
             Config.setValue(Config.C_DB_NAME, name);
             Config.setValue(Config.C_DB_PORT, port);
 
-
-        } catch (IOException e) {
-            LOGGER.log(Level.ERROR, e);
-        }
-
-        try {
             Utils.installDB();
             Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
+            
+            return "redirect:/";   
+        } catch (ConfigException e) {
+            throw new GenericException(rb.getString("configError"), e);
         } catch (DatabaseException e) {
-            throw new GenericException(rb.getString("dbError"));
-        } catch (IOException e) {
-            LOGGER.log(Level.ERROR, e);
-        }
-        
-        return "redirect:/";
+            throw new GenericException(rb.getString("dbError"), e);
+        } 
     }
 
     /**
@@ -492,11 +405,11 @@ public class DefaultController {
     @RequestMapping(value = "/install", method = RequestMethod.GET)
     public String install(ModelMap model) {
         try {
-            if (Boolean.TRUE.toString().equals(Config.getValue(Config.C_DB_INST))) {
+            if (Config.dbInstalled()) {
                 throw new NotFoundException();
             }
-        } catch (IOException e) {
-            LOGGER.log(Level.ERROR, e);
+        } catch (ConfigException e) {
+            throw new GenericException(rb.getString("configError"), e);
         }
 
         return "install";
@@ -513,23 +426,23 @@ public class DefaultController {
     @ResponseBody
     public String doExport(HttpServletResponse response, @PathVariable Long grammarId) {
         response.setHeader("Content-Disposition", "attachment;filename=\"export.xml\"");
-        if (grammarId == null || grammarId == 0) {
-            throw new IllegalArgumentException();
-        }
-
+        
         try {
             baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
 
             Grammar grammar = grammarManager.findGrammar(grammarId);
+            if (grammar == null) {
+                throw new NotFoundException();
+            }
 
             return grammar.getContent();
 
         } catch (DatabaseException e) {
             throw new GenericException(rb.getString("dbError"));
         } finally {
-            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);};
+            try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
     }
 }

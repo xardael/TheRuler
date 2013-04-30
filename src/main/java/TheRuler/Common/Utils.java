@@ -1,7 +1,7 @@
 package TheRuler.Common;
 
+import TheRuler.Exceptions.ConfigException;
 import TheRuler.Exceptions.DatabaseException;
-import TheRuler.Model.GrammarManagerBaseXImpl;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -17,10 +17,10 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * Static methods which provides utility functions.
@@ -44,7 +44,9 @@ public class Utils {
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
-        } 
+        }  catch (ConfigException e) {
+            throw new DatabaseException(e);
+        }
     }
     
     /**
@@ -59,7 +61,6 @@ public class Utils {
         StreamResult result = new StreamResult(buffer);
         DOMSource source = new DOMSource(element);
         TransformerFactory.newInstance().newTransformer().transform(source, result);
-        //String xml = new String(buffer.toByteArray());
         String xml = "";
         try {
             xml = buffer.toString("UTF-8");
@@ -92,7 +93,7 @@ public class Utils {
      * Login information must be stored in configuration propertis file.
      * If db with configured name exists, it will be overwritten.
      */
-    public static void installDB() throws DatabaseException {
+    public static void installDB() throws DatabaseException, ConfigException {
         BaseXClient baseXClient = null;
         try {
             baseXClient = new BaseXClient(Config.getValue(Config.C_DB_HOST), Integer.parseInt(Config.getValue(Config.C_DB_PORT)), Config.getValue(Config.C_DB_USER), Config.getValue(Config.C_DB_PASS));

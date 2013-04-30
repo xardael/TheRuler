@@ -3,6 +3,7 @@ package TheRuler.Model;
 import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
+import TheRuler.Exceptions.ConfigException;
 import TheRuler.Exceptions.DatabaseException;
 import TheRuler.Exceptions.GenericException;
 import java.io.IOException;
@@ -15,7 +16,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -55,7 +55,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
     public void addRule(Rule rule, GrammarMeta grammarMeta) throws DatabaseException {
         if (grammarMeta == null || rule == null) {
             throw new IllegalArgumentException();
-        } else if (grammarMeta.getId() == null || rule.getId() == null || rule.getId() == "") {
+        } else if (grammarMeta.getId() == null || rule.getId() == null || "".equals(rule.getId())) {
             throw new IllegalArgumentException();
         }
 
@@ -75,7 +75,9 @@ public class RuleManagerBaseXImpl implements RuleManager {
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
-        } 
+        } catch (ConfigException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     /**
@@ -101,6 +103,8 @@ public class RuleManagerBaseXImpl implements RuleManager {
             }
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
+            throw new DatabaseException(e);
+        } catch (ConfigException e) {
             throw new DatabaseException(e);
         }
     }
@@ -136,6 +140,8 @@ public class RuleManagerBaseXImpl implements RuleManager {
             return rule;
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
+            throw new DatabaseException(e);
+        } catch (ConfigException e) {
             throw new DatabaseException(e);
         }
     }
@@ -190,6 +196,8 @@ public class RuleManagerBaseXImpl implements RuleManager {
         } catch (TransformerException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
+        } catch (ConfigException e) {
+            throw new DatabaseException(e);
         }
     }
 
@@ -242,6 +250,8 @@ public class RuleManagerBaseXImpl implements RuleManager {
         } catch (TransformerException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
+        } catch (ConfigException e) {
+            throw new DatabaseException(e);
         }
     }
 
@@ -254,7 +264,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
     public void updateRule(Rule rule, GrammarMeta grammarMeta) throws DatabaseException {
         if (grammarMeta == null || rule == null) {
             throw new IllegalArgumentException();
-        } else if (grammarMeta.getId() == null || rule.getId() == null || rule.getId() == "") {
+        } else if (grammarMeta.getId() == null || rule.getId() == null || "".equals(rule.getId())) {
             throw new IllegalArgumentException();
         }
 
@@ -271,7 +281,9 @@ public class RuleManagerBaseXImpl implements RuleManager {
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
-        } 
+        }  catch (ConfigException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     /**
@@ -298,6 +310,8 @@ public class RuleManagerBaseXImpl implements RuleManager {
             LOGGER.log(Level.INFO, "deleteRule - deleted rule with id = '" + rule.getId() + "' in grammar " + grammarMeta.getId());
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
+            throw new DatabaseException(e);
+        } catch (ConfigException e) {
             throw new DatabaseException(e);
         }
     }

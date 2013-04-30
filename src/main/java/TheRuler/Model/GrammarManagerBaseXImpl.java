@@ -3,6 +3,7 @@ package TheRuler.Model;
 import TheRuler.Common.BaseXClient;
 import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
+import TheRuler.Exceptions.ConfigException;
 import TheRuler.Exceptions.DatabaseException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -78,14 +79,13 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             String insertNodeCommand = "insert node "
                     + "<grammarRecord id='" + newId + "'>"
                     + "  <name>" + HtmlUtils.htmlEscape(grammarMeta.getName()) + "</name>"
-                    + "  <description>" + ((grammarMeta.getDescription() == null) ? "" : HtmlUtils.htmlEscape(grammarMeta.getDescription())) + "</description>"
+                    + "  <description>" + ((grammarMeta.getDescription() == null) ? "" : HtmlUtils.htmlEscape(grammarMeta.getDescription().trim())) + "</description>"
                     + "  <date>" + Utils.convertDateToGmtString(new Date()) + "</date>"
                     + "</grammarRecord>"
                     + "into //grammars";
             
-            String result = baseXClient.execute("xquery " + insertNodeCommand);
+            baseXClient.execute("xquery " + insertNodeCommand);
 
-            //String grammar = "<grammar xmlns='http://www.w3.org/2001/06/grammar' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.w3.org/2001/06/grammar http://www.w3.org/TR/speech-grammar/grammar.xsd' xml:lang='en-US' version='1.0'></grammar>";
             String grammar = "<grammar></grammar>";
             
             InputStream bais = new ByteArrayInputStream(grammar.getBytes("UTF-8"));
@@ -111,7 +111,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
      * @return All grammar information in Grammr object. If grammar meta with
      *         given ID does not exist, returns null.
      */
-    public Grammar findGrammar(Long id) throws DatabaseException{
+    public Grammar findGrammar(Long id) throws DatabaseException {
         if (id == null) {
             throw new IllegalArgumentException();
         }
@@ -137,6 +137,8 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             return grammar;
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
+            throw new DatabaseException(e);
+        } catch (ConfigException e) {
             throw new DatabaseException(e);
         }
         
@@ -166,9 +168,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
                 return null;
             }
             
-            String name = null;
             String description = null;
-            String dateString = null;
             GrammarMeta grammarMeta = new GrammarMeta();
             
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -180,7 +180,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             
             NodeList nameNodes = root.getElementsByTagName("name");
             Element line = (Element) nameNodes.item(0);
-            name = line.getFirstChild().getNodeValue();
+            String name = line.getFirstChild().getNodeValue();
             
             NodeList descriptionNodes = root.getElementsByTagName("description");
             line = (Element) descriptionNodes.item(0);
@@ -190,7 +190,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             
             NodeList dateNodes = root.getElementsByTagName("date");
             line = (Element) dateNodes.item(0);
-            dateString = line.getFirstChild().getNodeValue();
+            String dateString = line.getFirstChild().getNodeValue();
             
             grammarMeta.setId(id);
             grammarMeta.setName(name);
@@ -312,7 +312,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             String updateNodeCommand = "replace node //grammars/grammarRecord[@id=" + grammarMeta.getId() + "] with"
                     + "<grammarRecord id='" + grammarMeta.getId() + "'>"
                     + "  <name>" + HtmlUtils.htmlEscape(grammarMeta.getName()) + "</name>"
-                    + "  <description>" + HtmlUtils.htmlEscape(grammarMeta.getDescription()) + "</description>"
+                    + "  <description>" + HtmlUtils.htmlEscape(grammarMeta.getDescription().trim()) + "</description>"
                     + "  <date>" + grammarMeta.getDate() + "</date>"
                     + "</grammarRecord>";
             
