@@ -30,10 +30,6 @@ public class AjaxController {
     
     private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AjaxController.class);
     private BaseXClient baseXClient = null;
-    
-    public AjaxController() {
-        baseXClient = null;
-    }
 
     /**
      * Finds rules. Provides functionality for insert ruleref feature.
@@ -43,8 +39,8 @@ public class AjaxController {
      * @return JSON formated collection of strings.
      */
     @RequestMapping(value = "/ajax/findRules", method = RequestMethod.POST)
-    public @ResponseBody
-    List<String> findRules(@RequestParam Long grammarId, @RequestParam String searchText) {
+    @ResponseBody
+    public List<String> findRules(@RequestParam Long grammarId, @RequestParam String searchText) {
         GrammarMeta gm = new GrammarMeta();
         if (grammarId != null) {
             gm.setId(grammarId);
@@ -79,8 +75,8 @@ public class AjaxController {
      * @return String "true" if exists, "false" otherwise.
      */
     @RequestMapping(value = "/ajax/ruleExists", method = RequestMethod.GET)
-    public @ResponseBody
-    Map<String, String> ruleExists(@RequestParam Long grammarId, @RequestParam String ruleId) {
+    @ResponseBody
+    public Map<String, String> ruleExists(@RequestParam Long grammarId, @RequestParam String ruleId) {
         GrammarMeta gm = new GrammarMeta();
         if (grammarId != null) {
             gm.setId(grammarId);

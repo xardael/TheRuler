@@ -317,7 +317,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             String query = "xquery replace node //grammars/grammarRecord[@id=" + grammarMeta.getId() + "] with"
                     + "<grammarRecord id='" + grammarMeta.getId() + "'>"
                     + "  <name>" + ((grammarMeta.getName() == null) ? old.getName() : HtmlUtils.htmlEscape(grammarMeta.getName())) + "</name>"
-                    + "  <description>" + ((grammarMeta.getDescription() == null) ? old.getDescription() : HtmlUtils.htmlEscape(grammarMeta.getDescription().trim())) + "</description>"
+                    + "  <description>" + ((grammarMeta.getDescription() == null) ? (old.getDescription() == null ? "" : old.getDescription()) : HtmlUtils.htmlEscape(grammarMeta.getDescription().trim())) + "</description>"
                     + "  <date>" + ((grammarMeta.getDate()) == null ? old.getDate() : grammarMeta.getDate()) + "</date>"
                     + "</grammarRecord>";
             

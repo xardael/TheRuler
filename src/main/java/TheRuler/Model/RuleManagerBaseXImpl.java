@@ -55,7 +55,8 @@ public class RuleManagerBaseXImpl implements RuleManager {
     public void addRule(Rule rule) throws DatabaseException, RuleExistsException {
         if (rule == null) {
             throw new IllegalArgumentException();
-        } else if (rule.getId() == null || "".equals(rule.getId()) || rule.getGrammarId() == null) {
+        } else if (rule.getId() == null || "".equals(rule.getId()) || rule.getGrammarId() == null ||
+                   rule.getContent() == null || "".equals(rule.getContent().trim())) {
             throw new IllegalArgumentException();
         }
 
@@ -64,9 +65,8 @@ public class RuleManagerBaseXImpl implements RuleManager {
         }
 
         try {
-            String query = "xquery insert node <rule id='" + rule.getId() + "'> "
-                    + (rule.getContent() == null ? "" : rule.getContent())
-                    + "</rule> "
+            String query = "xquery insert node "
+                    + (rule.getContent() == null ? "<rule id='" + rule.getId() + "' />" : rule.getContent())
                     + "into doc('" + Config.getValue(Config.C_DB_NAME) + "/" + rule.getGrammarId() + ".xml')/grammar";
             
             LOGGER.log(Level.DEBUG, "Executing query: " + query);
@@ -93,14 +93,17 @@ public class RuleManagerBaseXImpl implements RuleManager {
         }
 
         try {
-            String query = String.format("xquery exists(doc('%s/%s.xml')//rule[@id='%s'])", Config.getValue(Config.C_DB_NAME), rule.getGrammarId(), rule.getId());
-            String result = baseXClient.execute(query);
-            
-            if ("true".equals(result)) {
-                return true;
-            } else {
-                return false;
+            String grammarQuery = String.format("xquery exists(doc('%s/Meta.xml')//grammars/grammarRecord[@id='%s'])", Config.getValue(Config.C_DB_NAME), rule.getGrammarId());
+            LOGGER.log(Level.DEBUG, "Executing query: " + grammarQuery);
+            String grammarResult = baseXClient.execute(grammarQuery);
+            if (!"true".equals(grammarResult)) {
+                throw new IllegalArgumentException("Grammar does not exists.");
             }
+            String query = String.format("xquery exists(doc('%s/%s.xml')//rule[@id='%s'])", Config.getValue(Config.C_DB_NAME), rule.getGrammarId(), rule.getId());
+            LOGGER.log(Level.DEBUG, "Executing query: " + query);
+            String result = baseXClient.execute(query);
+
+            return "true".equals(result);
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);

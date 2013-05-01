@@ -57,7 +57,8 @@ public class DefaultController {
      *
      * @param model Empty ModelMap.
      * @param id ID of grammar.
-     * @param request Request for accesing url params.
+     * @param search Search indicator.
+     * @param name Search string.
      * @return The grammar page view.
      */
     @RequestMapping(value = "/grammar/{id}", method = RequestMethod.GET)
@@ -201,7 +202,7 @@ public class DefaultController {
      * Creates new grammar with posted name and redirects to grammar meta edit
      * page of created grammar.
      *
-     * @param request HTTP Request with posted data - grammar name.
+     * @param name grammar name
      * @return Redirects to the grammar meta edit view.
      */
     @RequestMapping(value = "/create-grammar", method = RequestMethod.POST)
@@ -258,7 +259,8 @@ public class DefaultController {
      * Adds new rule with posted name and redirects to grammar page with rule
      * listing.
      *
-     * @param request Request with posted rule name.
+     * @param ruleId Rule ID.
+     * @param grammarId Grammar ID.
      * @return Redirects to the grammar page view.
      */
     @RequestMapping(value = "/rule-add", method = RequestMethod.POST)
@@ -360,7 +362,11 @@ public class DefaultController {
     /**
      * Installs database and redirects to grammar page.
      *
-     * @param request Request with connection data.
+     * @param host
+     * @param user
+     * @param pass
+     * @param name
+     * @param port
      * @return Redirects to the grammar page view.
      */
     @RequestMapping(value = "/doInstall", method = RequestMethod.POST)
