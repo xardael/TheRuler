@@ -44,11 +44,7 @@ public class RestController {
     @RequestMapping(value = "/rest/grammar", method = RequestMethod.GET, produces = "application/srgs+xml;charset=UTF-8")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String getGrammar(@RequestParam("grammarId") Long grammarId) {
-        if (grammarId == null) {
-            throw new BadRequestException();
-        }
-
+    public String getGrammar(@RequestParam("grammarId") Long grammarId) {        
         try {
             baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
@@ -57,12 +53,12 @@ public class RestController {
             Grammar grammar = grammarManager.findGrammar(grammarId);
 
             if (grammar == null) {
-                throw new NotFoundException();
+                throw new BadRequestException();
             }
 
             return Utils.fixSrgsHeader(grammar.getContent());
         } catch (DatabaseException e) {
-            throw new BadRequestException();
+            throw new InternalErrorException();
         } finally {
             try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
@@ -144,15 +140,15 @@ public class RestController {
     @RequestMapping(value = "/rest/create-grammar", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public Map<String, String> createGrammar(@RequestParam("grammarName") String grammarName) {
-        if (grammarName == null || "".equals(grammarName)) {
+    public Map<String, String> createGrammar(@RequestParam String grammarName, @RequestParam(required = false) String grammarContent) {
+        if ("".equals(grammarName.trim())) {
             throw new BadRequestException();
         }
 
         HashMap<String, String> result = new HashMap<String, String>();
         GrammarMeta gm = new GrammarMeta();
         gm.setName(grammarName);
-
+        
         try {
             baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
@@ -160,6 +156,14 @@ public class RestController {
 
             gm = grammarManager.createGrammar(gm);
             result.put("grammarId", gm.getId().toString());
+            
+            
+            if (grammarContent != null && !"".equals(grammarContent.trim())) {
+                Grammar grammar = new Grammar();
+                grammar.setMeta(gm);
+                grammar.setContent(grammarContent);
+                grammarManager.updateGrammar(grammar);
+            }
 
             return result;
         } catch (DatabaseException e) {
@@ -250,27 +254,26 @@ public class RestController {
      * @param ruleId ID of rule.
      * @return The rule edit view.
      */
-    @RequestMapping(value = "/rest/grammar/{grammarId}/rule/{ruleId}")
+    @RequestMapping(value = "/rest/rule", produces = "application/xml;charset=UTF-8")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String getRule(ModelMap model, @PathVariable Long grammarId, @PathVariable String ruleId) {
+    public String getRule(@RequestParam Long grammarId, @RequestParam String ruleId) {
         try {
+            baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
 
             GrammarMeta gm = grammarManager.findGrammarMeta(grammarId);
+            if (gm == null) {
+                throw new BadRequestException();
+            }
             Rule rule = ruleManager.findRuleById(ruleId, gm);
             if (rule == null) {
-                throw new NotFoundException();
+                throw new BadRequestException();
             }
-            List<Rule> rules = ruleManager.findAllRules(gm);
-
-            model.addAttribute("gm", gm);
-            model.addAttribute("rule", rule);
-            model.addAttribute("rules", rules);
-
+           
             return rule.getContent();
         } catch (DatabaseException e) {
             throw new InternalErrorException();

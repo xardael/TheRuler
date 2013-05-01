@@ -36,6 +36,10 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
     private BaseXClient baseXClient;
     private static final Logger LOGGER = Logger.getLogger(GrammarManagerBaseXImpl.class);
 
+    public GrammarManagerBaseXImpl() {
+        //Logger.getRootLogger().setLevel(Level.DEBUG);
+    }
+    
     /**
      * Sets BaseX connection identificator for this manager.
      *
@@ -377,6 +381,7 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
             }
             String query = "xquery delete node //grammars/grammarRecord[@id=" + grammarMeta.getId() + "]";
             LOGGER.log(Level.DEBUG, "Executing query: " + query);
+            LOGGER.debug("Executing query: " + query);
             baseXClient.execute(query);
             
             query = "delete " + grammarMeta.getId() + ".xml";
