@@ -46,6 +46,8 @@ public class Utils {
             throw new DatabaseException(e);
         }  catch (ConfigException e) {
             throw new DatabaseException(e);
+        } catch (NumberFormatException e) {
+            throw new DatabaseException(e);
         }
     }
     
@@ -104,7 +106,11 @@ public class Utils {
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
-        }  finally {
+        } catch (ConfigException e) {
+            throw new DatabaseException(e);
+        } catch (NumberFormatException e) {
+            throw new DatabaseException(e);
+        } finally {
             try {baseXClient.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
     }
