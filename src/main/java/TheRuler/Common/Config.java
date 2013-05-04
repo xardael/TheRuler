@@ -77,6 +77,24 @@ public class Config {
      * @param key Key in config file.
      * @return If key exists, its value is returned. Otherwise returns empty string.
      */
+    public static int getPortAsInt() throws ConfigException {
+        try {
+            Properties props = init();
+            return Integer.parseInt(props.getProperty(Config.C_DB_PORT, "0"));
+        } catch (NumberFormatException e) {
+            return 0;
+        } catch (IOException e) {
+            LOGGER.log(Level.ERROR, e);
+            throw new ConfigException(e);
+        }
+    }
+    
+    /**
+     * Gets value of given key from properties file.
+     *
+     * @param key Key in config file.
+     * @return If key exists, its value is returned. Otherwise returns empty string.
+     */
     public static String getValue(String key) throws ConfigException {
         if (key == null) {
             throw new IllegalArgumentException();
@@ -101,17 +119,20 @@ public class Config {
         if (key == null || value == null) {
             throw new IllegalArgumentException();
         }
+        Writer writer = null;
         
         try {
             Properties props = init();
             props.setProperty(key, value);
             URL url = Config.class.getClassLoader().getResource(CONFIG_FILE_NAME);
             String path = url.getPath();
-            Writer writer = new FileWriter(path);
-            props.store(writer, "");
+            writer = new FileWriter(path);
+            props.store(writer, "");            
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new ConfigException(e);
+        } finally {
+            try {writer.close();} catch (Exception e) {LOGGER.log(Level.ERROR, e);}
         }
     }
 }

@@ -38,7 +38,7 @@ public class Utils {
      */
     public static BaseXClient connectToBaseX() throws DatabaseException {
         try {
-            BaseXClient baseXClient = new BaseXClient(Config.getValue(Config.C_DB_HOST), Integer.parseInt(Config.getValue(Config.C_DB_PORT)), Config.getValue(Config.C_DB_USER), Config.getValue(Config.C_DB_PASS));
+            BaseXClient baseXClient = new BaseXClient(Config.getValue(Config.C_DB_HOST), Config.getPortAsInt(), Config.getValue(Config.C_DB_USER), Config.getValue(Config.C_DB_PASS));
             baseXClient.execute("OPEN " + Config.getValue(Config.C_DB_NAME));
             return baseXClient;
         } catch (IOException e) {
@@ -95,14 +95,22 @@ public class Utils {
      * Login information must be stored in configuration propertis file.
      * If db with configured name exists, it will be overwritten.
      */
-    public static void installDB() throws DatabaseException, ConfigException {
+    public static void installDB(String user, String host, String pass, String name, Integer port) throws DatabaseException, ConfigException {
         BaseXClient baseXClient = null;
         try {
-            baseXClient = new BaseXClient(Config.getValue(Config.C_DB_HOST), Integer.parseInt(Config.getValue(Config.C_DB_PORT)), Config.getValue(Config.C_DB_USER), Config.getValue(Config.C_DB_PASS));
-            baseXClient.execute("CREATE DB " + Config.getValue(Config.C_DB_NAME));
-            baseXClient.execute("OPEN " + Config.getValue(Config.C_DB_NAME));
+            baseXClient = new BaseXClient(host, port, user, pass);
+            baseXClient.execute("CREATE DB " + name);
+            baseXClient.execute("OPEN " + name);
             InputStream bais = new ByteArrayInputStream(Config.GRAMMARS_ROOT_NAME.getBytes("UTF-8"));
             baseXClient.add(Config.GRAMMARS_FILE_NAME, bais);
+            
+            Config.setValue(Config.C_DB_USER, user);
+            Config.setValue(Config.C_DB_HOST, host);
+            Config.setValue(Config.C_DB_PASS, pass);
+            Config.setValue(Config.C_DB_NAME, name);
+            Config.setValue(Config.C_DB_PORT, port.toString());
+            Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
+            
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);

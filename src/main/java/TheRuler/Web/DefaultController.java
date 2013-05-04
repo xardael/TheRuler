@@ -374,22 +374,14 @@ public class DefaultController {
                             @RequestParam("inputUser") String user,
                             @RequestParam("inputPass") String pass,
                             @RequestParam("inputName") String name,
-                            @RequestParam("inputPort") String port) {
+                            @RequestParam("inputPort") Integer port) {
         try {
             // If DB is already seted as installed - do not process
             if (Config.dbInstalled()) {
                 throw new NotFoundException();
             }
 
-            Config.setValue(Config.C_DB_USER, user);
-            Config.setValue(Config.C_DB_HOST, host);
-            Config.setValue(Config.C_DB_PASS, pass);
-            Config.setValue(Config.C_DB_NAME, name);
-            Config.setValue(Config.C_DB_PORT, port);
-
-            Utils.installDB();
-            Config.setValue(Config.C_DB_INST, Boolean.TRUE.toString());
-            
+            Utils.installDB(user, host, pass, name, port);           
             return "redirect:/";   
         } catch (ConfigException e) {
             throw new GenericException(rb.getString("configError"), e);
