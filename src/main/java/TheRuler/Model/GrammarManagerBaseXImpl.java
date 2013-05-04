@@ -36,10 +36,6 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
     private BaseXClient baseXClient;
     private static final Logger LOGGER = Logger.getLogger(GrammarManagerBaseXImpl.class);
 
-    public GrammarManagerBaseXImpl() {
-        //Logger.getRootLogger().setLevel(Level.DEBUG);
-    }
-    
     /**
      * Sets BaseX connection identificator for this manager.
      *

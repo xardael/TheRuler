@@ -55,8 +55,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
     public void addRule(Rule rule) throws DatabaseException, RuleExistsException {
         if (rule == null) {
             throw new IllegalArgumentException();
-        } else if (rule.getId() == null || "".equals(rule.getId()) || rule.getGrammarId() == null ||
-                   rule.getContent() == null || "".equals(rule.getContent().trim())) {
+        } else if (rule.getId() == null || "".equals(rule.getId()) || rule.getGrammarId() == null) {
             throw new IllegalArgumentException();
         }
 
