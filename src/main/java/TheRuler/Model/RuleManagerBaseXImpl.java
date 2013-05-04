@@ -49,7 +49,6 @@ public class RuleManagerBaseXImpl implements RuleManager {
     /**
      * Persist given rule as a new rule into BaseX database.
      *
-     * @param grammarMeta Grammar meta.
      * @param rule Rule object.
      */
     public void addRule(Rule rule) throws DatabaseException, RuleExistsException {
@@ -260,7 +259,6 @@ public class RuleManagerBaseXImpl implements RuleManager {
      * Update rule in BaseX database.
      *
      * @param rule Rule object with ID.
-     * @param grammarMeta GrammarMeta object of grammar containing given rule with ID.
      */
     public void updateRule(Rule rule) throws DatabaseException {
         if (rule == null) {
@@ -295,7 +293,6 @@ public class RuleManagerBaseXImpl implements RuleManager {
      * Deletes given rule from BaseX database.
      *
      * @param rule Rule object with ID.
-     * @param grammarMeta GrammarMeta object of grammar containing given rule with ID.
      */
     public void deleteRule(Rule rule) throws DatabaseException {
         if (rule == null) {

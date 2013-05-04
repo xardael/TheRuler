@@ -14,7 +14,6 @@ public interface RuleManager {
     /**
      * Persist given rule as a new rule into a database.
      *
-     * @param grammarMeta Grammar meta.
      * @param rule Rule object.
      */
     void addRule(Rule rule) throws DatabaseException, RuleExistsException;
@@ -50,7 +49,6 @@ public interface RuleManager {
      * Update rule in a database.
      *
      * @param rule Rule object with ID.
-     * @param grammarMeta GrammarMeta object of grammar containing given rule with ID.
      */
     void updateRule(Rule rule) throws DatabaseException;
 
@@ -58,7 +56,6 @@ public interface RuleManager {
      * Deletes given rule from BaseX database.
      *
      * @param rule Rule object with ID.
-     * @param grammarMeta GrammarMeta object of grammar containing given rule with ID.
      */
     void deleteRule(Rule rule) throws DatabaseException;
 }

@@ -74,7 +74,7 @@ public class Utils {
      * Adds prolog and refs to schema into given SRGS grammar's header.
      * 
      * @param xml XML string.
-     * @return 
+     * @return SRGS grammar with correct header.
      */
     public static String fixSrgsHeader(String xml) {
         String header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
