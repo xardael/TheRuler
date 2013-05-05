@@ -36,6 +36,10 @@ public class RestController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public String getGrammar(@RequestParam("grammarId") Long grammarId) {        
+        if (grammarId == null) {
+            throw new BadRequestException();
+        }
+        
         try {
             baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
@@ -129,14 +133,14 @@ public class RestController {
      * Adds new rule with posted name into grammar with given ID.
      *
      * @param ruleId Rule ID.
-     * @param content Rule content.
+     * @param ruleContent Rule content.
      * @param grammarId ID of grammar to insert the rule.
      * @return HTTP status.
      */
     @RequestMapping(value = "/rest/create-rule", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String createRule(@RequestParam String ruleId, @RequestParam String content, @RequestParam Long grammarId) {
+    public String createRule(@RequestParam String ruleId, @RequestParam String ruleContent, @RequestParam Long grammarId) {
         try {
             baseXClient = Utils.connectToBaseX();
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
@@ -144,7 +148,9 @@ public class RestController {
 
             Rule rule = new Rule();
             rule.setId(ruleId);
-            rule.setContent(content);
+            if (ruleContent != "") {
+                rule.setContent(ruleContent);
+            }
             rule.setGrammarId(grammarId);
 
             ruleManager.addRule(rule);
