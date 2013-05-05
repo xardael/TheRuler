@@ -1,9 +1,7 @@
 package TheRuler.Model;
 
 import TheRuler.Common.BaseXClient;
-import TheRuler.Common.Config;
 import TheRuler.Common.Utils;
-import TheRuler.Exceptions.ConfigException;
 import TheRuler.Exceptions.DatabaseException;
 import TheRuler.Exceptions.RuleExistsException;
 import java.io.IOException;
@@ -65,7 +63,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
         try {
             String query = "xquery insert node "
                     + (rule.getContent() == null ? "<rule id='" + rule.getId() + "' />" : rule.getContent())
-                    + "into doc('" + Config.getValue(Config.C_DB_NAME) + "/" + rule.getGrammarId() + ".xml')/grammar";
+                    + "into //grammars/grammarRecord[grammarMeta/@id=" + rule.getGrammarId() + "]/grammar";
             
             LOGGER.log(Level.DEBUG, "Executing query: " + query);
             baseXClient.execute(query);
@@ -73,9 +71,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
-        } catch (ConfigException e) {
-            throw new DatabaseException(e);
-        }
+        } 
     }
 
     /**
@@ -91,13 +87,13 @@ public class RuleManagerBaseXImpl implements RuleManager {
         }
 
         try {
-            String grammarQuery = String.format("xquery exists(doc('%s/Meta.xml')//grammars/grammarRecord[@id='%s'])", Config.getValue(Config.C_DB_NAME), rule.getGrammarId());
+            String grammarQuery = String.format("xquery exists(//grammars/grammarRecord[grammarMeta/@id=%s])", rule.getGrammarId());
             LOGGER.log(Level.DEBUG, "Executing query: " + grammarQuery);
             String grammarResult = baseXClient.execute(grammarQuery);
             if (!"true".equals(grammarResult)) {
                 throw new IllegalArgumentException("Grammar does not exists.");
             }
-            String query = String.format("xquery exists(doc('%s/%s.xml')//rule[@id='%s'])", Config.getValue(Config.C_DB_NAME), rule.getGrammarId(), rule.getId());
+            String query = String.format("xquery exists(//grammars/grammarRecord[grammarMeta/@id=%s]/grammar//rule[@id='%s'])", rule.getGrammarId(), rule.getId());
             LOGGER.log(Level.DEBUG, "Executing query: " + query);
             String result = baseXClient.execute(query);
 
@@ -105,9 +101,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
-        } catch (ConfigException e) {
-            throw new DatabaseException(e);
-        }
+        } 
     }
     
     /**
@@ -124,7 +118,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
         }
 
         try {
-            String queryString = String.format("doc('%s/%s.xml')//rule[@id='%s'][1]", Config.getValue(Config.C_DB_NAME), grammarMeta.getId(), id);
+            String queryString = String.format("//grammars/grammarRecord[grammarMeta/@id=%s]/grammar//rule[@id='%s'][1]", grammarMeta.getId(), id);
             BaseXClient.Query query = baseXClient.query(queryString);
             LOGGER.log(Level.DEBUG, "Executing query: " + queryString);
             
@@ -143,9 +137,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
-        } catch (ConfigException e) {
-            throw new DatabaseException(e);
-        }
+        } 
     }
 
     /**
@@ -161,11 +153,11 @@ public class RuleManagerBaseXImpl implements RuleManager {
         
         try {
             BaseXClient.Query query = baseXClient.query("<rules> "
-                    + "{for $rule in doc('" + Config.getValue(Config.C_DB_NAME) + "/" + grammarMeta.getId() + ".xml')//rule "
+                    + "{for $rule in //grammars/grammarRecord[grammarMeta/@id=" + grammarMeta.getId() + "]/grammar//rule "
                     + "return $rule} "
                     + "</rules>");
             String xml = query.execute();
-            
+
             List<Rule> rules = new ArrayList<Rule>();
             
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -198,9 +190,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
         } catch (TransformerException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
-        } catch (ConfigException e) {
-            throw new DatabaseException(e);
-        }
+        } 
     }
 
     /**
@@ -213,7 +203,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
     public List<Rule> findAllRulesById(String id, GrammarMeta grammarMeta) throws DatabaseException {
         try {
             BaseXClient.Query query = baseXClient.query("<rules> "
-                    + "{for $rule in doc('" + Config.getValue(Config.C_DB_NAME) + "/" + grammarMeta.getId() + ".xml')//rule[contains( "
+                    + "{for $rule in //grammars/grammarRecord[grammarMeta/@id=" + grammarMeta.getId() + "]/grammar//rule[contains( "
                     + "translate(@id,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') "
                     + ", '" + id + "')] "
                     + "return $rule} "
@@ -250,9 +240,7 @@ public class RuleManagerBaseXImpl implements RuleManager {
         } catch (TransformerException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
-        } catch (ConfigException e) {
-            throw new DatabaseException(e);
-        }
+        } 
     }
 
     /**
@@ -277,16 +265,14 @@ public class RuleManagerBaseXImpl implements RuleManager {
         }
         
         try {
-            String query = "xquery replace node doc('%1$s/%2$s.xml')//rule[@id='%3$s'][1] with %4$s";
-            query = String.format(query, Config.getValue(Config.C_DB_NAME), rule.getGrammarId(), rule.getId(), wholeRule);
+            String query = "xquery replace node //grammars/grammarRecord[grammarMeta/@id=%s]/grammar//rule[@id='%s'][1] with %s";
+            query = String.format(query, rule.getGrammarId(), rule.getId(), wholeRule);
             LOGGER.log(Level.DEBUG, "Executing query: " + query);
             baseXClient.execute(query);
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
-        }  catch (ConfigException e) {
-            throw new DatabaseException(e);
-        }
+        }  
     }
 
     /**
@@ -306,15 +292,13 @@ public class RuleManagerBaseXImpl implements RuleManager {
         }
 
         try {
-            String query = String.format("xquery delete node doc('%s/%s.xml')//rule[@id='%s'][1]", Config.getValue(Config.C_DB_NAME), rule.getGrammarId(), rule.getId());
+            String query = String.format("xquery delete node //grammars/grammarRecord[grammarMeta/@id=%s]/grammar//rule[@id='%s'][1]", rule.getGrammarId(), rule.getId());
             LOGGER.log(Level.DEBUG, "Executing query: " + query);
             baseXClient.execute(query);
             LOGGER.log(Level.INFO, "deleteRule - deleted rule with id = '" + rule.getId() + "' in grammar " + rule.getGrammarId());
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);
-        } catch (ConfigException e) {
-            throw new DatabaseException(e);
-        }
+        } 
     }
 }

@@ -36,7 +36,7 @@ public class Config {
     /** Meta file root element. */
     public static final String GRAMMARS_ROOT_NAME = "<grammars></grammars>";
     /** Meta file name. */
-    public static final String GRAMMARS_FILE_NAME = "Meta.xml";
+    public static final String GRAMMARS_FILE_NAME = "GrammarsFile.xml";
     /** Configuration file name. */
     public static final String CONFIG_FILE_NAME = "config.properties";
     /** Localization file name. */
