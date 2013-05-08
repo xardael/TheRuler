@@ -35,7 +35,7 @@ public class RestController {
     @RequestMapping(value = "/rest/grammar", method = RequestMethod.GET, produces = "application/srgs+xml;charset=UTF-8")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String getGrammar(@RequestParam("grammarId") Long grammarId) {        
+    public String getGrammar(@RequestParam String grammarId) {        
         if (grammarId == null) {
             throw new BadRequestException();
         }
@@ -45,7 +45,7 @@ public class RestController {
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
 
-            Grammar grammar = grammarManager.findGrammar(grammarId);
+            Grammar grammar = grammarManager.findGrammarByName(grammarId);
 
             if (grammar == null) {
                 throw new BadRequestException();
@@ -62,15 +62,15 @@ public class RestController {
     /**
      * Creates new grammar with posted name and opitonal content.
      *
-     * @param grammarName Name of created grammar.
+     * @param grammarId Name of created grammar.
      * @param grammarContent SRGS Grammar content (optional).
      * @return ID of created grammar in JSON variable grammarId.
      */
     @RequestMapping(value = "/rest/create-grammar", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public Map<String, String> createGrammar(@RequestParam String grammarName, @RequestParam(required = false) String grammarContent) {
-        if ("".equals(grammarName.trim())) {
+    public Map<String, String> createGrammar(@RequestParam String grammarId) {
+        if ("".equals(grammarId.trim())) {
             throw new BadRequestException();
         }
 
@@ -78,21 +78,16 @@ public class RestController {
             baseXClient = Utils.connectToBaseX();
             HashMap<String, String> result = new HashMap<String, String>();
             GrammarMeta gm = new GrammarMeta();
-            gm.setName(grammarName);
+            gm.setName(grammarId);
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
 
+            if (grammarManager.grammarExistsByName(grammarId)) {
+                throw new BadRequestException();
+            }
             gm = grammarManager.createGrammar(gm);
             result.put("grammarId", gm.getId().toString());
             
-            
-            if (grammarContent != null && !"".equals(grammarContent.trim())) {
-                Grammar grammar = new Grammar();
-                grammar.setMeta(gm);
-                grammar.setContent(grammarContent);
-                grammarManager.updateGrammar(grammar);
-            }
-
             return result;
         } catch (DatabaseException e) {
             throw new InternalErrorException();
@@ -110,13 +105,17 @@ public class RestController {
     @RequestMapping(value = "/rest/delete-grammar", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String deleteGrammar(@RequestParam Long grammarId) {
+    public String deleteGrammar(@RequestParam String grammarId) {
         try {
             baseXClient = Utils.connectToBaseX();
             GrammarMeta gm = new GrammarMeta();
-            gm.setId(grammarId);
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
+            Grammar grammar = grammarManager.findGrammarByName(grammarId);
+            if (grammar == null) {
+                throw new BadRequestException();
+            }
+            gm.setId(grammar.getId());
             grammarManager.deletaGrammar(gm);
             return "";
         } catch (DatabaseException e) {
@@ -140,18 +139,26 @@ public class RestController {
     @RequestMapping(value = "/rest/create-rule", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String createRule(@RequestParam String ruleId, @RequestParam String ruleContent, @RequestParam Long grammarId) {
+    public String createRule(@RequestParam String ruleId, @RequestParam String ruleContent, @RequestParam String grammarId) {
         try {
             baseXClient = Utils.connectToBaseX();
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
-
+            
             Rule rule = new Rule();
             rule.setId(ruleId);
-            if (ruleContent != "") {
+            if (!"".equals(ruleContent)) {
                 rule.setContent(ruleContent);
             }
-            rule.setGrammarId(grammarId);
+            
+            GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+            grammarManager.setBaseXClient(baseXClient);
+            Grammar grammar = grammarManager.findGrammarByName(grammarId);
+            if (grammar == null) {
+                throw new BadRequestException();
+            }
+            
+            rule.setGrammarId(grammar.getId());
 
             ruleManager.addRule(rule);
         } catch (DatabaseException e) {
@@ -177,15 +184,18 @@ public class RestController {
     @RequestMapping(value = "/rest/rule", produces = "application/xml;charset=UTF-8")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String getRule(@RequestParam Long grammarId, @RequestParam String ruleId) {
+    public String getRule(@RequestParam String grammarId, @RequestParam String ruleId) {
         try {
             baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
-
-            GrammarMeta gm = grammarManager.findGrammarMeta(grammarId);
+            Grammar grammar = grammarManager.findGrammarByName(grammarId);
+            if (grammar == null) {
+                throw new BadRequestException();
+            }
+            GrammarMeta gm = grammarManager.findGrammarMeta(grammar.getId());
             if (gm == null) {
                 throw new BadRequestException();
             }
@@ -212,12 +222,18 @@ public class RestController {
     @RequestMapping(value = "/rest/delete-rule", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String deleteRule(@RequestParam Long grammarId, @RequestParam String ruleId) {
+    public String deleteRule(@RequestParam String grammarId, @RequestParam String ruleId) {
         try {
             baseXClient = Utils.connectToBaseX();
             Rule rule = new Rule();
             rule.setId(ruleId);
-            rule.setGrammarId(grammarId);
+            GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
+            grammarManager.setBaseXClient(baseXClient);
+            Grammar grammar = grammarManager.findGrammarByName(grammarId);
+            if (grammar == null) {
+                throw new BadRequestException();
+            }
+            rule.setGrammarId(grammar.getId());
             RuleManagerBaseXImpl ruleManager = new RuleManagerBaseXImpl();
             ruleManager.setBaseXClient(baseXClient);
             ruleManager.deleteRule(rule);

@@ -390,6 +390,33 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
     }
     
     /**
+     * Finds grammar by name.
+     * 
+     * @param grammarName The grammar name.
+     * @return Grammar with given name.
+     */
+    public Grammar findGrammarByName(String grammarName) throws DatabaseException {
+        if (grammarName == null || "".equals(grammarName)) {
+            throw new IllegalArgumentException();
+        }
+        
+        try {
+            if (!grammarExistsByName(grammarName)) {
+                return null;
+            }
+            String idString = baseXClient.execute("xquery string(//grammars/grammarRecord/grammarMeta[name/text()='" + grammarName + "'][1]/@id)");
+            Long id = Long.parseLong(idString);
+            return findGrammar(id);
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.ERROR, e);
+            throw new DatabaseException(e);
+        } catch (IOException e) {
+            LOGGER.log(Level.ERROR, e);
+            throw new DatabaseException(e);
+        } 
+    }
+    
+    /**
      * Checks if grammar with given ID exists.
      * 
      * @param gm Grammar meta containg ID.
@@ -399,6 +426,32 @@ public class GrammarManagerBaseXImpl implements GrammarManager {
         try {
             String result = baseXClient.execute("xquery exists(//grammars/grammarRecord[grammarMeta/@id=" + grammarMeta.getId() + "])");
             return Boolean.parseBoolean(result);
+        } catch (IOException e) {
+            LOGGER.log(Level.ERROR, e);
+            throw new DatabaseException(e);
+        } 
+    }
+    
+    /**
+     * Checks if grammar with given name exists.
+     * 
+     * @param grammarName Grammar name.
+     * @return TRUE if grammar with given ID exists, FALSE otherwise.
+     */
+    public boolean grammarExistsByName(String grammarName) throws DatabaseException {
+        if (grammarName == null || "".equals(grammarName)) {
+            throw new IllegalArgumentException();
+        }
+        
+        try {
+            String result = baseXClient.execute("xquery exists(//grammars/grammarRecord/grammarMeta/name[text()='" + grammarName + "'])");
+            if (Boolean.parseBoolean(result)) {
+                return true;
+            }
+            return false;
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.ERROR, e);
+            throw new DatabaseException(e);
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
             throw new DatabaseException(e);

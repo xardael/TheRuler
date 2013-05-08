@@ -218,7 +218,9 @@ public class DefaultController {
             baseXClient = Utils.connectToBaseX();
             GrammarManagerBaseXImpl grammarManager = new GrammarManagerBaseXImpl();
             grammarManager.setBaseXClient(baseXClient);
-
+            if (grammarManager.grammarExistsByName(gm.getName())) {
+                throw new GenericException(rb.getString("grammarExists"));
+            }
             gm = grammarManager.createGrammar(gm);
 
             return "redirect:/grammar/" + gm.getId();
